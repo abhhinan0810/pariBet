@@ -1,0 +1,145 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper: Check if user matches UID
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Helper: Check if user is admin
+    function isAdmin() {
+      return isAuthenticated() &&
+        (request.auth.token.role == 'admin' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+
+    // Helper: Check if user email is verified
+    function isVerifiedEmail() {
+      return isAuthenticated() && request.auth.token.email_verified == true;
+    }
+
+    // --- APPROVED STUDENTS DIRECTORY ---
+    match /approved_students/{email} {
+      // Regular users can only read individual record during registration/verification
+      allow get: if true;
+      allow list: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // --- USERS COLLECTION ---
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      
+      // User profile creation: must match verified email
+      allow create: if isOwner(userId) &&
+        request.resource.data.email == request.auth.token.email &&
+        request.resource.data.role == 'regular_user';
+
+      // Updates: cannot change officialName, admissionNumber, role, accountStatus, or walletBalance
+      allow update: if (isOwner(userId) &&
+        request.resource.data.officialName == resource.data.officialName &&
+        request.resource.data.admissionNumber == resource.data.admissionNumber &&
+        request.resource.data.role == resource.data.role &&
+        request.resource.data.accountStatus == resource.data.accountStatus &&
+        request.resource.data.walletBalance == resource.data.walletBalance) || isAdmin();
+
+      allow delete: if isAdmin();
+    }
+
+    // --- PREDICTIONS COLLECTION ---
+    match /predictions/{predictionId} {
+      allow read: if isAuthenticated();
+
+      allow create: if isAuthenticated() &&
+        request.resource.data.creatorId == request.auth.uid &&
+        request.resource.data.status == 'OPEN';
+
+      // Only creator or admin can update status / submit result
+      allow update: if (isAuthenticated() &&
+        (resource.data.creatorId == request.auth.uid || isAdmin())) || isAdmin();
+
+      allow delete: if isAdmin();
+    }
+
+    // --- PARTICIPATIONS COLLECTION ---
+    match /participations/{participationId} {
+      allow read: if isAuthenticated();
+
+      // User can only create their own participation before deadline
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid;
+
+      // Completed participations cannot be edited or deleted by users
+      allow update, delete: if isAdmin();
+    }
+
+    // --- WALLETS & TRANSACTIONS (Authoritative Ledger) ---
+    match /wallets/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isAdmin(); // Wallet changes must go through Cloud Functions or Admin
+    }
+
+    match /transactions/{transactionId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() &&
+        (request.resource.data.userId == request.auth.uid || isAdmin());
+      allow update, delete: if false; // Immutable ledger
+    }
+
+    // --- LOAN REQUESTS & OFFERS ---
+    match /loan_requests/{requestId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.borrowerId == request.auth.uid;
+      allow update: if isAuthenticated() &&
+        (resource.data.borrowerId == request.auth.uid || isAdmin());
+      allow delete: if isAuthenticated() &&
+        (resource.data.borrowerId == request.auth.uid || isAdmin());
+    }
+
+    match /loan_offers/{offerId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() &&
+        request.resource.data.lenderId == request.auth.uid;
+      allow update: if isAuthenticated() &&
+        (resource.data.lenderId == request.auth.uid || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /loans/{loanId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.borrowerId == request.auth.uid ||
+         resource.data.lenderId == request.auth.uid ||
+         isAdmin());
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() &&
+        (resource.data.borrowerId == request.auth.uid ||
+         resource.data.lenderId == request.auth.uid ||
+         isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // --- NOTIFICATIONS ---
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid || resource.data.userId == 'all');
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // --- ADMIN LOGS ---
+    match /admin_logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin();
+      allow update, delete: if false; // Immutable audit log
+    }
+  }
+}
+

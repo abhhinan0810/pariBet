@@ -439,7 +439,7 @@ export const CreatePredictionPage: React.FC = () => {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full casino-gold-button py-4 px-6 flex items-center justify-center gap-2 text-base font-bold cursor-pointer disabled:opacity-50"
+          className="w-full casino-pink-button py-4 px-6 flex items-center justify-center gap-2 text-base font-bold cursor-pointer disabled:opacity-50 shadow-pink-glow"
         >
           {submitting ? (
             <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />

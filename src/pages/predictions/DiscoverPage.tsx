@@ -51,7 +51,7 @@ export const DiscoverPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display font-black text-2xl lg:text-3xl text-white flex items-center gap-2">
-            <Compass className="w-6 h-6 text-gold-highlight" />
+            <Compass className="w-6 h-6 text-brand-violet" />
             <span>Discover Predictions</span>
           </h1>
           <p className="text-sm text-casino-muted">
@@ -61,10 +61,10 @@ export const DiscoverPage: React.FC = () => {
 
         <Link
           to="/create"
-          className="casino-gold-button px-4 py-2.5 text-xs font-bold inline-flex items-center gap-2 self-start"
+          className="casino-pink-button px-4 py-2.5 text-xs font-bold inline-flex items-center gap-2 self-start shadow-pink-glow"
         >
           <PlusCircle className="w-4 h-4" />
-          <span>Create Prediction</span>
+          <span>New Prediction</span>
         </Link>
       </div>
 
@@ -78,7 +78,7 @@ export const DiscoverPage: React.FC = () => {
             placeholder="Search prediction title or topic..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#12121A] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-gold/60"
+            className="w-full bg-[#110B29] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-brand-violet/60"
           />
         </div>
 
@@ -90,7 +90,7 @@ export const DiscoverPage: React.FC = () => {
               onClick={() => setStatusFilter(st)}
               className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-colors cursor-pointer shrink-0 ${
                 statusFilter === st
-                  ? 'bg-gold/15 text-gold-highlight border border-gold/40'
+                  ? 'bg-brand-violet/20 text-brand-violet border border-brand-violet/40 shadow-brand-glow'
                   : 'bg-white/5 text-casino-muted hover:text-white border border-transparent'
               }`}
             >
@@ -108,7 +108,7 @@ export const DiscoverPage: React.FC = () => {
             onClick={() => setSelectedCategory(cat)}
             className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               selectedCategory === cat
-                ? 'bg-gold-gradient text-black font-bold shadow-gold-glow-sm'
+                ? 'bg-gradient-to-r from-brand-violet to-brand-pink text-white font-bold shadow-brand-glow'
                 : 'bg-background-card border border-white/5 text-casino-muted hover:text-white hover:border-white/20'
             }`}
           >

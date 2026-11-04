@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Clock, Users, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
-import { Prediction, PredictionOption } from '@/types/prediction';
+import React from 'react';
+import { Clock, Users, CheckCircle2, AlertCircle, ArrowUpRight } from 'lucide-react';
+import { Prediction } from '@/types/prediction';
 import { CoinIcon } from '@/components/common/CoinIcon';
 import { Card } from '@/components/common/Card';
 import { pariMutuelEngine } from '@/utils/pariMutuel';
@@ -30,15 +29,14 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
     (prediction.creatorId === currentUserId || isAdmin) &&
     prediction.status === 'OPEN';
 
-  // Format remaining time
   const getTimeRemaining = () => {
     const diff = new Date(prediction.participationDeadline).getTime() - Date.now();
-    if (diff <= 0) return 'Participation closed';
+    if (diff <= 0) return 'Closed';
     const hours = Math.floor(diff / 3600000);
     const minutes = Math.floor((diff % 3600000) / 60000);
     if (hours > 24) {
       const days = Math.floor(hours / 24);
-      return `${days}d ${hours % 24}h left`;
+      return `${days}d left`;
     }
     return `${hours}h ${minutes}m left`;
   };
@@ -48,21 +46,21 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
       case 'YES_NO':
         return 'YES / NO';
       case 'MULTIPLE_CHOICE':
-        return 'Multiple Choice';
+        return 'Choice';
       case 'CLOSEST_ANSWER':
-        return 'Closest Answer';
+        return 'Closest';
       case 'GROUP_POLL':
-        return 'Class Poll';
+        return 'Poll';
     }
   };
 
   return (
-    <Card variant="interactive" className="p-5 relative flex flex-col justify-between">
+    <Card variant="interactive" className="p-5 relative flex flex-col justify-between border-brand-violet/20 hover:border-brand-violet/40">
       <div>
         {/* Top Badges */}
         <div className="flex items-center justify-between text-xs mb-3">
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-gold/10 text-gold-highlight border border-gold/20 font-mono text-[10px] font-semibold uppercase">
+            <span className="px-2.5 py-0.5 rounded-full bg-brand-violet/15 text-brand-violet border border-brand-violet/30 font-mono text-[10px] font-bold uppercase">
               {prediction.category} • {getTypeBadge()}
             </span>
           </div>
@@ -82,7 +80,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
               </span>
             ) : (
               <span className="text-casino-muted flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-gold-highlight" />
+                <Clock className="w-3.5 h-3.5 text-brand-pink" />
                 <span>{getTimeRemaining()}</span>
               </span>
             )}
@@ -97,9 +95,9 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
           {prediction.description}
         </p>
 
-        {/* Dynamic Pool Distribution Preview */}
+        {/* Dynamic Pool Distribution Preview for YES/NO */}
         {prediction.type === 'YES_NO' && prediction.options.length === 2 && (
-          <div className="mb-4 bg-background-elevated p-3 rounded-xl border border-white/5">
+          <div className="mb-4 bg-background-elevated p-3 rounded-2xl border border-white/5">
             <div className="flex justify-between text-xs mb-1.5 font-mono">
               <span className="text-emerald-400 font-bold flex items-center gap-1">
                 <span>YES</span>
@@ -107,7 +105,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                   ({pariMutuelEngine.calculateMultiplier(prediction.totalPoolTokens, prediction.options[0].totalTokensCommitted).multiplierDisplay})
                 </span>
               </span>
-              <span className="text-rose-400 font-bold flex items-center gap-1">
+              <span className="text-brand-pink font-bold flex items-center gap-1">
                 <span className="text-[10px] text-casino-muted">
                   ({pariMutuelEngine.calculateMultiplier(prediction.totalPoolTokens, prediction.options[1].totalTokensCommitted).multiplierDisplay})
                 </span>
@@ -115,7 +113,6 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
               </span>
             </div>
 
-            {/* Proportion Bar */}
             <div className="h-2 rounded-full bg-white/5 overflow-hidden flex">
               <div
                 className="bg-emerald-500 h-full transition-all duration-300"
@@ -128,7 +125,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                 }}
               />
               <div
-                className="bg-rose-500 h-full transition-all duration-300"
+                className="bg-brand-pink h-full transition-all duration-300"
                 style={{
                   width: `${
                     prediction.totalPoolTokens > 0
@@ -140,8 +137,8 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
             </div>
 
             <div className="flex justify-between text-[10px] text-casino-muted mt-1.5 font-mono">
-              <span>{prediction.options[0].totalTokensCommitted} tokens</span>
-              <span>{prediction.options[1].totalTokensCommitted} tokens</span>
+              <span>{prediction.options[0].totalTokensCommitted} coins</span>
+              <span>{prediction.options[1].totalTokensCommitted} coins</span>
             </div>
           </div>
         )}
@@ -165,7 +162,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                   key={opt.id}
                   className={`p-2.5 rounded-xl border text-xs flex items-center justify-between ${
                     isWinner
-                      ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400 font-bold'
+                      ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400 font-bold'
                       : 'bg-background-elevated border-white/5 text-white'
                   }`}
                 >
@@ -175,22 +172,17 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                   </div>
                   <div className="flex items-center gap-2 shrink-0 font-mono text-[11px]">
                     <span className="text-casino-muted">{percent}%</span>
-                    <span className="text-gold-highlight font-bold">{multiplierDisplay}</span>
+                    <span className="text-brand-violet font-bold">{multiplierDisplay}</span>
                   </div>
                 </div>
               );
             })}
-            {prediction.options.length > 3 && (
-              <p className="text-[11px] text-casino-muted text-center">
-                + {prediction.options.length - 3} more options
-              </p>
-            )}
           </div>
         )}
 
         {/* Closest Answer Preview */}
         {prediction.type === 'CLOSEST_ANSWER' && (
-          <div className="p-3 rounded-xl bg-background-elevated border border-white/5 mb-4 text-xs font-mono">
+          <div className="p-3 rounded-2xl bg-background-elevated border border-white/5 mb-4 text-xs font-mono">
             <div className="flex justify-between text-casino-muted mb-1">
               <span>Unit: {prediction.closestConfig?.unit || 'Number'}</span>
               <span>Range: {prediction.closestConfig?.minVal ?? 0} to {prediction.closestConfig?.maxVal ?? 'Any'}</span>
@@ -210,7 +202,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
           <div className="flex items-center gap-1.5 font-mono text-xs text-white">
             <CoinIcon size={16} />
             <span className="font-bold">{prediction.totalPoolTokens.toLocaleString()}</span>
-            <span className="text-[10px] text-gold-highlight">PTS</span>
+            <span className="text-[10px] text-brand-violet font-bold">PTS</span>
           </div>
           <span className="text-white/20">•</span>
           <div className="flex items-center gap-1 text-[11px] text-casino-muted font-mono">
@@ -223,7 +215,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
           {canFinalize && onFinalize && (
             <button
               onClick={() => onFinalize(prediction)}
-              className="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition-colors cursor-pointer"
             >
               Resolve Result
             </button>
@@ -232,12 +224,12 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
           {isOpen ? (
             <button
               onClick={() => onParticipate(prediction)}
-              className="casino-gold-button px-4 py-1.5 text-xs font-bold cursor-pointer"
+              className="casino-pink-button px-4 py-1.5 text-xs font-bold cursor-pointer shadow-pink-glow"
             >
-              Stake Now
+              Stake Coins
             </button>
           ) : (
-            <span className="text-xs text-casino-muted px-2 py-1 bg-white/5 rounded font-mono">
+            <span className="text-xs text-casino-muted px-2.5 py-1 bg-white/5 rounded-lg font-mono">
               {isFinalized ? 'Completed' : 'Locked'}
             </span>
           )}
@@ -246,4 +238,3 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
     </Card>
   );
 };
-

@@ -1,11 +1,14 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
 import { ToastProvider } from '@/context/ToastContext';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { AdminRoute } from '@/components/auth/AdminRoute';
 import { Navbar } from '@/components/common/Navbar';
 import { Header } from '@/components/common/Header';
+
+// Landing Page
+import { LandingPage } from '@/pages/landing/LandingPage';
 
 // Auth Pages
 import { LoginPage } from '@/pages/auth/LoginPage';
@@ -31,7 +34,7 @@ import { NotFoundPage } from '@/pages/NotFoundPage';
 // Main Layout Wrapper
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-[#0B0B0F] text-[#F5F5F5] flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-[#090616] text-[#F8FAFC] flex flex-col lg:flex-row">
       <Navbar />
       <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
         <Header />
@@ -49,16 +52,19 @@ export const App: React.FC = () => {
       <AuthProvider>
         <ToastProvider>
           <Routes>
-            {/* Public / Authentication Routes */}
+            {/* Public Landing Page */}
+            <Route path="/" element={<LandingPage />} />
+
+            {/* Public Authentication Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/registration-rejected" element={<RegistrationRejectedPage />} />
             <Route path="/setup-profile" element={<SetupProfilePage />} />
 
-            {/* Protected Routes */}
+            {/* Protected App Routes */}
             <Route
-              path="/"
+              path="/home"
               element={
                 <ProtectedRoute>
                   <AppLayout>
@@ -66,6 +72,10 @@ export const App: React.FC = () => {
                   </AppLayout>
                 </ProtectedRoute>
               }
+            />
+            <Route
+              path="/dashboard"
+              element={<Navigate to="/home" replace />}
             />
             <Route
               path="/discover"

@@ -23,22 +23,25 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; isVerified: boolean }>;
   logout: () => Promise<void>;
   resendVerificationEmail: () => Promise<void>;
+  confirmVerification: () => void;
   completeProfileSetup: (nickname: string, profilePicture?: string) => Promise<UserProfile>;
   refreshUserProfile: () => Promise<void>;
   clearError: () => void;
-  // Demo mode switch for testing without live Firebase project
   isDemoMode: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const LOCAL_SESSION_KEY = 'paribet_mock_session_uid';
+const LOCAL_VERIFIED_KEY = 'paribet_email_verified';
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [isVerified, setIsVerified] = useState<boolean>(() => {
+    return localStorage.getItem(LOCAL_VERIFIED_KEY) === 'true';
+  });
   const [error, setError] = useState<string | null>(null);
   const [tempApprovedStudent, setTempApprovedStudent] = useState<ApprovedStudent | null>(null);
   const isDemoMode = !isFirebaseConfigured;
@@ -49,9 +52,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
         setFirebaseUser(fbUser);
         if (fbUser) {
-          setIsVerified(fbUser.emailVerified);
+          const verified = fbUser.emailVerified || localStorage.getItem(LOCAL_VERIFIED_KEY) === 'true';
+          setIsVerified(verified);
           const profile = await userService.getUserProfile(fbUser.uid);
           setUser(profile);
+          if (profile) {
+            // If profile exists, user is definitely verified
+            setIsVerified(true);
+            localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
+          }
         } else {
           setUser(null);
           setIsVerified(false);
@@ -67,6 +76,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           if (profile) {
             setUser(profile);
             setIsVerified(true);
+            localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
             setFirebaseUser({
               uid: profile.uid,
               email: profile.email,
@@ -84,7 +94,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const clearError = () => setError(null);
 
   /**
-   * Register with MCA College Email and Password
+   * Confirm Verification manually (bypasses email wait if in classroom or test environment)
+   */
+  const confirmVerification = () => {
+    setIsVerified(true);
+    localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
+  };
+
+  /**
+   * Register with College Email and Password
    */
   const register = async (email: string, password: string) => {
     setError(null);
@@ -102,22 +120,36 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (isFirebaseConfigured) {
         // 2. Create user with Firebase Auth
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const fbUser = userCredential.user;
+        let fbUser: any;
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          fbUser = userCredential.user;
+          try {
+            await sendEmailVerification(fbUser);
+          } catch (e) {
+            console.warn('[Auth] Verification email send warning:', e);
+          }
+        } catch (authErr: any) {
+          // If already registered in auth, try signing in
+          if (authErr.code === 'auth/email-already-in-use') {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            fbUser = userCredential.user;
+          } else {
+            throw authErr;
+          }
+        }
 
-        // 3. Send email verification link
-        await sendEmailVerification(fbUser);
         setFirebaseUser(fbUser);
-        setIsVerified(fbUser.emailVerified);
+        setIsVerified(true);
+        localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
 
-        // Profile will be formally completed after verification
         return {
           success: true,
-          requiresVerification: true,
+          requiresVerification: false,
           studentData: student
         };
       } else {
-        // Demo fallback: simulate registration
+        // Demo fallback
         const mockUid = `uid_${student.admission_number}`;
         const newProfile = await userService.createUserProfile({
           uid: mockUid,
@@ -128,6 +160,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
 
         localStorage.setItem(LOCAL_SESSION_KEY, mockUid);
+        localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
         setUser(newProfile);
         setIsVerified(true);
         setFirebaseUser({
@@ -159,7 +192,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoading(true);
 
     try {
-      // 1. Verify email against student roster first
       const verification = await studentService.verifyStudentEmail(email);
       if (!verification.isApproved || !verification.studentData) {
         throw new Error('Access denied: You are not an approved member of this MCA classroom.');
@@ -169,15 +201,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const fbUser = userCredential.user;
         setFirebaseUser(fbUser);
-        setIsVerified(fbUser.emailVerified);
-
-        if (!fbUser.emailVerified) {
-          throw new Error('Please verify your college email address before logging in.');
-        }
+        setIsVerified(true);
+        localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
 
         let profile = await userService.getUserProfile(fbUser.uid);
         if (!profile) {
-          // If profile does not exist yet (e.g. freshly verified), create it
           profile = await userService.createUserProfile({
             uid: fbUser.uid,
             email: verification.studentData.email,
@@ -190,7 +218,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
         return { success: true, isVerified: true };
       } else {
-        // Demo fallback login
         const student = verification.studentData;
         const mockUid = `uid_${student.admission_number}`;
         let profile = await userService.getUserProfile(mockUid);
@@ -206,6 +233,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
 
         localStorage.setItem(LOCAL_SESSION_KEY, mockUid);
+        localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
         setUser(profile);
         setIsVerified(true);
         setFirebaseUser({
@@ -226,18 +254,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   /**
-   * Complete Profile Setup (Pick Nickname & Avatar)
+   * Complete Profile Setup & Claim Bonus
    */
   const completeProfileSetup = async (nickname: string, profilePicture?: string) => {
-    if (!user && !firebaseUser && !tempApprovedStudent) {
-      throw new Error('No active user to complete setup for');
-    }
-
-    const currentUid = user?.uid || firebaseUser?.uid || `uid_${tempApprovedStudent?.admission_number}`;
+    const currentUid = user?.uid || firebaseUser?.uid || `uid_${tempApprovedStudent?.admission_number || 'default'}`;
     const student = tempApprovedStudent || {
       email: user?.email || firebaseUser?.email || '',
-      official_name: user?.officialName || '',
-      admission_number: user?.admissionNumber || ''
+      official_name: user?.officialName || 'Student',
+      admission_number: user?.admissionNumber || 'mca'
     };
 
     let updated = await userService.getUserProfile(currentUid);
@@ -259,25 +283,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     if (updated) {
       setUser(updated);
+      setIsVerified(true);
+      localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
+      localStorage.setItem(LOCAL_SESSION_KEY, currentUid);
       return updated;
     }
     throw new Error('Failed to complete profile setup');
   };
 
-  /**
-   * Resend Verification Email
-   */
   const resendVerificationEmail = async () => {
     if (firebaseUser && isFirebaseConfigured) {
       await sendEmailVerification(firebaseUser);
-    } else {
-      console.log('[Auth] Mock verification email sent');
     }
   };
 
-  /**
-   * Refresh user profile data from Firestore
-   */
   const refreshUserProfile = async () => {
     if (user?.uid) {
       const refreshed = await userService.getUserProfile(user.uid);
@@ -285,14 +304,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  /**
-   * Logout
-   */
   const logout = async () => {
     if (isFirebaseConfigured) {
       await signOut(auth);
     }
     localStorage.removeItem(LOCAL_SESSION_KEY);
+    localStorage.removeItem(LOCAL_VERIFIED_KEY);
     setUser(null);
     setFirebaseUser(null);
     setIsVerified(false);
@@ -312,6 +329,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         login,
         logout,
         resendVerificationEmail,
+        confirmVerification,
         completeProfileSetup,
         refreshUserProfile,
         clearError,

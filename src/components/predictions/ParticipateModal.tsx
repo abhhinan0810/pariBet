@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, AlertCircle, TrendingUp, CheckCircle2 } from 'lucide-react';
-import { Prediction, PredictionOption } from '@/types/prediction';
+import { motion } from 'framer-motion';
+import { X, Sparkles, AlertCircle, TrendingUp } from 'lucide-react';
+import { Prediction } from '@/types/prediction';
 import { CoinIcon } from '@/components/common/CoinIcon';
 import { pariMutuelEngine } from '@/utils/pariMutuel';
 import { useAuth } from '@/context/AuthContext';
@@ -33,11 +33,9 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
   const isInsufficient = stakeAmount > userBalance;
   const minRequired = prediction.minCommitment;
 
-  // Selected Option Object
   const selectedOption = prediction.options.find((o) => o.id === selectedOptionId);
   const currentOptionPool = selectedOption ? selectedOption.totalTokensCommitted : 0;
 
-  // Dynamic Multiplier & Estimated Payout Calculation
   const estimatedPayout = pariMutuelEngine.calculateEstimatedPayout(
     stakeAmount,
     currentOptionPool,
@@ -68,12 +66,12 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
     }
 
     if (stakeAmount < minRequired) {
-      toastError('Minimum Stake', `Minimum stake is ${minRequired} tokens.`);
+      toastError('Minimum Stake', `Minimum stake is ${minRequired} coins.`);
       return;
     }
 
     if (isInsufficient) {
-      toastError('Insufficient Balance', 'You do not have enough virtual tokens.');
+      toastError('Insufficient Balance', 'You do not have enough virtual coins.');
       return;
     }
 
@@ -92,7 +90,7 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
       });
 
       await refreshUserProfile();
-      success('Stake Placed!', `Committed ${stakeAmount} tokens on "${prediction.title}"`);
+      success('Stake Placed!', `Committed ${stakeAmount} coins on "${prediction.title}"`);
       onSuccess();
       onClose();
     } catch (err: any) {
@@ -103,17 +101,17 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full max-w-lg casino-card border-gold/30 p-6 relative max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-lg casino-card border-brand-violet/30 p-6 relative max-h-[90vh] overflow-y-auto"
       >
         {/* Header */}
         <div className="flex items-start justify-between pb-4 border-b border-white/5 mb-4">
           <div>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-gold-highlight font-semibold">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-brand-pink font-bold">
               {prediction.category} • {prediction.type}
             </span>
             <h2 className="text-base font-bold text-white mt-1 pr-6 leading-snug">
@@ -128,12 +126,12 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Options Selection (for YES/NO, Multiple Choice, Group Poll) */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Options Selection */}
           {prediction.type !== 'CLOSEST_ANSWER' && (
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-casino-muted mb-2">
-                Choose Winning Outcome
+                Select Your Pick
               </label>
               <div className="space-y-2">
                 {prediction.options.map((opt) => {
@@ -147,9 +145,9 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
                       key={opt.id}
                       type="button"
                       onClick={() => setSelectedOptionId(opt.id)}
-                      className={`w-full p-3.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                      className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-gold bg-gold/15 shadow-gold-glow-sm text-white font-bold'
+                          ? 'border-brand-violet bg-brand-violet/20 shadow-brand-glow text-white font-bold'
                           : 'border-white/10 bg-background-elevated hover:border-white/20 text-casino-muted hover:text-white'
                       }`}
                     >
@@ -157,15 +155,15 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
                         <div
                           className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
                             isSelected
-                              ? 'border-gold bg-gold text-black'
+                              ? 'border-brand-violet bg-brand-violet text-white'
                               : 'border-white/30'
                           }`}
                         >
-                          {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-black" />}
+                          {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                         </div>
                         <span className="text-sm">{opt.text}</span>
                       </div>
-                      <div className="font-mono text-xs text-gold-highlight">
+                      <div className="font-mono text-xs text-brand-violet font-bold">
                         {multiplierDisplay}
                       </div>
                     </button>
@@ -179,7 +177,7 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
           {prediction.type === 'CLOSEST_ANSWER' && (
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-casino-muted mb-1.5">
-                Your Numerical Prediction ({prediction.closestConfig?.unit || 'Number'})
+                Your Prediction ({prediction.closestConfig?.unit || 'Number'})
               </label>
               <input
                 type="number"
@@ -192,22 +190,19 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
                 onChange={(e) =>
                   setClosestAnswerValue(e.target.value === '' ? '' : Number(e.target.value))
                 }
-                className="w-full bg-[#12121A] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-gold"
+                className="w-full bg-[#110B29] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-brand-violet"
               />
-              <p className="text-[11px] text-casino-muted mt-1 font-mono">
-                The closest valid answer (or tied closest answers) wins the accumulated pool.
-              </p>
             </div>
           )}
 
-          {/* Stake Amount Input & Quick Chips */}
+          {/* Stake Amount Input */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-casino-muted">
-                Stake Amount (Virtual Tokens)
+                Stake Amount (Coins)
               </label>
               <span className="text-xs font-mono text-casino-muted flex items-center gap-1">
-                <span>Balance:</span>
+                <span>Available:</span>
                 <span className="text-white font-bold">{userBalance.toLocaleString()}</span>
                 <CoinIcon size={14} />
               </span>
@@ -220,10 +215,10 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
                 max={userBalance}
                 value={stakeAmount}
                 onChange={(e) => setStakeAmount(Math.max(0, Number(e.target.value)))}
-                className="w-full bg-[#12121A] border border-white/10 rounded-xl px-4 py-3 text-base text-white font-mono font-bold focus:outline-none focus:border-gold"
+                className="w-full bg-[#110B29] border border-white/10 rounded-xl px-4 py-3 text-base text-white font-mono font-bold focus:outline-none focus:border-brand-violet"
               />
-              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-gold-highlight font-bold">
-                TOKENS
+              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-brand-violet font-bold">
+                COINS
               </div>
             </div>
 
@@ -242,7 +237,7 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
               <button
                 type="button"
                 onClick={() => setStakeAmount(userBalance)}
-                className="py-1.5 px-2 rounded-lg bg-gold/10 hover:bg-gold/20 border border-gold/30 text-xs font-mono text-gold-highlight font-bold transition-colors cursor-pointer"
+                className="py-1.5 px-2 rounded-lg bg-brand-violet/20 hover:bg-brand-violet/30 border border-brand-violet/40 text-xs font-mono text-brand-violet font-bold transition-colors cursor-pointer"
               >
                 MAX
               </button>
@@ -250,13 +245,13 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
           </div>
 
           {/* Estimated Payout Display */}
-          <div className="p-4 rounded-xl bg-gradient-to-r from-gold/10 via-[#1C1C2A] to-background-elevated border border-gold/20 space-y-2">
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-brand-violet/20 via-[#1C1245] to-background-elevated border border-brand-violet/30 space-y-1.5">
             <div className="flex items-center justify-between text-xs text-casino-muted font-mono">
               <span className="flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5 text-gold-highlight" />
-                <span>Dynamic Multiplier</span>
+                <TrendingUp className="w-3.5 h-3.5 text-brand-pink" />
+                <span>Current Multiplier</span>
               </span>
-              <span className="text-gold-highlight font-bold">{multiplierDisplay}</span>
+              <span className="text-brand-pink font-bold">{multiplierDisplay}</span>
             </div>
             <div className="flex items-center justify-between pt-1 border-t border-white/5">
               <span className="text-xs text-white font-medium">Estimated Win Payout:</span>
@@ -265,15 +260,12 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
                 <span>~{estimatedPayout.toLocaleString()} PTS</span>
               </div>
             </div>
-            <p className="text-[10px] text-casino-muted leading-tight">
-              Dynamic Pari-Mutuel formula: S + (S/W)*L. Includes original returned stake.
-            </p>
           </div>
 
           {isInsufficient && (
             <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
-              <span>Insufficient tokens. Request a loan from the Token Bank or lower your stake.</span>
+              <span>Insufficient coins. Lower your stake or request a loan from the Token Bank.</span>
             </div>
           )}
 
@@ -281,14 +273,14 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
           <button
             type="submit"
             disabled={submitting || isInsufficient || stakeAmount < minRequired}
-            className="w-full casino-gold-button py-3.5 px-4 flex items-center justify-center gap-2 text-sm font-bold cursor-pointer disabled:opacity-50"
+            className="w-full casino-pink-button py-3.5 px-4 flex items-center justify-center gap-2 text-sm font-bold cursor-pointer disabled:opacity-50 shadow-pink-glow"
           >
             {submitting ? (
-              <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                <span>Confirm Commitment ({stakeAmount} Tokens)</span>
+                <span>Confirm Bet ({stakeAmount} Coins)</span>
               </>
             )}
           </button>
@@ -297,4 +289,3 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
     </div>
   );
 };
-

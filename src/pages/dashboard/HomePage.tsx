@@ -156,6 +156,62 @@ export const HomePage: React.FC = () => {
         </Card>
       </div>
 
+      {/* FEATURED LIVE ARENA SHOWDOWN (dice-roll-showdown.jpg) */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0C0D13] to-[#14151F] border border-amber-500/20 p-5 sm:p-6 shadow-xl">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div className="md:col-span-5 lg:col-span-4 relative flex items-center justify-center">
+            <div className="relative w-full max-w-[260px] aspect-square rounded-2xl overflow-hidden border border-white/10 group shadow-xl">
+              <img
+                src="/images/dice-roll-showdown.jpg"
+                alt="Live Craps Arena"
+                className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0C0D13]/70 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[10px] font-mono">
+                <span className="text-amber-400 font-bold bg-[#07080B]/90 px-2.5 py-1 rounded-lg border border-amber-400/20 backdrop-blur-md">
+                  FEATURED ARENA
+                </span>
+                <span className="text-emerald-400 font-bold bg-[#07080B]/90 px-2.5 py-1 rounded-lg border border-emerald-400/20 backdrop-blur-md">
+                  LIVE ACTION
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="md:col-span-7 lg:col-span-8 space-y-2.5">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Flame className="w-3.5 h-3.5 text-amber-400" />
+                Campus Main Event
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="text-xs text-slate-400 font-medium">All 53 Classmates Eligible</span>
+            </div>
+            <h2 className="font-display font-black text-xl lg:text-2xl text-white">
+              Roll The Dice on Tomorrow's Big Outcomes
+            </h2>
+            <p className="text-xs lg:text-sm text-slate-400 leading-relaxed max-w-xl">
+              Turn everyday classroom banter into high-stakes pari-mutuel showdowns. Predict lab surprises, sports finals, or seminar dates before the pool locks.
+            </p>
+            <div className="flex items-center gap-3 pt-1">
+              <Link
+                to="/create"
+                className="vip-gold-btn px-4 py-2 text-xs font-extrabold flex items-center gap-1.5 cursor-pointer"
+              >
+                <PlusCircle className="w-3.5 h-3.5 text-black" />
+                <span>Launch Prediction</span>
+              </Link>
+              <Link
+                to="/discover"
+                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-semibold transition-all"
+              >
+                Explore Active Pools
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Categories Bar */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         <Link

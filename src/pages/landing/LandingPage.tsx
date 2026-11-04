@@ -231,7 +231,7 @@ export const LandingPage: React.FC = () => {
           </Link>
 
           {/* Nav Links */}
-          <nav className="hidden md:flex items-center gap-7 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-400">
             <a href="#hero-stage" className="hover:text-amber-400 transition-colors">Stage</a>
             <a href="#categories" className="hover:text-amber-400 transition-colors">Markets</a>
             <a href="#roulette-demo" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
@@ -240,6 +240,10 @@ export const LandingPage: React.FC = () => {
             </a>
             <a href="#poker-lounge" className="hover:text-amber-400 transition-colors">VIP Lounge</a>
             <a href="#live-markets" className="hover:text-amber-400 transition-colors">Live Bets</a>
+            <a href="#winners-circle" className="hover:text-amber-400 transition-colors flex items-center gap-1">
+              <PartyPopper className="w-3.5 h-3.5 text-amber-400" />
+              <span>Squad</span>
+            </a>
             <a href="#bank-vault" className="hover:text-amber-400 transition-colors">Vault</a>
           </nav>
 
@@ -464,216 +468,245 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* 5. INTERACTIVE ROULETTE MINI-GAME (Minimalist VIP Slate & Gold) */}
-      <section id="roulette-demo" className="py-16 px-4 lg:px-8 max-w-6xl mx-auto">
+      <section id="roulette-demo" className="py-16 px-4 lg:px-8 max-w-7xl mx-auto">
         <div className="rounded-3xl bg-[#0C0D12] border border-white/8 p-6 sm:p-10 shadow-xl relative overflow-hidden">
           {/* Subtle gold accent light */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
 
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/25 text-xs font-mono font-bold uppercase mb-2">
-              <Dice5 className="w-3.5 h-3.5" /> Interactive Odds Test
-            </span>
-            <h2 className="font-display font-black text-2xl sm:text-3xl text-white">
-              Try Your Luck: The pariBET Mini-Roulette
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1.5">
-              Pick your chips, choose an outcome, and spin to simulate dynamic pari-mutuel payouts.
-            </p>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Controls */}
-            <div className="lg:col-span-5 space-y-5 bg-[#12131A] p-6 rounded-2xl border border-white/5">
-              <div>
-                <label className="text-xs font-mono font-bold uppercase text-slate-400 block mb-2">
-                  1. Virtual Chips Stake
-                </label>
-                <div className="grid grid-cols-4 gap-2">
-                  {[100, 250, 500, 1000].map((chip) => (
-                    <button
-                      key={chip}
-                      type="button"
-                      onClick={() => setSelectedChip(chip)}
-                      className={`py-2 px-2 rounded-xl font-mono text-xs font-bold transition-all ${
-                        selectedChip === chip
-                          ? 'bg-amber-500 text-black shadow-gold-glow scale-105'
-                          : 'bg-[#181A24] text-slate-300 hover:bg-[#202230] border border-white/5'
-                      }`}
-                    >
-                      <span>🪙 {chip}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+            {/* Left 4 cols: Cinematic Artwork with Natural Framing */}
+            <div className="lg:col-span-4 relative flex flex-col items-center">
+              <div className="relative w-full max-w-[320px] rounded-2xl overflow-hidden border border-white/10 group shadow-2xl">
+                <img
+                  src="/images/roulette-master.jpg"
+                  alt="pariBET Roulette Specialist"
+                  className="w-full aspect-[4/5] object-cover object-center transform group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0C0D12] via-[#0C0D12]/20 to-transparent opacity-70 pointer-events-none" />
 
-              <div>
-                <label className="text-xs font-mono font-bold uppercase text-slate-400 block mb-2">
-                  2. Choose Wager
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedSide('RED')}
-                    className={`p-3 rounded-xl text-xs font-bold transition-all border ${
-                      selectedSide === 'RED'
-                        ? 'bg-rose-950/70 border-rose-500 text-rose-300 shadow-sm'
-                        : 'bg-[#181A24] border-white/5 text-slate-400 hover:bg-[#202230]'
-                    }`}
-                  >
-                    <div className="text-xs font-bold">RED</div>
-                    <div className="text-[10px] font-mono text-amber-400">2.0x</div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedSide('BLACK')}
-                    className={`p-3 rounded-xl text-xs font-bold transition-all border ${
-                      selectedSide === 'BLACK'
-                        ? 'bg-slate-800 border-white text-white shadow-sm'
-                        : 'bg-[#181A24] border-white/5 text-slate-400 hover:bg-[#202230]'
-                    }`}
-                  >
-                    <div className="text-xs font-bold">BLACK</div>
-                    <div className="text-[10px] font-mono text-amber-400">2.0x</div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedSide('GOLD')}
-                    className={`p-3 rounded-xl text-xs font-bold transition-all border ${
-                      selectedSide === 'GOLD'
-                        ? 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-sm'
-                        : 'bg-[#181A24] border-white/5 text-slate-400 hover:bg-[#202230]'
-                    }`}
-                  >
-                    <div className="text-xs font-bold">JACKPOT</div>
-                    <div className="text-[10px] font-mono text-amber-400">14.0x</div>
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleSpinWheel}
-                disabled={isSpinning}
-                className="w-full vip-gold-btn py-3 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                {isSpinning ? (
-                  <>
-                    <Shuffle className="w-4 h-4 animate-spin text-black" />
-                    <span>Spinning Wheel...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 text-black" />
-                    <span>Spin (Stake {selectedChip} 🪙)</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Display */}
-            <div className="lg:col-span-7 flex flex-col items-center justify-center p-6 bg-[#101117] rounded-2xl border border-white/5 text-center min-h-[260px]">
-              {isSpinning ? (
-                <div className="flex flex-col items-center gap-3 py-6">
-                  <motion.div
-                    animate={{ rotate: 1080 }}
-                    transition={{ duration: 1.1, ease: 'easeInOut' }}
-                    className="w-20 h-20 rounded-full border-2 border-dashed border-amber-400 flex items-center justify-center bg-[#171822] text-2xl font-black text-white"
-                  >
-                    🎲
-                  </motion.div>
-                  <p className="text-xs font-mono text-amber-400 animate-pulse font-medium">
-                    Calculating pari-mutuel odds...
+                <div className="absolute bottom-3 left-3 right-3 p-3 rounded-xl bg-[#08090C]/90 backdrop-blur-md border border-white/10">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-amber-400 font-bold uppercase tracking-wider">
+                      Single-Zero Table
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-400 font-bold">14.0x Max Payout</span>
+                  </div>
+                  <p className="text-xs font-semibold text-white mt-1">
+                    "Play the odds, never the house."
                   </p>
                 </div>
-              ) : spinResult ? (
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="flex flex-col items-center gap-3"
-                >
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center text-xl bg-[#181A24] border border-amber-400/40">
-                    {spinResult.won ? '🏆' : '💀'}
+              </div>
+            </div>
+
+            {/* Right 8 cols: Title & Interactive Controls */}
+            <div className="lg:col-span-8 space-y-6">
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/25 text-xs font-mono font-bold uppercase mb-2">
+                  <Dice5 className="w-3.5 h-3.5" /> Interactive Odds Test
+                </span>
+                <h2 className="font-display font-black text-2xl sm:text-3xl text-white">
+                  Try Your Luck: The pariBET Mini-Roulette
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                  Pick your chips, choose an outcome, and spin to simulate dynamic pari-mutuel payouts.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+                {/* Controls (6 cols) */}
+                <div className="md:col-span-6 space-y-4 bg-[#12131A] p-5 rounded-2xl border border-white/5">
+                  <div>
+                    <label className="text-xs font-mono font-bold uppercase text-slate-400 block mb-2">
+                      1. Virtual Chips Stake
+                    </label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[100, 250, 500, 1000].map((chip) => (
+                        <button
+                          key={chip}
+                          type="button"
+                          onClick={() => setSelectedChip(chip)}
+                          className={`py-2 px-1.5 rounded-xl font-mono text-xs font-bold transition-all ${
+                            selectedChip === chip
+                              ? 'bg-amber-500 text-black shadow-gold-glow scale-105'
+                              : 'bg-[#181A24] text-slate-300 hover:bg-[#202230] border border-white/5'
+                          }`}
+                        >
+                          <span>🪙 {chip}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
-                  <div className="text-base font-bold text-white">
-                    Outcome: <span className="font-mono text-amber-400">{spinResult.side}</span>
+                  <div>
+                    <label className="text-xs font-mono font-bold uppercase text-slate-400 block mb-2">
+                      2. Choose Wager
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedSide('RED')}
+                        className={`p-2.5 rounded-xl text-xs font-bold transition-all border ${
+                          selectedSide === 'RED'
+                            ? 'bg-rose-950/70 border-rose-500 text-rose-300 shadow-sm'
+                            : 'bg-[#181A24] border-white/5 text-slate-400 hover:bg-[#202230]'
+                        }`}
+                      >
+                        <div className="text-xs font-bold">RED</div>
+                        <div className="text-[10px] font-mono text-amber-400">2.0x</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setSelectedSide('BLACK')}
+                        className={`p-2.5 rounded-xl text-xs font-bold transition-all border ${
+                          selectedSide === 'BLACK'
+                            ? 'bg-slate-800 border-white text-white shadow-sm'
+                            : 'bg-[#181A24] border-white/5 text-slate-400 hover:bg-[#202230]'
+                        }`}
+                      >
+                        <div className="text-xs font-bold">BLACK</div>
+                        <div className="text-[10px] font-mono text-amber-400">2.0x</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setSelectedSide('GOLD')}
+                        className={`p-2.5 rounded-xl text-xs font-bold transition-all border ${
+                          selectedSide === 'GOLD'
+                            ? 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-sm'
+                            : 'bg-[#181A24] border-white/5 text-slate-400 hover:bg-[#202230]'
+                        }`}
+                      >
+                        <div className="text-xs font-bold">JACKPOT</div>
+                        <div className="text-[10px] font-mono text-amber-400">14.0x</div>
+                      </button>
+                    </div>
                   </div>
 
-                  {spinResult.won ? (
-                    <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 max-w-sm">
-                      <div className="font-bold text-sm flex items-center justify-center gap-1.5">
-                        <PartyPopper className="w-4 h-4 text-amber-400" />
-                        <span>Win Payout: +{spinResult.winAmount} 🪙</span>
-                      </div>
-                      <p className="text-xs text-slate-300 mt-1">
-                        Hit {spinResult.multiplier}x return! Claim your real 1,000 starting tokens to join live student markets.
+                  <button
+                    type="button"
+                    onClick={handleSpinWheel}
+                    disabled={isSpinning}
+                    className="w-full vip-gold-btn py-3 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {isSpinning ? (
+                      <>
+                        <Shuffle className="w-4 h-4 animate-spin text-black" />
+                        <span>Spinning Wheel...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 text-black" />
+                        <span>Spin ({selectedChip} 🪙)</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Display (6 cols) */}
+                <div className="md:col-span-6 flex flex-col items-center justify-center p-6 bg-[#101117] rounded-2xl border border-white/5 text-center min-h-[260px]">
+                  {isSpinning ? (
+                    <div className="flex flex-col items-center gap-3 py-6">
+                      <motion.div
+                        animate={{ rotate: 1080 }}
+                        transition={{ duration: 1.1, ease: 'easeInOut' }}
+                        className="w-16 h-16 rounded-full border-2 border-dashed border-amber-400 flex items-center justify-center bg-[#171822] text-2xl font-black text-white"
+                      >
+                        🎲
+                      </motion.div>
+                      <p className="text-xs font-mono text-amber-400 animate-pulse font-medium">
+                        Calculating pari-mutuel odds...
                       </p>
                     </div>
+                  ) : spinResult ? (
+                    <motion.div
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="flex flex-col items-center gap-2.5"
+                    >
+                      <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg bg-[#181A24] border border-amber-400/40">
+                        {spinResult.won ? '🏆' : '💀'}
+                      </div>
+
+                      <div className="text-sm font-bold text-white">
+                        Outcome: <span className="font-mono text-amber-400">{spinResult.side}</span>
+                      </div>
+
+                      {spinResult.won ? (
+                        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 max-w-xs">
+                          <div className="font-bold text-xs flex items-center justify-center gap-1.5">
+                            <PartyPopper className="w-3.5 h-3.5 text-amber-400" />
+                            <span>Win: +{spinResult.winAmount} 🪙</span>
+                          </div>
+                          <p className="text-[11px] text-slate-300 mt-1">
+                            Hit {spinResult.multiplier}x return! Claim your real 1,000 starting tokens to join live student markets.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 max-w-xs">
+                          <div className="font-bold text-xs">No hit this spin</div>
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            All verified MCA peers start with 1,000 free coins.
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="mt-2 flex items-center gap-2">
+                        <button
+                          onClick={handleSpinWheel}
+                          className="px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-xs font-semibold text-white transition-all"
+                        >
+                          Spin Again
+                        </button>
+                        <Link
+                          to="/register"
+                          className="vip-gold-btn px-3.5 py-1.5 text-xs font-bold"
+                        >
+                          Claim 1,000 Coins
+                        </Link>
+                      </div>
+                    </motion.div>
                   ) : (
-                    <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 max-w-sm">
-                      <div className="font-bold text-xs">No hit this spin</div>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        Don't sweat it — all verified MCA peers start with 1,000 free coins.
+                    <div className="flex flex-col items-center gap-2 py-4">
+                      <div className="w-14 h-14 rounded-2xl bg-[#181924] flex items-center justify-center text-2xl border border-white/10">
+                        🎰
+                      </div>
+                      <h3 className="text-sm font-bold text-white mt-1">Ready for a spin?</h3>
+                      <p className="text-xs text-slate-400 max-w-xs">
+                        Select your chip stake on the left and hit spin to preview the pari-mutuel odds payout.
                       </p>
                     </div>
                   )}
-
-                  <div className="mt-2 flex items-center gap-3">
-                    <button
-                      onClick={handleSpinWheel}
-                      className="px-4 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-xs font-semibold text-white transition-all"
-                    >
-                      Spin Again
-                    </button>
-                    <Link
-                      to="/register"
-                      className="vip-gold-btn px-4 py-1.5 text-xs font-bold"
-                    >
-                      Claim 1,000 Coins
-                    </Link>
-                  </div>
-                </motion.div>
-              ) : (
-                <div className="flex flex-col items-center gap-2 py-4">
-                  <div className="w-16 h-16 rounded-2xl bg-[#181924] flex items-center justify-center text-2xl border border-white/10">
-                    🎰
-                  </div>
-                  <h3 className="text-sm font-bold text-white mt-1">Ready for a spin?</h3>
-                  <p className="text-xs text-slate-400 max-w-xs">
-                    Select your chip stake on the left and hit spin to preview the pari-mutuel odds payout.
-                  </p>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 6. VIP POKER LOUNGE WITH FEATHERED EDGES (poker-night.png) */}
+      {/* 6. VIP POKER LOUNGE WITH FEATHERED EDGES (casino-royale-vip.jpg) */}
       <section id="poker-lounge" className="py-20 px-4 lg:px-8 max-w-7xl mx-auto border-t border-white/5">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left: The Cinematic Artwork with Feathered Edges */}
           <div className="lg:col-span-6 relative flex items-center justify-center">
             <div className="relative w-full max-w-xl">
-              <div className="relative rounded-2xl overflow-hidden">
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 group shadow-2xl">
                 <img
-                  src="/images/poker-night.png"
-                  alt="South Asian Poker Night"
-                  className="w-full h-auto object-cover transform hover:scale-[1.02] transition-transform duration-700"
+                  src="/images/casino-royale-vip.jpg"
+                  alt="Casino Royale VIP Poker Lounge"
+                  className="w-full h-auto aspect-[4/3] object-cover object-center transform group-hover:scale-[1.02] transition-transform duration-700"
                 />
 
-                {/* Feathered Edge Gradients — Blending into Obsidian Black */}
-                <div className="absolute inset-y-0 right-0 w-24 sm:w-36 bg-gradient-to-l from-[#07080B] to-transparent pointer-events-none" />
-                <div className="absolute inset-x-0 bottom-0 h-24 sm:h-36 bg-gradient-to-t from-[#07080B] to-transparent pointer-events-none" />
-                <div className="absolute inset-x-0 top-0 h-16 sm:h-20 bg-gradient-to-b from-[#07080B] to-transparent pointer-events-none" />
-                <div className="absolute inset-y-0 left-0 w-16 sm:w-24 bg-gradient-to-r from-[#07080B] to-transparent pointer-events-none" />
+                {/* Subtle Edge Vignettes — Keeps the entire table, chips and faces visible */}
+                <div className="absolute inset-y-0 right-0 w-10 sm:w-16 bg-gradient-to-l from-[#07080B]/70 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 h-12 sm:h-16 bg-gradient-to-t from-[#07080B]/80 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 top-0 h-8 sm:h-12 bg-gradient-to-b from-[#07080B]/60 to-transparent pointer-events-none" />
+                <div className="absolute inset-y-0 left-0 w-10 sm:w-16 bg-gradient-to-r from-[#07080B]/70 to-transparent pointer-events-none" />
               </div>
 
               {/* Minimalist Floating Label */}
-              <div className="absolute bottom-4 right-4 bg-[#0B0C10]/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-xl text-xs font-mono text-slate-300">
-                <span className="text-amber-400 font-bold">TABLE #01</span> • 53 Seat Limit
+              <div className="absolute bottom-4 right-4 bg-[#0B0C10]/90 backdrop-blur-md border border-white/10 px-3.5 py-2 rounded-xl text-xs font-mono text-slate-300 shadow-xl">
+                <span className="text-amber-400 font-bold">CASINO ROYALE VIP</span> • Daniel Craig & The Syndicate
               </div>
             </div>
           </div>
@@ -686,8 +719,8 @@ export const LandingPage: React.FC = () => {
                 The VIP Table
               </span>
               <h2 className="font-display font-black text-3xl sm:text-4xl text-white mt-2 leading-tight">
-                Campus Gossip Meets{' '}
-                <span className="gold-shimmer-text">High-Roller Odds</span>
+                Casino Royale Meets{' '}
+                <span className="gold-shimmer-text">College Syndicate</span>
               </h2>
               <p className="text-sm text-slate-400 mt-3 leading-relaxed">
                 Traditional betting sites take steep house cuts and match you with strangers. pariBET is built strictly for the 53 students of our MCA batch — the winner pool is shared entirely among classmates.
@@ -818,10 +851,99 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 8. TOKEN BANK VAULT */}
+      {/* 7.5 THE WINNER'S CIRCLE & SQUAD GLORY (squad-celebration.jpg) */}
+      <section id="winners-circle" className="py-20 px-4 lg:px-8 max-w-7xl mx-auto border-t border-white/5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Left: Squad Celebration Artwork with Natural Aspect & Soft Edge Blend */}
+          <div className="lg:col-span-6 relative flex items-center justify-center order-2 lg:order-1">
+            <div className="relative w-full max-w-md">
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 group shadow-2xl">
+                <img
+                  src="/images/squad-celebration.jpg"
+                  alt="pariBET Squad Victory at the Casino Table"
+                  className="w-full h-auto aspect-[9/14] object-cover object-top transform group-hover:scale-[1.02] transition-transform duration-700"
+                />
+
+                {/* Gentle edge blending — leaves craps table, chips, and faces fully visible */}
+                <div className="absolute inset-y-0 right-0 w-8 sm:w-12 bg-gradient-to-l from-[#07080B]/60 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 h-10 sm:h-14 bg-gradient-to-t from-[#07080B]/70 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 top-0 h-8 sm:h-10 bg-gradient-to-b from-[#07080B]/50 to-transparent pointer-events-none" />
+                <div className="absolute inset-y-0 left-0 w-8 sm:w-12 bg-gradient-to-r from-[#07080B]/60 to-transparent pointer-events-none" />
+              </div>
+
+              {/* Floating Winning Pill */}
+              <div className="absolute bottom-4 left-4 bg-[#0B0C10]/90 backdrop-blur-md border border-amber-500/30 px-3.5 py-2 rounded-xl flex items-center gap-2.5 shadow-xl">
+                <Flame className="w-4 h-4 text-amber-400 animate-pulse" />
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Top Syndicate Win</span>
+                  <span className="text-xs font-bold text-amber-400">+14,500 🪙 Distributed</span>
+                </div>
+              </div>
+
+              {/* Floating Roster Badge */}
+              <div className="absolute top-4 right-4 bg-[#0B0C10]/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-xl text-xs font-mono text-emerald-400 flex items-center gap-1.5 shadow-xl">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>100% Peer Return</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Narrative & Syndicate Perks */}
+          <div className="lg:col-span-6 space-y-6 order-1 lg:order-2">
+            <div>
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                <PartyPopper className="w-3.5 h-3.5 text-amber-400" />
+                The Winner's Circle
+              </span>
+              <h2 className="font-display font-black text-3xl sm:text-4xl text-white mt-2 leading-tight">
+                Nothing Hits Harder Than{' '}
+                <span className="gold-shimmer-text">Winning With The Squad</span>
+              </h2>
+              <p className="text-sm text-slate-400 mt-3 leading-relaxed">
+                Whether you called the lab viva duration down to the minute, backed the batch striker in the cricket cup, or pooled coins for Friday treat polls — every single token won stays within our 53 classmates.
+              </p>
+            </div>
+
+            <div className="space-y-3 pt-2">
+              <div className="p-4 rounded-xl bg-[#0E0F15] border border-white/5 flex items-start gap-3.5">
+                <Users className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-sm font-bold text-white">Zero House Rake</h4>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    No middlemen or casino profit margins. The entire pool is mathematically distributed among winners.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-[#0E0F15] border border-white/5 flex items-start gap-3.5">
+                <Zap className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-sm font-bold text-white">Instant Class Payouts</h4>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Smart resolution ensures coins hit your balance the second the official market is finalized.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <Link
+                to={user ? "/home" : "/register"}
+                className="vip-gold-btn px-6 py-3 text-xs font-extrabold inline-flex items-center gap-2"
+              >
+                <span>Join the Next Syndicate</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. TOKEN BANK VAULT (chip-stacker-vault.jpg) */}
       <section id="bank-vault" className="py-16 px-4 lg:px-8 max-w-7xl mx-auto border-t border-white/5">
         <div className="rounded-3xl bg-[#0D0E14] p-8 sm:p-12 border border-white/5">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left 7 cols: Information */}
             <div className="lg:col-span-7 space-y-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/25 text-xs font-mono font-bold uppercase">
                 <Landmark className="w-3.5 h-3.5" /> Classroom Central Reserve
@@ -831,7 +953,7 @@ export const LandingPage: React.FC = () => {
                 <span className="gold-shimmer-text">The Token Bank</span>
               </h2>
               <p className="text-sm text-slate-400 leading-relaxed">
-                Ran out of coins on an ambitious prediction? The integrated peer lending system lets you request instant classmate loans at flat rates.
+                Ran out of coins on an ambitious prediction? The integrated peer lending system lets you request instant classmate loans at flat rates backed by peer trust.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
@@ -857,31 +979,47 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="lg:col-span-5 bg-[#12141C] p-6 rounded-2xl border border-white/5 space-y-4">
-              <div className="text-xs font-mono text-amber-400 uppercase font-bold tracking-wider">
-                Live Reserve Summary
+            {/* Right 5 cols: Chip Stacker Artwork + Live Reserve Summary */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 group shadow-xl">
+                <img
+                  src="/images/chip-stacker-vault.jpg"
+                  alt="pariBET Central Reserve Banker"
+                  className="w-full aspect-[4/5] object-cover object-center transform group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0E14] via-[#0D0E14]/20 to-transparent opacity-60 pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 p-3 flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-amber-400 font-bold bg-[#08090C]/90 px-2.5 py-1 rounded-lg border border-amber-400/20 backdrop-blur-md">
+                    VAULT KEEPER • THE CHIP LEADER
+                  </span>
+                  <span className="text-[10px] font-mono text-emerald-400 font-bold bg-[#08090C]/90 px-2.5 py-1 rounded-lg border border-emerald-400/20 backdrop-blur-md">
+                    0.0% Default Rate
+                  </span>
+                </div>
               </div>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                  <span className="text-xs text-slate-400">Total Coins in Circulation</span>
-                  <span className="font-mono font-black text-amber-400 text-sm">215,400 🪙</span>
+
+              <div className="bg-[#12141C] p-5 rounded-2xl border border-white/5 space-y-3">
+                <div className="text-xs font-mono text-amber-400 uppercase font-bold tracking-wider">
+                  Live Reserve Summary
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                  <span className="text-xs text-slate-400">Active Peer Loans</span>
-                  <span className="font-mono font-bold text-emerald-400 text-sm">12 Funded</span>
+                <div className="space-y-2.5">
+                  <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                    <span className="text-xs text-slate-400">Total Coins in Circulation</span>
+                    <span className="font-mono font-black text-amber-400 text-sm">215,400 🪙</span>
+                  </div>
+                  <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                    <span className="text-xs text-slate-400">Active Peer Loans</span>
+                    <span className="font-mono font-bold text-emerald-400 text-sm">12 Funded</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                  <span className="text-xs text-slate-400">Default Rate</span>
-                  <span className="font-mono font-bold text-slate-300 text-sm">0.0% (Class Code)</span>
-                </div>
+                <Link
+                  to={user ? "/bank" : "/register"}
+                  className="w-full vip-gold-btn py-2.5 text-xs font-bold flex items-center justify-center gap-2 mt-2"
+                >
+                  <span>Access Token Bank</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
-              <Link
-                to={user ? "/bank" : "/register"}
-                className="w-full vip-gold-btn py-2.5 text-xs font-bold flex items-center justify-center gap-2"
-              >
-                <span>Access Token Bank</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
             </div>
           </div>
         </div>

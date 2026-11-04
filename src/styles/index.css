@@ -4,78 +4,114 @@
 
 @layer base {
   body {
-    background-color: #090616;
-    color: #F8FAFC;
+    background-color: #07080B;
+    color: #F3F4F6;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
 
-/* Custom Gaming Scrollbar */
+/* Custom Minimalist VIP Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #090616;
+  background: #07080B;
 }
 ::-webkit-scrollbar-thumb {
-  background: #23164F;
+  background: #181A24;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #8B5CF6;
+  background: #F59E0B;
 }
 
-/* Glassmorphism & Gaming Cards */
+/* Marquee Ticker */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 32s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Shimmer & Glow Effects */
+@keyframes goldShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.gold-shimmer-text {
+  background: linear-gradient(90deg, #FDE68A 0%, #F59E0B 25%, #FFFBEB 50%, #F59E0B 75%, #FDE68A 100%);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: goldShimmer 4s linear infinite;
+}
+
+/* Glassmorphism & Minimalist Gaming Cards */
 .casino-card {
-  background: linear-gradient(180deg, rgba(25, 17, 59, 0.85) 0%, rgba(15, 10, 36, 0.95) 100%);
-  border: 1px solid rgba(139, 92, 246, 0.16);
+  background: linear-gradient(180deg, rgba(16, 17, 24, 0.95) 0%, rgba(11, 12, 17, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 1.25rem;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.85);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   backdrop-filter: blur(12px);
 }
 
 .casino-card:hover {
-  border-color: rgba(168, 85, 247, 0.35);
-  box-shadow: 0 14px 40px -10px rgba(124, 58, 237, 0.25);
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 14px 40px -10px rgba(245, 158, 11, 0.15);
 }
 
-/* Modern Purple & Gradient Buttons */
+/* VIP Gold Action Buttons */
+.vip-gold-btn,
 .casino-gold-button,
-.casino-primary-button {
-  background: linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%);
-  color: #FFFFFF;
-  font-weight: 700;
-  border-radius: 0.875rem;
-  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+.casino-primary-button,
+.casino-pink-button {
+  background: linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #D97706 100%);
+  color: #000000;
+  font-weight: 800;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35);
   transition: all 0.2s ease-in-out;
 }
 
+.vip-gold-btn:hover,
 .casino-gold-button:hover,
-.casino-primary-button:hover {
-  background: linear-gradient(135deg, #B56CFA 0%, #8B5CF6 50%, #7074F4 100%);
-  box-shadow: 0 6px 26px rgba(124, 58, 237, 0.6);
+.casino-primary-button:hover,
+.casino-pink-button:hover {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FBBF24 50%, #B45309 100%);
+  box-shadow: 0 6px 28px rgba(245, 158, 11, 0.55);
   transform: translateY(-1px);
 }
 
+.vip-gold-btn:active,
 .casino-gold-button:active,
-.casino-primary-button:active {
+.casino-primary-button:active,
+.casino-pink-button:active {
   transform: translateY(0);
 }
 
-/* Neon Pink Action Button */
-.casino-pink-button {
-  background: linear-gradient(135deg, #F43F5E 0%, #EC4899 50%, #D946EF 100%);
-  color: #FFFFFF;
-  font-weight: 700;
-  border-radius: 0.875rem;
-  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
-  transition: all 0.2s ease-in-out;
+/* Feathered Image Mask Helpers */
+.feather-mask-split {
+  mask-image: radial-gradient(ellipse at 60% 50%, black 50%, rgba(0,0,0,0.4) 75%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse at 60% 50%, black 50%, rgba(0,0,0,0.4) 75%, transparent 100%);
 }
 
-.casino-pink-button:hover {
-  background: linear-gradient(135deg, #FB7185 0%, #F472B6 50%, #E879F9 100%);
-  box-shadow: 0 6px 26px rgba(236, 72, 153, 0.6);
-  transform: translateY(-1px);
+.feather-mask-panoramic {
+  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%),
+              linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%),
+                      linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
 }

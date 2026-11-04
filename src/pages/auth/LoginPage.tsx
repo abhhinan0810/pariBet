@@ -34,9 +34,9 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#090616] flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
-      {/* Background Neon Glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-brand-violet/15 blur-[140px] rounded-full pointer-events-none" />
+    <div className="min-h-screen bg-[#07080B] flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
+      {/* Subtle Ambient Gold Glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-amber-500/5 blur-[160px] rounded-full pointer-events-none" />
 
       {/* Back to Home Link */}
       <Link
@@ -55,23 +55,23 @@ export const LoginPage: React.FC = () => {
       >
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-purple to-brand-pink p-0.5 shadow-brand-glow mb-4">
-            <div className="w-full h-full bg-[#0E0924] rounded-[14px] flex items-center justify-center">
-              <span className="font-display font-black text-2xl text-white">P</span>
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 p-0.5 shadow-gold-glow mb-4">
+            <div className="w-full h-full bg-[#0B0C10] rounded-[13px] flex items-center justify-center">
+              <span className="font-display font-black text-2xl text-amber-400">P</span>
             </div>
           </div>
           <h1 className="font-display font-black text-3xl tracking-tight text-white mb-1.5">
-            Sign In to pariBet
+            Sign In to pari<span className="text-amber-400">BET</span>
           </h1>
           <p className="text-xs text-casino-muted">
-            Private MCA Classroom Prediction & Virtual Gaming Arena
+            Private MCA Classroom Prediction & Virtual Gaming Club
           </p>
         </div>
 
         {/* Card */}
-        <div className="casino-card p-6 sm:p-8 border-brand-violet/25">
+        <div className="casino-card p-6 sm:p-8 border-white/5">
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/5">
-            <span className="text-xs font-semibold text-brand-violet flex items-center gap-1.5">
+            <span className="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4" />
               <span>53 Verified MCA Seats</span>
             </span>
@@ -93,7 +93,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="admission_number@ceconline.edu"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#110B29] border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-brand-violet focus:ring-1 focus:ring-brand-violet transition-all font-mono"
+                  className="w-full bg-[#12131A] border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all font-mono"
                 />
               </div>
             </div>
@@ -110,7 +110,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#110B29] border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-brand-violet focus:ring-1 focus:ring-brand-violet transition-all font-mono"
+                  className="w-full bg-[#12131A] border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all font-mono"
                 />
               </div>
             </div>
@@ -118,15 +118,15 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 casino-primary-button py-3.5 px-4 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full mt-2 vip-gold-btn py-3.5 px-4 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-xs font-black uppercase tracking-wider"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4" />
-                  <span>Log In to Arena</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4 text-black" />
+                  <span>Log In to Lounge</span>
+                  <ArrowRight className="w-4 h-4 text-black" />
                 </>
               )}
             </button>
@@ -139,7 +139,7 @@ export const LoginPage: React.FC = () => {
             </p>
             <Link
               to="/register"
-              className="text-xs font-bold text-brand-pink hover:underline inline-flex items-center gap-1"
+              className="text-xs font-bold text-amber-400 hover:underline inline-flex items-center gap-1"
             >
               Verify Your College Email & Sign Up
             </Link>
@@ -155,7 +155,7 @@ export const LoginPage: React.FC = () => {
               setEmail('chn25mca055@ceconline.edu');
               setPassword('password123');
             }}
-            className="text-brand-violet font-mono underline hover:text-white transition-colors cursor-pointer"
+            className="text-amber-400 font-mono underline hover:text-white transition-colors cursor-pointer"
           >
             Auto-fill: chn25mca055@ceconline.edu (Abhinav Krishna S)
           </button>

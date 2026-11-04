@@ -168,6 +168,61 @@ export const TokenBankPage: React.FC = () => {
         </button>
       </div>
 
+      {/* Central Reserve Vault Hero Banner (chip-stacker-vault.jpg) */}
+      <div className="relative overflow-hidden rounded-3xl bg-[#0E0F15] border border-white/10 p-5 sm:p-6 shadow-xl">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div className="md:col-span-4 relative flex items-center justify-center">
+            <div className="relative w-full max-w-xs rounded-2xl overflow-hidden border border-white/10 group">
+              <img
+                src="/images/chip-stacker-vault.jpg"
+                alt="Central Reserve Vault Master"
+                className="w-full h-48 sm:h-52 object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0E0F15] via-transparent to-transparent opacity-85" />
+              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] font-mono">
+                <span className="text-amber-400 font-bold bg-[#07080B]/90 px-2 py-0.5 rounded border border-amber-400/20">
+                  VAULT MASTER
+                </span>
+                <span className="text-emerald-400 font-bold bg-[#07080B]/90 px-2 py-0.5 rounded border border-emerald-400/20">
+                  PEER LIQUIDITY
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="md:col-span-8 space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Coins className="w-3.5 h-3.5 text-amber-400" />
+                Class Central Reserve
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="text-xs text-emerald-400 font-mono font-semibold">0.0% Default Rate</span>
+            </div>
+            <h2 className="font-display font-black text-xl lg:text-2xl text-white">
+              Instant Liquidity & Classmate Peer Financing
+            </h2>
+            <p className="text-xs sm:text-sm text-casino-muted leading-relaxed max-w-xl">
+              Ran low on tokens before a big Friday pool? Borrow from classmates with transparent flat terms. Or put your winning stacks to work by funding requests to earn flat interest returns.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
+              <div className="p-2.5 rounded-xl bg-[#12131A] border border-white/5">
+                <span className="text-[10px] text-casino-muted font-mono block">Interest Cap</span>
+                <span className="text-sm font-mono font-bold text-amber-400">0% – 10% Flat</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[#12131A] border border-white/5">
+                <span className="text-[10px] text-casino-muted font-mono block">Max Term</span>
+                <span className="text-sm font-mono font-bold text-white">14 Days</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[#12131A] border border-white/5 col-span-2 sm:col-span-1">
+                <span className="text-[10px] text-casino-muted font-mono block">Repayment</span>
+                <span className="text-sm font-mono font-bold text-emerald-400">Classroom Code</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Tabs */}
       <div className="flex items-center gap-2 border-b border-white/5 pb-2">
         <button

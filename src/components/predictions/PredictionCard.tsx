@@ -55,12 +55,12 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
   };
 
   return (
-    <Card variant="interactive" className="p-5 relative flex flex-col justify-between border-brand-violet/20 hover:border-brand-violet/40">
+    <Card variant="interactive" className="p-5 relative flex flex-col justify-between border-white/5 hover:border-amber-500/30">
       <div>
         {/* Top Badges */}
         <div className="flex items-center justify-between text-xs mb-3">
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-brand-violet/15 text-brand-violet border border-brand-violet/30 font-mono text-[10px] font-bold uppercase">
+            <span className="px-2.5 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/25 font-mono text-[10px] font-bold uppercase">
               {prediction.category} • {getTypeBadge()}
             </span>
           </div>
@@ -80,7 +80,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
               </span>
             ) : (
               <span className="text-casino-muted flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-brand-pink" />
+                <Clock className="w-3.5 h-3.5 text-amber-400" />
                 <span>{getTimeRemaining()}</span>
               </span>
             )}
@@ -105,7 +105,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                   ({pariMutuelEngine.calculateMultiplier(prediction.totalPoolTokens, prediction.options[0].totalTokensCommitted).multiplierDisplay})
                 </span>
               </span>
-              <span className="text-brand-pink font-bold flex items-center gap-1">
+              <span className="text-rose-400 font-bold flex items-center gap-1">
                 <span className="text-[10px] text-casino-muted">
                   ({pariMutuelEngine.calculateMultiplier(prediction.totalPoolTokens, prediction.options[1].totalTokensCommitted).multiplierDisplay})
                 </span>
@@ -125,7 +125,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                 }}
               />
               <div
-                className="bg-brand-pink h-full transition-all duration-300"
+                className="bg-rose-500 h-full transition-all duration-300"
                 style={{
                   width: `${
                     prediction.totalPoolTokens > 0
@@ -172,7 +172,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                   </div>
                   <div className="flex items-center gap-2 shrink-0 font-mono text-[11px]">
                     <span className="text-casino-muted">{percent}%</span>
-                    <span className="text-brand-violet font-bold">{multiplierDisplay}</span>
+                    <span className="text-amber-400 font-bold">{multiplierDisplay}</span>
                   </div>
                 </div>
               );
@@ -202,7 +202,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
           <div className="flex items-center gap-1.5 font-mono text-xs text-white">
             <CoinIcon size={16} />
             <span className="font-bold">{prediction.totalPoolTokens.toLocaleString()}</span>
-            <span className="text-[10px] text-brand-violet font-bold">PTS</span>
+            <span className="text-[10px] text-amber-400 font-bold">PTS</span>
           </div>
           <span className="text-white/20">•</span>
           <div className="flex items-center gap-1 text-[11px] text-casino-muted font-mono">
@@ -224,7 +224,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
           {isOpen ? (
             <button
               onClick={() => onParticipate(prediction)}
-              className="casino-pink-button px-4 py-1.5 text-xs font-bold cursor-pointer shadow-pink-glow"
+              className="vip-gold-btn px-4 py-1.5 text-xs font-bold cursor-pointer"
             >
               Stake Coins
             </button>

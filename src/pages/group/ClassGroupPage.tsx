@@ -75,45 +75,69 @@ export const ClassGroupPage: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-20 lg:pb-10 max-w-6xl mx-auto">
-      {/* Header */}
-      <div>
-        <h1 className="font-display font-black text-2xl lg:text-3xl text-white flex items-center gap-2">
-          <Users className="w-6 h-6 text-gold-highlight" />
-          <span>CEC MCA Classroom Lounge</span>
-        </h1>
-        <p className="text-sm text-casino-muted">
-          College of Engineering Chengannur • MCA Batch of 2025 Private Club
-        </p>
-      </div>
-
-      {/* Classroom Banner */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card variant="gold-border" className="p-5">
-          <GraduationCap className="w-8 h-8 text-gold-highlight mb-2" />
-          <h3 className="font-bold text-white text-base">Classroom Network</h3>
-          <p className="text-xs text-casino-muted mt-1">Master of Computer Applications</p>
-          <div className="flex items-center gap-2 mt-3">
-            <span className="text-xs text-gold-highlight font-mono font-bold bg-gold/10 px-2 py-0.5 rounded">
-              53 VERIFIED SEATS
-            </span>
-          </div>
-        </Card>
-
-        <Card variant="default" className="p-5 md:col-span-2 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-2 text-emerald-400 font-semibold text-sm mb-2">
-              <ShieldCheck className="w-5 h-5" />
-              <span>Closed-Community Roster Isolation</span>
+      {/* Cinematic Syndicate Header Banner (squad-celebration.jpg) */}
+      <div className="relative overflow-hidden rounded-3xl bg-[#0E0F15] border border-white/10 p-6 lg:p-8 shadow-xl">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div className="lg:col-span-4 relative flex items-center justify-center">
+            <div className="relative w-full max-w-[280px] aspect-[4/5] rounded-2xl overflow-hidden border border-white/10 group shadow-xl">
+              <img
+                src="/images/squad-celebration.jpg"
+                alt="CEC MCA Class Syndicate"
+                className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0E0F15]/75 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[10px] font-mono">
+                <span className="text-amber-400 font-bold bg-[#07080B]/90 px-2.5 py-1 rounded-lg border border-amber-400/20 backdrop-blur-md">
+                  THE SYNDICATE
+                </span>
+                <span className="text-emerald-400 font-bold bg-[#07080B]/90 px-2.5 py-1 rounded-lg border border-emerald-400/20 backdrop-blur-md">
+                  53 SEATS VERIFIED
+                </span>
+              </div>
             </div>
-            <p className="text-xs text-casino-muted leading-relaxed">
-              This space is strictly restricted to the 53 verified students in the CSV roster. Outside registrations and emails not matching <code className="text-gold-highlight font-mono">admission_number@ceconline.edu</code> are permanently blocked by security rules.
-            </p>
           </div>
-          <div className="text-[11px] text-casino-muted font-mono flex items-center gap-1.5 mt-3">
-            <Lock className="w-3.5 h-3.5 text-gold-highlight" />
-            <span>End-to-end roster validation active</span>
+
+          <div className="lg:col-span-8 space-y-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/25">
+                  EXCLUSIVE BATCH CLUB
+                </span>
+                <span className="text-[11px] text-casino-muted font-mono">
+                  College of Engineering Chengannur
+                </span>
+              </div>
+              <h1 className="font-display font-black text-2xl lg:text-3xl text-white">
+                CEC MCA Batch of 2025 Lounge
+              </h1>
+              <p className="text-xs sm:text-sm text-casino-muted mt-1 leading-relaxed max-w-2xl">
+                The private clubhouse where 53 verified classmates pit their predictions against one another. Zero corporate house edge, 100% peer returns, and instant bragging rights.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div className="p-3.5 rounded-xl bg-[#12131A] border border-white/5 flex items-start gap-3">
+                <GraduationCap className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-xs font-bold text-white block">Closed Roster Protocol</span>
+                  <span className="text-[11px] text-casino-muted">
+                    Only <code className="text-amber-400 font-mono">@ceconline.edu</code> logins matching the official CSV roster are permitted.
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#12131A] border border-white/5 flex items-start gap-3">
+                <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-xs font-bold text-white block">Sovereign Batch Vault</span>
+                  <span className="text-[11px] text-casino-muted">
+                    All token prizes and loan interest stay 100% inside our classroom economy.
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-        </Card>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -8,55 +8,55 @@ export const Header: React.FC = () => {
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-30 bg-[#090616]/90 backdrop-blur-md border-b border-white/5 px-4 lg:px-8 py-3 flex items-center justify-between">
+    <header className="sticky top-0 z-30 bg-[#07080B]/90 backdrop-blur-md border-b border-white/5 px-4 lg:px-8 py-3 flex items-center justify-between">
       {/* Brand on Mobile / Class network on Desktop */}
       <div className="flex items-center gap-3">
         <Link to="/home" className="lg:hidden flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-purple to-brand-pink p-0.5 shadow-brand-glow">
-            <div className="w-full h-full bg-[#0E0924] rounded-[8px] flex items-center justify-center">
-              <span className="font-display font-black text-sm text-white">P</span>
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 p-0.5 shadow-gold-glow">
+            <div className="w-full h-full bg-[#0B0C10] rounded-[8px] flex items-center justify-center">
+              <span className="font-display font-black text-sm text-amber-400">P</span>
             </div>
           </div>
           <span className="font-display font-black text-lg text-white">
-            pariBet
+            pari<span className="text-amber-400">BET</span>
           </span>
         </Link>
         <div className="hidden lg:flex items-center gap-2 text-xs font-mono text-casino-muted">
           <span className="text-emerald-400 inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>CEC MCA CLASSROOM NETWORK</span>
           <span>•</span>
-          <span className="text-brand-violet font-bold">53 VERIFIED SEATS</span>
+          <span className="text-amber-400 font-bold">53 VERIFIED SEATS</span>
         </div>
       </div>
 
-      {/* User Actions & Balance Pill (Jackpotter & LoopBet inspired) */}
+      {/* User Actions & Balance Pill */}
       {user ? (
         <div className="flex items-center gap-3">
           {/* Quick Balance Pill */}
           <Link
             to="/wallet"
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#181138] border border-brand-violet/40 hover:border-brand-violet shadow-brand-glow transition-all active:scale-95"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#12131A] border border-amber-500/25 hover:border-amber-400 shadow-sm transition-all active:scale-95"
           >
             <CoinIcon size={18} />
             <span className="font-mono font-bold text-xs sm:text-sm text-white">
               {user.walletBalance.toLocaleString()}
             </span>
-            <span className="text-[10px] text-brand-violet font-bold font-mono">COINS</span>
+            <span className="text-[10px] text-amber-400 font-bold font-mono">COINS</span>
           </Link>
 
-          {/* Quick Create / Stake Action Button (Jackpotter Deposit style) */}
+          {/* Quick Create / Stake Action Button */}
           <Link
             to="/create"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-brand-violet to-brand-pink text-white text-xs font-bold shadow-brand-glow transition-all active:scale-95"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full vip-gold-btn text-xs font-bold transition-all active:scale-95"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3.5 h-3.5 text-black" />
             <span>New Prediction</span>
           </Link>
 
           {/* Leaderboard Shortcut */}
           <Link
             to="/leaderboard"
-            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-casino-muted hover:text-brand-violet transition-colors"
+            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-casino-muted hover:text-amber-400 transition-colors"
             title="Leaderboard"
           >
             <Trophy className="w-4 h-4" />
@@ -69,7 +69,7 @@ export const Header: React.FC = () => {
             title="Notifications"
           >
             <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-pink shadow-pink-glow" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-400 shadow-gold-glow" />
           </Link>
 
           {/* User Avatar */}
@@ -77,7 +77,7 @@ export const Header: React.FC = () => {
             <img
               src={user.profilePicture}
               alt={user.nickname}
-              className="w-8 h-8 rounded-full border border-brand-violet/40 object-cover group-hover:border-brand-violet transition-colors bg-background-elevated"
+              className="w-8 h-8 rounded-full border border-amber-400/40 object-cover group-hover:border-amber-400 transition-colors bg-background-elevated"
             />
           </Link>
         </div>
@@ -91,7 +91,7 @@ export const Header: React.FC = () => {
           </Link>
           <Link
             to="/register"
-            className="px-3.5 py-1.5 text-xs font-bold casino-primary-button shadow-brand-glow"
+            className="px-3.5 py-1.5 text-xs font-bold vip-gold-btn"
           >
             Join Club
           </Link>

@@ -8,33 +8,34 @@ export default {
     extend: {
       colors: {
         background: {
-          DEFAULT: '#090616',      // Deep midnight obsidian purple
-          secondary: '#0E0924',    // Dark purple surface
-          card: '#140D33',         // Rich card background
-          elevated: '#1D1347',     // Elevated card
-          hover: '#241857',
+          DEFAULT: '#07080B',      // Deep obsidian pitch black
+          secondary: '#0B0C10',    // Dark slate surface
+          card: '#0E0F15',         // Minimalist card background
+          elevated: '#12131A',     // Elevated card / modal
+          hover: '#181A24',        // Hover slate
         },
         brand: {
-          purple: '#8B5CF6',
-          violet: '#A855F7',
-          pink: '#EC4899',
-          cyan: '#06B6D4',
-          blue: '#3B82F6',
+          purple: '#F59E0B',       // Replaced with gold to maintain compatibility
+          violet: '#F59E0B',       // Replaced with gold to maintain compatibility
+          pink: '#FBBF24',         // Replaced with bright gold
+          cyan: '#D97706',         // Replaced with deep gold
+          blue: '#F59E0B',
           gold: '#F59E0B',
-          glow: 'rgba(139, 92, 246, 0.35)',
+          glow: 'rgba(245, 158, 11, 0.25)',
         },
         gold: {
           DEFAULT: '#F59E0B',
-          highlight: '#FBBF24',
+          highlight: '#FDE68A',
           dark: '#D97706',
           glow: 'rgba(245, 158, 11, 0.35)',
         },
         casino: {
-          text: '#F8FAFC',
+          text: '#F3F4F6',
           muted: '#94A3B8',
           green: '#10B981',
           red: '#EF4444',
-          accent: '#A855F7',
+          accent: '#F59E0B',
+          gold: '#F59E0B',
         }
       },
       fontFamily: {
@@ -43,18 +44,18 @@ export default {
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       boxShadow: {
-        'brand-glow': '0 0 25px -4px rgba(139, 92, 246, 0.45)',
-        'pink-glow': '0 0 25px -4px rgba(236, 72, 153, 0.45)',
-        'cyan-glow': '0 0 25px -4px rgba(6, 182, 212, 0.45)',
-        'gold-glow': '0 0 20px -3px rgba(245, 158, 11, 0.45)',
-        'card-glow': '0 12px 36px -10px rgba(0, 0, 0, 0.8)',
+        'brand-glow': '0 0 25px -4px rgba(245, 158, 11, 0.35)',
+        'pink-glow': '0 0 25px -4px rgba(245, 158, 11, 0.35)',
+        'cyan-glow': '0 0 25px -4px rgba(245, 158, 11, 0.25)',
+        'gold-glow': '0 0 25px -4px rgba(245, 158, 11, 0.45)',
+        'card-glow': '0 12px 36px -10px rgba(0, 0, 0, 0.85)',
       },
       backgroundImage: {
-        'purple-gradient': 'linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #4C1D95 100%)',
-        'pink-gradient': 'linear-gradient(135deg, #EC4899 0%, #A855F7 100%)',
+        'purple-gradient': 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #D97706 100%)',
+        'pink-gradient': 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #D97706 100%)',
         'gold-gradient': 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #D97706 100%)',
-        'banner-gradient': 'linear-gradient(135deg, #2A175B 0%, #170F3A 60%, #0E0924 100%)',
-        'card-gradient': 'linear-gradient(180deg, rgba(29, 19, 71, 0.8) 0%, rgba(14, 9, 36, 0.95) 100%)',
+        'banner-gradient': 'linear-gradient(135deg, #181924 0%, #0E0F15 60%, #07080B 100%)',
+        'card-gradient': 'linear-gradient(180deg, rgba(18, 19, 26, 0.95) 0%, rgba(11, 12, 16, 0.98) 100%)',
       }
     },
   },

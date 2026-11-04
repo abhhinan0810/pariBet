@@ -189,6 +189,47 @@ export const LeaderboardPage: React.FC = () => {
         </div>
       </div>
 
+      {/* High-Roller Hall of Fame Banner (casino-royale-vip.jpg) */}
+      <div className="relative overflow-hidden rounded-3xl bg-[#0E0F15] border border-white/10 p-5 sm:p-6 shadow-xl">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div className="md:col-span-4 relative flex items-center justify-center">
+            <div className="relative w-full max-w-xs rounded-2xl overflow-hidden border border-white/10 group">
+              <img
+                src="/images/casino-royale-vip.jpg"
+                alt="Casino Royale High Roller"
+                className="w-full h-44 sm:h-48 object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0E0F15] via-transparent to-transparent opacity-80" />
+              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] font-mono">
+                <span className="text-amber-400 font-bold bg-[#07080B]/90 px-2 py-0.5 rounded border border-amber-400/20">
+                  WHALE LOUNGE
+                </span>
+                <span className="text-emerald-400 font-bold bg-[#07080B]/90 px-2 py-0.5 rounded border border-emerald-400/20">
+                  TOP TIER
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="md:col-span-8 space-y-2.5">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                The High-Roller Table
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="text-xs text-slate-400 font-medium">Rankings Updated Live</span>
+            </div>
+            <h2 className="font-display font-black text-xl lg:text-2xl text-white">
+              Where Class Champions Claim Immortal Glory
+            </h2>
+            <p className="text-xs sm:text-sm text-casino-muted leading-relaxed max-w-xl">
+              From consistent 80%+ win rates to audacious underdog sweeps, the leaderboard tracks the true kings and queens of the MCA betting circuit.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* 7 Category Pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
         {[

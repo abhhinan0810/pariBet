@@ -146,7 +146,7 @@ export const CreatePredictionPage: React.FC = () => {
       });
 
       success('Prediction Created!', `"${newPred.title}" is now open for classroom bets.`);
-      navigate('/');
+      navigate('/discover');
     } catch (err: any) {
       toastError('Creation Failed', err.message);
     } finally {
@@ -159,11 +159,11 @@ export const CreatePredictionPage: React.FC = () => {
       {/* Top Header */}
       <div>
         <Link
-          to="/"
+          to="/discover"
           className="inline-flex items-center gap-1.5 text-xs text-casino-muted hover:text-white mb-2"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Lounge</span>
+          <span>Back to Markets</span>
         </Link>
         <h1 className="font-display font-black text-2xl lg:text-3xl text-white flex items-center gap-2">
           <PlusCircle className="w-6 h-6 text-gold-highlight" />

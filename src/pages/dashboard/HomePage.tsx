@@ -479,21 +479,90 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Bank Shortcut Card */}
-            <div className="mt-4 pt-3 border-t border-white/5">
+            <div className="mt-4 pt-3 border-t border-white/5 space-y-2.5">
               <Link
                 to="/bank"
-                className="p-3 rounded-xl bg-gradient-to-r from-brand-violet/15 to-transparent border border-brand-violet/30 flex items-center justify-between hover:border-brand-violet transition-colors"
+                className="p-3 rounded-xl bg-gradient-to-r from-amber-500/15 to-transparent border border-amber-500/30 flex items-center justify-between hover:border-amber-400 transition-colors"
               >
                 <div className="flex items-center gap-2.5">
-                  <Landmark className="w-4 h-4 text-brand-cyan" />
+                  <Landmark className="w-4 h-4 text-amber-400" />
                   <div>
-                    <span className="text-xs font-bold text-white block">Token Bank</span>
+                    <span className="text-xs font-bold text-white block">Token Bank Vault</span>
                     <span className="text-[10px] text-casino-muted">
-                      Need tokens? Request a peer loan
+                      Need emergency points? Request a peer bailout
                     </span>
                   </div>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-brand-cyan" />
+                <ArrowRight className="w-3.5 h-3.5 text-amber-400" />
+              </Link>
+
+              {/* LIVE ACTIVITY TICKER — THE TABLE IS MOVING */}
+              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono font-bold uppercase text-emerald-400 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    The Table is Moving
+                  </span>
+                  <Link to="/discover" className="text-[10px] text-amber-400 hover:underline font-mono">
+                    Live Floor
+                  </Link>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="p-2 rounded-xl bg-white/[0.03] border border-white/5 flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-[11px] text-white font-medium">
+                        <strong className="text-amber-400">Anand M</strong> put 500 PTS on "Rahul Being 10m Late"
+                      </p>
+                      <span className="text-[9px] font-mono text-slate-400">2m ago • 2.6x Odds</span>
+                    </div>
+                    <span className="text-[9px] font-mono font-bold text-amber-300 bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/20 shrink-0">
+                      HIGH STAKE
+                    </span>
+                  </div>
+
+                  <div className="p-2 rounded-xl bg-white/[0.03] border border-white/5 flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-[11px] text-white font-medium">
+                        <strong className="text-rose-400">Sneha R</strong> hit a 4-win streak! (+1,250 PTS)
+                      </p>
+                      <span className="text-[9px] font-mono text-slate-400">5m ago • Hot Hand</span>
+                    </div>
+                    <span className="text-[9px] font-mono font-bold text-rose-300 bg-rose-400/10 px-1.5 py-0.5 rounded border border-rose-400/20 shrink-0">
+                      STREAK 🔥
+                    </span>
+                  </div>
+
+                  <div className="p-2 rounded-xl bg-white/[0.03] border border-white/5 flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-[11px] text-white font-medium">
+                        <strong className="text-sky-400">Abhinav K</strong> reclaimed #1 spot in Mandhi race
+                      </p>
+                      <span className="text-[9px] font-mono text-slate-400">25m ago • 5,450 PTS</span>
+                    </div>
+                    <span className="text-[9px] font-mono font-bold text-amber-300 bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/20 shrink-0">
+                      🍗 #1
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* LORE & PERSONALITIES SHORTCUT */}
+              <Link
+                to="/group"
+                className="p-3 rounded-xl bg-black/30 border border-white/10 flex items-center justify-between hover:border-amber-400/40 transition-colors group block"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="text-base">👑</span>
+                  <div>
+                    <span className="text-xs font-bold text-white group-hover:text-amber-400 transition-colors block">
+                      Meet the High Rollers & Hall of Disasters
+                    </span>
+                    <span className="text-[10px] text-casino-muted">
+                      Explore dynamic player archetypes & classroom upset lore
+                    </span>
+                  </div>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
               </Link>
             </div>
           </div>

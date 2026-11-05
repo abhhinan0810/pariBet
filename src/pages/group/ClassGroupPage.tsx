@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Users,
   ShieldCheck,
@@ -7,7 +8,9 @@ import {
   MessageSquare,
   Sparkles,
   Send,
-  Lock
+  Lock,
+  Trophy,
+  ArrowRight
 } from 'lucide-react';
 import { Card } from '@/components/common/Card';
 import { useAuth } from '@/context/AuthContext';
@@ -24,6 +27,14 @@ interface FeedPost {
 }
 
 const INITIAL_FEED: FeedPost[] = [
+  {
+    id: 'p0',
+    authorNickname: 'Shadow (Abhinav)',
+    authorName: 'Abhinav Krishna S',
+    content: '🍗 OFFICIAL SEMESTER 4 GRAND PRIZE ANNOUNCEMENT! The stakes are set: For the top 4 players commanding the Hall of Fame at the end of Sem 4, I will personally sponsor a steaming, authentic full Mandhi platter! Bring your best game to upcoming markets!',
+    timestamp: 'Pinned Announcement',
+    likes: 38,
+  },
   {
     id: 'p1',
     authorNickname: 'Shadow',
@@ -137,6 +148,39 @@ export const ClassGroupPage: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* SEMESTER 4 GRAND PRIZE SYNDICATE BANNER */}
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-black/60 via-[#180a0f]/60 to-black/60 border-2 border-amber-400/35 p-4 sm:p-5 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl overflow-hidden border border-amber-400/40 shrink-0 shadow">
+              <img
+                src="/assets/aistudio/Sponsored_Mandhi_Feast_Poster_e8b7457a.png"
+                alt="Mandhi Grand Prize"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono font-bold text-amber-400 uppercase bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/25">
+                  🍗 SEM 4 GRAND PRIZE
+                </span>
+                <span className="text-xs text-slate-400 font-mono">Top 4 Standings Cutoff</span>
+              </div>
+              <h3 className="text-sm sm:text-base font-bold text-white mt-0.5">
+                Full Mandhi Platter Sponsored by <span className="text-amber-400">Abhinav (Varkkala / Pari)</span>
+              </h3>
+            </div>
+          </div>
+          <Link
+            to="/leaderboard"
+            className="vip-gold-btn px-4 py-2 text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 self-start sm:self-auto"
+          >
+            <span>View Cutoff</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
 

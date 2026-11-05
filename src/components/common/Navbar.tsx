@@ -29,7 +29,7 @@ export const Navbar: React.FC = () => {
   ];
 
   const secondaryNavItems = [
-    { label: 'Leaderboard', path: '/leaderboard', icon: Trophy },
+    { label: 'Leaderboard & Prizes', path: '/leaderboard', icon: Trophy, badge: '🍗 Mandhi' },
     { label: 'Token Bank', path: '/bank', icon: Landmark },
     { label: 'Class Group', path: '/group', icon: Users },
     { label: 'Notifications', path: '/notifications', icon: Bell },
@@ -120,15 +120,22 @@ export const Navbar: React.FC = () => {
                     key={item.path}
                     to={item.path}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                      `flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
                         isActive
                           ? 'bg-red-500/10 text-red-400 border-l-2 border-red-500 font-bold'
                           : 'text-casino-muted hover:text-white hover:bg-white/5'
                       }`
                     }
                   >
-                    <Icon className="w-4 h-4 shrink-0" />
-                    <span className="whitespace-nowrap">{item.label}</span>
+                    <div className="flex items-center gap-3">
+                      <Icon className="w-4 h-4 shrink-0" />
+                      <span className="whitespace-nowrap">{item.label}</span>
+                    </div>
+                    {item.badge && (
+                      <span className="text-[10px] font-mono bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-bold">
+                        {item.badge}
+                      </span>
+                    )}
                   </NavLink>
                 );
               })}
@@ -178,7 +185,7 @@ export const Navbar: React.FC = () => {
       </aside>
 
       {/* MOBILE BOTTOM NAVIGATION BAR */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#07080B]/85 backdrop-blur-2xl border-t border-white/10 z-50 flex items-center justify-around px-1 pb-safe">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#07080B]/90 backdrop-blur-2xl border-t border-white/10 z-40 flex items-center justify-around px-1 pb-[env(safe-area-inset-bottom,0px)]">
         {primaryNavItems.map((item) => {
           const Icon = item.icon;
           return (

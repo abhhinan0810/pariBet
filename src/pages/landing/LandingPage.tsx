@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles,
   TrendingUp,
@@ -17,7 +17,11 @@ import {
   Shuffle,
   PartyPopper,
   ChevronRight,
-  CheckCircle2
+  CheckCircle2,
+  Trophy,
+  Menu,
+  X,
+  Crown
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -67,6 +71,7 @@ const HERO_CATEGORIES = [
 
 export const LandingPage: React.FC = () => {
   const { user } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Mini roulette demo state
   const [selectedChip, setSelectedChip] = useState<number>(250);
@@ -104,8 +109,14 @@ export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-transparent text-[#F3F4F6] overflow-x-hidden selection:bg-amber-500 selection:text-black font-sans">
       {/* 1. TOP MARQUEE TICKER (Minimalist Obsidian & Gold) */}
-      <div className="bg-[#0B0C10] border-b border-white/5 py-2 overflow-hidden relative z-50">
-        <div className="animate-marquee whitespace-nowrap flex items-center gap-8 text-xs font-mono">
+      <div className="bg-[#0B0C10] border-b border-white/5 py-2 overflow-hidden relative z-40">
+        <div className="animate-marquee whitespace-nowrap flex items-center gap-6 sm:gap-8 text-xs font-mono">
+          <span className="inline-flex items-center gap-1.5 text-amber-300 font-extrabold bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30 shadow-sm">
+            <span>🍗</span>
+            <span>SEM 4 GRAND PRIZE: TOP 4 WIN FULL MANDHI SPONSORED BY ABHINAV (VARKKALA/PARI)</span>
+            <Trophy className="w-3.5 h-3.5 text-amber-400" />
+          </span>
+          <span className="text-white/20">•</span>
           <span className="inline-flex items-center gap-1.5 text-amber-400 font-bold">
             <Flame className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
             CLASS VAULT JACKPOT: 64,800 🪙
@@ -121,41 +132,33 @@ export const LandingPage: React.FC = () => {
             WELCOME BONUS: 1,000 FREE COINS ON SIGNUP
           </span>
           <span className="text-white/20">•</span>
-          <span className="inline-flex items-center gap-1.5 text-slate-300">
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
-            HOT POOL: "Will Friday 4th period be free?" (7,400 🪙 Pool)
+          <span className="inline-flex items-center gap-1.5 text-amber-300 font-extrabold bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30">
+            <span>🍗</span>
+            <span>ABHINAV MANDHI FEAST • TOP 4 QUALIFY AT END OF SEM 4</span>
           </span>
           <span className="text-white/20">•</span>
           <span className="inline-flex items-center gap-1.5 text-slate-400 font-medium">
             <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
             EXCLUSIVE TO 53 MCA STUDENTS @ CECONLINE.EDU
           </span>
-          <span className="text-white/20">•</span>
-          <span className="inline-flex items-center gap-1.5 text-amber-400 font-bold">
-            <Flame className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-            CLASS VAULT JACKPOT: 64,800 🪙
-          </span>
-          <span className="text-white/20">•</span>
-          <span className="inline-flex items-center gap-1.5 text-slate-300">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            LATEST WIN: Midhun won 3,450 🪙 on "Surprise Lab Test" (2.3x)
-          </span>
-          <span className="text-white/20">•</span>
-          <span className="inline-flex items-center gap-1.5 text-emerald-400 font-bold">
-            <Coins className="w-3.5 h-3.5 text-emerald-400" />
-            WELCOME BONUS: 1,000 FREE COINS ON SIGNUP
-          </span>
         </div>
       </div>
 
       {/* 2. HEADER NAVIGATION */}
-      <header className="sticky top-0 z-40 bg-[#07080B]/90 backdrop-blur-xl border-b border-white/5 px-4 lg:px-8 py-3.5">
+      <header className="sticky top-0 z-40 bg-[#07080B]/90 backdrop-blur-xl border-b border-white/5 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo: pariBET */}
-          <Link to="/" className="flex items-center gap-3 group shrink-0"><img src="/images/mca.png" alt="MCA" className="w-10 h-10 rounded-xl object-contain shrink-0 p-1 bg-white/5 border border-white/10" /><img src="/images/logo.png" alt="pariBET" className="h-8 w-auto object-contain shrink-0" /></Link>
+          <Link to="/" className="flex items-center gap-2 sm:gap-3 group shrink-0">
+            <img src="/images/mca.png" alt="MCA" className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-contain shrink-0 p-0.5 sm:p-1 bg-white/5 border border-white/10" />
+            <img src="/images/logo.png" alt="pariBET" className="h-6 sm:h-8 w-auto object-contain shrink-0" />
+          </Link>
 
-          {/* Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          {/* Desktop Nav Links */}
+          <nav className="hidden md:flex items-center gap-5 lg:gap-6 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <a href="#grand-prize-mandhi" className="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1 font-bold">
+              <span>🍗</span>
+              <span>Grand Prize</span>
+            </a>
             <a href="#hero-stage" className="hover:text-amber-400 transition-colors">Stage</a>
             <a href="#categories" className="hover:text-amber-400 transition-colors">Markets</a>
             <a href="#roulette-demo" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
@@ -170,35 +173,112 @@ export const LandingPage: React.FC = () => {
             <a href="#bank-vault" className="hover:text-amber-400 transition-colors">Vault</a>
           </nav>
 
-          {/* Auth CTA */}
-          <div className="flex items-center gap-3">
+          {/* Auth CTA & Mobile Hamburger */}
+          <div className="flex items-center gap-2 sm:gap-3">
             {user ? (
               <Link
                 to="/home"
-                className="vip-gold-btn px-5 py-2 text-xs font-bold flex items-center gap-2"
+                className="vip-gold-btn px-3.5 sm:px-5 py-1.5 sm:py-2 text-xs font-bold flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
               >
-                <span>Enter Gaming Lounge</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Enter Lounge</span>
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Link>
             ) : (
               <>
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+                  className="px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors whitespace-nowrap"
                 >
                   Log In
                 </Link>
                 <Link
                   to="/register"
-                  className="vip-gold-btn px-4 py-2 text-xs font-extrabold flex items-center gap-1.5"
+                  className="vip-gold-btn px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-extrabold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap"
                 >
-                  <Coins className="w-3.5 h-3.5" />
-                  <span>Claim 1,000 Coins</span>
+                  <Coins className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden xs:inline">Claim 1,000 Coins</span>
+                  <span className="xs:hidden">1,000 Free</span>
                 </Link>
               </>
             )}
+
+            {/* Mobile Menu Toggle Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-1.5 sm:p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden pt-4 pb-2 border-t border-white/10 mt-3 space-y-2 overflow-hidden"
+            >
+              <a
+                href="#grand-prize-mandhi"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-500/20 to-transparent border border-amber-500/30 text-amber-300 text-xs font-bold"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-base">🍗</span>
+                  <span>Sem 4 Grand Prize (Full Mandhi)</span>
+                </div>
+                <span className="text-[10px] font-mono bg-amber-400/20 px-1.5 py-0.5 rounded text-amber-300">TOP 4</span>
+              </a>
+              <a
+                href="#hero-stage"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5"
+              >
+                Hero Stage
+              </a>
+              <a
+                href="#categories"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5"
+              >
+                Prediction Markets
+              </a>
+              <a
+                href="#roulette-demo"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5"
+              >
+                <Dice5 className="w-3.5 h-3.5 text-amber-400" />
+                <span>Mini-Roulette Demo</span>
+              </a>
+              <a
+                href="#poker-lounge"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5"
+              >
+                VIP Lounge & Rules
+              </a>
+              <a
+                href="#winners-circle"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5"
+              >
+                Squad Victories
+              </a>
+              <a
+                href="#bank-vault"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5"
+              >
+                Token Bank Vault
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* 3. HERO SECTION — SPLIT LAYOUT WITH FEATHERED EDGES */}
@@ -224,12 +304,30 @@ export const LandingPage: React.FC = () => {
               <span className="text-slate-400 font-normal">53 Verified Members</span>
             </motion.div>
 
+            {/* Grand Prize Callout Banner */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+            >
+              <a
+                href="#grand-prize-mandhi"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-gradient-to-r from-amber-500/20 via-rose-500/15 to-transparent border border-amber-500/40 hover:border-amber-400 text-xs text-amber-300 transition-all group shadow-sm"
+              >
+                <span className="text-base">🍗</span>
+                <span className="font-extrabold text-white">Sem 4 Grand Prize:</span>
+                <span className="text-slate-300 hidden sm:inline">Full Mandhi for Top 4 sponsored by</span>
+                <span className="font-bold text-amber-400 underline decoration-amber-400/60">Abhinav (Varkkala/pari)</span>
+                <ArrowRight className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-1 transition-transform" />
+              </a>
+            </motion.div>
+
             {/* Main Headline */}
             <motion.h1
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="font-display font-black text-4xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-[1.1]"
+              className="font-display font-black text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-[1.1]"
             >
               Predict with Friends.{' '}
               <br />
@@ -243,7 +341,7 @@ export const LandingPage: React.FC = () => {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-sm sm:text-base text-slate-400 max-w-xl leading-relaxed"
+              className="text-xs sm:text-base text-slate-400 max-w-xl leading-relaxed"
             >
               The private social prediction lounge exclusively for 53 MCA classmates at College of Engineering Chengannur. Dynamic pari-mutuel odds, virtual tokens, and zero real money.
             </motion.p>
@@ -285,7 +383,7 @@ export const LandingPage: React.FC = () => {
             </motion.div>
 
             {/* Quick Trust Badges */}
-            <div className="pt-3 flex flex-wrap items-center gap-5 text-xs text-slate-400 font-medium">
+            <div className="pt-3 flex flex-wrap items-center gap-4 sm:gap-5 text-xs text-slate-400 font-medium">
               <span className="flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 Verified <code className="text-amber-400 font-mono">@ceconline.edu</code> Roster
@@ -318,17 +416,17 @@ export const LandingPage: React.FC = () => {
                   className="w-full h-auto object-cover transform hover:scale-[1.02] transition-transform duration-700"
                 />
 
-                {/* Left Edge Feather Fade: Softly blends into the left column */}
-                <div className="absolute inset-y-0 left-0 w-24 sm:w-36 bg-gradient-to-r from-[#07080B] to-transparent pointer-events-none" />
+                {/* Left Edge Feather Fade */}
+                <div className="absolute inset-y-0 left-0 w-8 sm:w-28 bg-gradient-to-r from-[#07080B] to-transparent pointer-events-none" />
 
-                {/* Bottom Edge Feather Fade: Softly blends into background */}
-                <div className="absolute inset-x-0 bottom-0 h-24 sm:h-36 bg-gradient-to-t from-[#07080B] to-transparent pointer-events-none" />
+                {/* Bottom Edge Feather Fade */}
+                <div className="absolute inset-x-0 bottom-0 h-12 sm:h-28 bg-gradient-to-t from-[#07080B] to-transparent pointer-events-none" />
 
                 {/* Top Edge Feather Fade */}
-                <div className="absolute inset-x-0 top-0 h-16 sm:h-20 bg-gradient-to-b from-[#07080B] to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 top-0 h-8 sm:h-16 bg-gradient-to-b from-[#07080B] to-transparent pointer-events-none" />
 
                 {/* Right Edge Feather Fade */}
-                <div className="absolute inset-y-0 right-0 w-16 sm:w-24 bg-gradient-to-l from-[#07080B] to-transparent pointer-events-none" />
+                <div className="absolute inset-y-0 right-0 w-6 sm:w-20 bg-gradient-to-l from-[#07080B] to-transparent pointer-events-none" />
               </div>
 
               {/* Floating Minimalist VIP Pill Badge */}
@@ -350,13 +448,150 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* 3.5. SEMESTER 4 GRAND PRIZE SHOWCASE — FULL MANDHI SPONSORED BY ABHINAV (VARKKALA / PARI) */}
+      <section id="grand-prize-mandhi" className="py-8 sm:py-16 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto scroll-mt-20">
+        <div className="relative rounded-3xl bg-gradient-to-br from-black/60 via-[#180a0f]/65 to-black/60 backdrop-blur-2xl border-2 border-amber-400/35 p-4 sm:p-8 lg:p-12 shadow-[0_0_60px_rgba(245,158,11,0.15)] overflow-hidden">
+          {/* Amber & Crimson ambient lighting */}
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/10 blur-[140px] rounded-full pointer-events-none" />
+          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-red-600/10 blur-[140px] rounded-full pointer-events-none" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+            {/* Left 6 cols: Poster Artwork featuring Abhinav holding the Mandhi feast */}
+            <div className="lg:col-span-6 flex flex-col items-center">
+              <div className="relative w-full max-w-sm sm:max-w-lg rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-amber-400/50 shadow-2xl group">
+                <img
+                  src="/assets/aistudio/Sponsored_Mandhi_Feast_Poster_e8b7457a.png"
+                  alt="Semester 4 Grand Prize Full Mandhi Sponsored by Abhinav"
+                  className="w-full h-auto object-cover transform group-hover:scale-[1.02] transition-transform duration-700"
+                />
+                {/* Subtle gradient overlay at bottom for VIP tag */}
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent p-4 sm:p-5 flex items-center justify-between">
+                  <div>
+                    <div className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                      <Crown className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                      <span>OFFICIAL BATCH SPONSOR</span>
+                    </div>
+                    <p className="text-sm sm:text-base font-extrabold text-white">
+                      Abhinav <span className="text-amber-400">(Varkkala / Pari)</span>
+                    </p>
+                  </div>
+                  <span className="text-xs font-mono font-bold bg-amber-400 text-black px-2.5 sm:px-3 py-1 rounded-lg shadow-gold-glow">
+                    TOP 4 ONLY
+                  </span>
+                </div>
+
+                {/* Floating Crown Badge at top */}
+                <div className="absolute top-3 left-3 bg-[#0B0C10]/90 backdrop-blur-md border border-amber-500/40 px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-xl">
+                  <span className="text-base">🍗</span>
+                  <span className="text-[11px] font-mono font-bold text-amber-300 uppercase tracking-wide">
+                    Full Mandhi Grand Prize
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right 6 cols: Prize Details & Qualification Criteria */}
+            <div className="lg:col-span-6 space-y-4 sm:space-y-5">
+              <div>
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider">
+                  <Trophy className="w-4 h-4 text-amber-400" />
+                  <span>End of Semester 4 Grand Prize</span>
+                </span>
+                <h2 className="font-display font-black text-2xl sm:text-4xl text-white mt-3 leading-tight">
+                  Feast Like Kings:{' '}
+                  <span className="gold-shimmer-text">Full Mandhi for Top 4</span>
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+                  The ultimate reward in MCA batch history! At the conclusion of Semester 4, the top 4 players leading the classroom Hall of Fame will sit down for a glorious, authentic full chicken Mandhi platter with steaming fragrant rice, fiery dips, mayonnaise, and crisp onions.
+                </p>
+              </div>
+
+              {/* Sponsor Card */}
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-black/45 border border-amber-500/25 backdrop-blur-xl flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-700 flex items-center justify-center text-xl shrink-0 text-black shadow-gold-glow">
+                  👑
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="text-xs sm:text-sm font-bold text-white">Proudly Sponsored by Abhinav</h4>
+                    <span className="text-[10px] font-mono text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/25 font-bold">
+                      Varkkala / Pari
+                    </span>
+                  </div>
+                  <p className="text-[11px] sm:text-xs text-slate-400 mt-1 leading-snug">
+                    "Play smart, back your convictions, and climb the rankings. When Sem 4 wraps up, the full Mandhi feast is on me for the top 4 masters of the pot."
+                  </p>
+                </div>
+              </div>
+
+              {/* 4 Feature Badges */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+                <div className="p-3 sm:p-3.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-amber-400/30 transition-all">
+                  <div className="flex items-center gap-2 text-xs font-bold text-white mb-0.5 sm:mb-1">
+                    <span className="text-base">🏆</span>
+                    <span>Top 4 Standings Cutoff</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-snug">
+                    The 4 highest points earners when Sem 4 finishes claim a seat at the feast.
+                  </p>
+                </div>
+
+                <div className="p-3 sm:p-3.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-amber-400/30 transition-all">
+                  <div className="flex items-center gap-2 text-xs font-bold text-white mb-0.5 sm:mb-1">
+                    <span className="text-base">🍗</span>
+                    <span>Full Platter Feast</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-snug">
+                    Authentic whole spiced chicken, fragrant Mandhi rice, garlic sauce, and dips.
+                  </p>
+                </div>
+
+                <div className="p-3 sm:p-3.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-amber-400/30 transition-all">
+                  <div className="flex items-center gap-2 text-xs font-bold text-white mb-0.5 sm:mb-1">
+                    <span className="text-base">👥</span>
+                    <span>Classroom Royalty</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-snug">
+                    Celebrate the semester finale together with classmates and pure bragging rights.
+                  </p>
+                </div>
+
+                <div className="p-3 sm:p-3.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-amber-400/30 transition-all">
+                  <div className="flex items-center gap-2 text-xs font-bold text-white mb-0.5 sm:mb-1">
+                    <span className="text-base">⚡</span>
+                    <span>100% Skill & Virtual</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-snug">
+                    Zero real money risk. Your prediction prowess and smart risk management win it.
+                  </p>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <Link
+                  to={user ? "/leaderboard" : "/register"}
+                  className="vip-gold-btn px-6 py-3 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2"
+                >
+                  <span>{user ? "Check Live Standings" : "Sign Up & Chase the Mandhi"}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <span className="text-[11px] sm:text-xs text-slate-400 text-center sm:text-left font-mono">
+                  53 Verified MCA Students Eligible
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 4. DOCKED 5 CATEGORY CARDS (Minimalist Slate & Gold Accent) */}
       <section id="categories" className="py-6 px-4 lg:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
           {HERO_CATEGORIES.map((cat, idx) => (
             <div
               key={idx}
-              className="p-4 sm:p-5 rounded-2xl bg-black/35 backdrop-blur-xl border border-white/10 hover:border-red-500/40 hover:bg-[#140b10]/50 transition-all duration-200 flex flex-col justify-between group shadow-xl hover:shadow-card-glow hover:-translate-y-0.5"
+              className={`p-4 sm:p-5 rounded-2xl bg-black/35 backdrop-blur-xl border border-white/10 hover:border-red-500/40 hover:bg-[#140b10]/50 transition-all duration-200 flex flex-col justify-between group shadow-xl hover:shadow-card-glow hover:-translate-y-0.5 ${idx === 4 ? 'col-span-2 md:col-span-1 lg:col-span-1' : ''}`}
             >
               <div>
                 <div className="flex items-center justify-between mb-2">

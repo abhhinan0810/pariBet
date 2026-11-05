@@ -360,6 +360,7 @@ export const HomePage: React.FC = () => {
                   isAdmin={user?.role === 'admin'}
                   onParticipate={(p) => setSelectedPrediction(p)}
                   onFinalize={(p) => setFinalizingPrediction(p)}
+                  onBetPlaced={fetchLivePredictions}
                 />
               ))}
             </div>

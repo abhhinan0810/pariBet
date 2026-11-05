@@ -370,6 +370,29 @@ export const LeaderboardPage: React.FC = () => {
                     <p className="text-xs sm:text-sm font-bold text-white leading-tight truncate">
                       {item.nickname}
                     </p>
+                    {/* Dynamic Personality Archetype Badge */}
+                    {item.winRate >= 80 ? (
+                      <span className="text-[9px] bg-amber-400/15 text-amber-300 border border-amber-400/30 px-1.5 py-0.2 rounded font-mono font-bold flex items-center gap-0.5">
+                        👑 Oracle
+                      </span>
+                    ) : item.championPoints >= 4000 ? (
+                      <span className="text-[9px] bg-yellow-400/15 text-yellow-300 border border-yellow-400/30 px-1.5 py-0.2 rounded font-mono font-bold flex items-center gap-0.5">
+                        🎲 High Roller
+                      </span>
+                    ) : item.rankChange >= 3 ? (
+                      <span className="text-[9px] bg-sky-400/15 text-sky-300 border border-sky-400/30 px-1.5 py-0.2 rounded font-mono font-bold flex items-center gap-0.5">
+                        📉 Comeback Kid
+                      </span>
+                    ) : item.streak >= 4 ? (
+                      <span className="text-[9px] bg-rose-400/15 text-rose-300 border border-rose-400/30 px-1.5 py-0.2 rounded font-mono font-bold flex items-center gap-0.5">
+                        🔥 Hot Hand
+                      </span>
+                    ) : (
+                      <span className="text-[9px] bg-emerald-400/15 text-emerald-300 border border-emerald-400/30 px-1.5 py-0.2 rounded font-mono font-bold flex items-center gap-0.5">
+                        🛡️ Safe Punter
+                      </span>
+                    )}
+
                     {isTop4 && (
                       <span className="text-[9px] bg-amber-400/20 text-amber-300 border border-amber-400/30 px-1.5 py-0.2 rounded font-mono font-bold flex items-center gap-0.5">
                         <span>🍗</span>

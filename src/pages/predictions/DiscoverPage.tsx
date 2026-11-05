@@ -139,6 +139,7 @@ export const DiscoverPage: React.FC = () => {
               isAdmin={user?.role === 'admin'}
               onParticipate={(p) => setSelectedPrediction(p)}
               onFinalize={(p) => setFinalizingPrediction(p)}
+              onBetPlaced={fetchPredictions}
             />
           ))}
         </div>

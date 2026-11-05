@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   Trophy,
@@ -7,7 +8,11 @@ import {
   Percent,
   Landmark,
   Zap,
-  Calendar
+  Crown,
+  X,
+  Sparkles,
+  CheckCircle2,
+  Info
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Card } from '@/components/common/Card';
@@ -29,6 +34,7 @@ export const LeaderboardPage: React.FC = () => {
   const { user } = useAuth();
   const [category, setCategory] = useState<LeaderboardCategory>('CHAMPION');
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('ALL_TIME');
+  const [prizeModalOpen, setPrizeModalOpen] = useState(false);
 
   // Authoritative ranking dataset based on 53 MCA students
   const leaderboardEntries = [
@@ -157,16 +163,18 @@ export const LeaderboardPage: React.FC = () => {
     }
   };
 
+  const cutoffPoints = sortedEntries[3] ? sortedEntries[3].championPoints : 0;
+
   return (
     <div className="space-y-6 pb-20 lg:pb-10 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           <h1 className="font-display font-black text-2xl lg:text-3xl text-white flex items-center gap-2">
             <Trophy className="w-6 h-6 text-gold-highlight" />
             <span>Classroom Hall of Fame</span>
           </h1>
-          <p className="text-sm text-casino-muted">
+          <p className="text-xs sm:text-sm text-casino-muted mt-0.5">
             CEC MCA Class of 2025 • Lifetime & Seasonal Standings
           </p>
         </div>
@@ -177,7 +185,7 @@ export const LeaderboardPage: React.FC = () => {
             <button
               key={tf}
               onClick={() => setTimeFilter(tf)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-mono font-semibold transition-all cursor-pointer ${
                 timeFilter === tf
                   ? 'bg-gold-gradient text-black font-bold shadow-sm'
                   : 'text-casino-muted hover:text-white'
@@ -189,43 +197,65 @@ export const LeaderboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* High-Roller Hall of Fame Banner (casino-royale-vip.jpg) */}
-      <div className="relative overflow-hidden rounded-3xl bg-[#0E0F15] border border-white/10 p-5 sm:p-6 shadow-xl">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+      {/* SEMESTER 4 GRAND PRIZE SHOWCASE BANNER (Featuring Mandhi Poster) */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-black/70 via-[#180a0f]/60 to-black/70 border-2 border-amber-400/35 p-4 sm:p-6 lg:p-7 shadow-[0_0_40px_rgba(245,158,11,0.15)]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center">
+          {/* Poster Thumbnail */}
           <div className="md:col-span-4 relative flex items-center justify-center">
-            <div className="relative w-full max-w-xs rounded-2xl overflow-hidden border border-white/10 group">
+            <div className="relative w-full max-w-[260px] rounded-2xl overflow-hidden border-2 border-amber-400/40 shadow-xl group cursor-pointer" onClick={() => setPrizeModalOpen(true)}>
               <img
-                src="/images/casino-royale-vip.jpg"
-                alt="Casino Royale High Roller"
-                className="w-full h-44 sm:h-48 object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
+                src="/assets/aistudio/Sponsored_Mandhi_Feast_Poster_e8b7457a.png"
+                alt="Semester 4 Grand Prize Mandhi Sponsored by Abhinav"
+                className="w-full aspect-[4/3] sm:aspect-square object-cover object-center transform group-hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0E0F15] via-transparent to-transparent opacity-80" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-85" />
+              <div className="absolute top-2 left-2 bg-amber-400 text-black text-[10px] font-mono font-black px-2 py-0.5 rounded shadow">
+                GRAND PRIZE
+              </div>
               <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] font-mono">
-                <span className="text-amber-400 font-bold bg-[#07080B]/90 px-2 py-0.5 rounded border border-amber-400/20">
-                  WHALE LOUNGE
+                <span className="text-amber-300 font-bold bg-black/80 px-2 py-0.5 rounded border border-amber-400/30">
+                  🍗 FULL MANDHI
                 </span>
-                <span className="text-emerald-400 font-bold bg-[#07080B]/90 px-2 py-0.5 rounded border border-emerald-400/20">
-                  TOP TIER
+                <span className="text-emerald-400 font-bold bg-black/80 px-2 py-0.5 rounded border border-emerald-400/30">
+                  TOP 4 ONLY
                 </span>
               </div>
             </div>
           </div>
 
+          {/* Banner Description */}
           <div className="md:col-span-8 space-y-2.5">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                The High-Roller Table
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/25">
+                <Crown className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                <span>End of Sem 4 Grand Prize</span>
               </span>
               <span className="text-white/20">•</span>
-              <span className="text-xs text-slate-400 font-medium">Rankings Updated Live</span>
+              <span className="text-xs text-slate-300 font-medium">
+                Sponsored by <strong className="text-amber-400">Abhinav (Varkkala / Pari)</strong>
+              </span>
             </div>
+
             <h2 className="font-display font-black text-xl lg:text-2xl text-white">
-              Where Class Champions Claim Immortal Glory
+              Top 4 Players Win a <span className="gold-shimmer-text">Full Mandhi Feast</span>
             </h2>
-            <p className="text-xs sm:text-sm text-casino-muted leading-relaxed max-w-xl">
-              From consistent 80%+ win rates to audacious underdog sweeps, the leaderboard tracks the true kings and queens of the MCA betting circuit.
+
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
+              At the final wrap-up of Semester 4, the top 4 contenders holding the highest points will be treated to a full authentic chicken Mandhi platter with fragrant rice, dips, and sides!
             </p>
+
+            <div className="flex items-center gap-3 pt-1 flex-wrap">
+              <button
+                onClick={() => setPrizeModalOpen(true)}
+                className="vip-gold-btn px-4 py-2 text-xs font-black flex items-center gap-1.5 cursor-pointer shadow-gold-glow"
+              >
+                <span>🍗 View Prize Poster & Rules</span>
+              </button>
+              <div className="text-[11px] font-mono text-emerald-400 flex items-center gap-1 bg-emerald-500/10 px-2.5 py-1.5 rounded-xl border border-emerald-500/20">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Cutoff: Rank #4 ({cutoffPoints.toLocaleString()} PTS)</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -246,7 +276,7 @@ export const LeaderboardPage: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setCategory(tab.id as LeaderboardCategory)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-all cursor-pointer ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-all cursor-pointer ${
                 category === tab.id
                   ? 'bg-gold/20 text-gold-highlight border border-gold/40 shadow-gold-glow-sm'
                   : 'bg-background-card border border-white/5 text-casino-muted hover:text-white hover:border-white/10'
@@ -259,86 +289,110 @@ export const LeaderboardPage: React.FC = () => {
         })}
       </div>
 
-      {/* Podium Top 3 Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {sortedEntries.slice(0, 3).map((item, idx) => {
-          const badges = ['👑 1st Place', '🥈 2nd Place', '🥉 3rd Place'];
-          return (
-            <Card
-              key={item.id}
-              variant={idx === 0 ? 'gold-border' : 'default'}
-              className="p-5 text-center relative overflow-hidden"
-            >
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-gold-highlight block mb-2">
-                {badges[idx]}
-              </span>
-              <img
-                src={item.avatar}
-                alt={item.nickname}
-                className="w-16 h-16 rounded-full border-2 border-gold mx-auto mb-2 object-cover bg-background-elevated shadow-gold-glow-sm"
-              />
-              <h3 className="font-display font-black text-lg text-white">{item.nickname}</h3>
-              <p className="text-xs text-casino-muted">{item.name}</p>
-              <div className="mt-3 p-2 rounded-xl bg-background-elevated border border-white/5 font-mono font-bold text-sm text-gold-highlight">
-                {getMetricDisplay(item)}
-              </div>
-            </Card>
-          );
-        })}
+      {/* TOP 4 MANDHI ZONE PODIUM CARDS */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1">
+              <span>🍗</span>
+              <span>Top 4 Mandhi Winning Zone</span>
+            </span>
+            <span className="text-[10px] text-slate-400 font-mono hidden sm:inline">Currently in qualifying seats</span>
+          </div>
+          <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/25">
+            Sem 4 Cutoff
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+          {sortedEntries.slice(0, 4).map((item, idx) => {
+            const badges = ['👑 1st Mandhi Seat', '🥈 2nd Mandhi Seat', '🥉 3rd Mandhi Seat', '🍗 4th Mandhi Seat'];
+            return (
+              <Card
+                key={item.id}
+                variant={idx === 0 ? 'gold-border' : 'default'}
+                className="p-3 sm:p-4 text-center relative overflow-hidden border-amber-500/30 hover:border-amber-400 transition-all shadow-md"
+              >
+                <div className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20 mb-2">
+                  <span>{badges[idx]}</span>
+                </div>
+                <img
+                  src={item.avatar}
+                  alt={item.nickname}
+                  className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-amber-400 mx-auto mb-2 object-cover bg-background-elevated shadow-gold-glow-sm"
+                />
+                <h3 className="font-display font-black text-sm sm:text-base text-white truncate">{item.nickname}</h3>
+                <p className="text-[10px] sm:text-xs text-casino-muted truncate">{item.name}</p>
+                <div className="mt-2.5 p-1.5 sm:p-2 rounded-xl bg-background-elevated border border-white/5 font-mono font-bold text-xs sm:text-sm text-gold-highlight">
+                  {getMetricDisplay(item)}
+                </div>
+              </Card>
+            );
+          })}
+        </div>
       </div>
 
       {/* Full Leaderboard Table */}
       <Card variant="default" className="divide-y divide-white/5">
-        <div className="p-4 bg-background-elevated flex items-center justify-between text-xs font-mono uppercase text-casino-muted">
+        <div className="p-3 sm:p-4 bg-background-elevated flex items-center justify-between text-[11px] sm:text-xs font-mono uppercase text-casino-muted">
           <span>Rank & Classmate</span>
           <span>Category Performance</span>
         </div>
 
         {sortedEntries.map((item, index) => {
           const rank = index + 1;
+          const isTop4 = rank <= 4;
           const isCurrentUser =
             item.admission.toLowerCase() === user?.admissionNumber.toLowerCase();
 
           return (
             <div
               key={item.id}
-              className={`p-4 flex items-center justify-between transition-colors ${
+              className={`p-3 sm:p-4 flex items-center justify-between transition-colors ${
                 isCurrentUser
                   ? 'bg-gold/10 border-l-4 border-gold'
+                  : isTop4
+                  ? 'hover:bg-amber-500/[0.04]'
                   : 'hover:bg-white/[0.02]'
               }`}
             >
-              <div className="flex items-center gap-3.5">
-                <span className="font-mono font-black text-sm text-gold-highlight w-6">
+              <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 pr-2">
+                <span className={`font-mono font-black text-xs sm:text-sm w-5 sm:w-6 shrink-0 ${isTop4 ? 'text-amber-400' : 'text-slate-400'}`}>
                   #{rank}
                 </span>
                 <img
                   src={item.avatar}
                   alt={item.nickname}
-                  className="w-10 h-10 rounded-full border border-gold/40 object-cover bg-background-elevated shrink-0"
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full border object-cover bg-background-elevated shrink-0 ${isTop4 ? 'border-amber-400/60 shadow-sm' : 'border-white/10'}`}
                 />
-                <div>
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-bold text-white leading-tight">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <p className="text-xs sm:text-sm font-bold text-white leading-tight truncate">
                       {item.nickname}
                     </p>
+                    {isTop4 && (
+                      <span className="text-[9px] bg-amber-400/20 text-amber-300 border border-amber-400/30 px-1.5 py-0.2 rounded font-mono font-bold flex items-center gap-0.5">
+                        <span>🍗</span>
+                        <span className="hidden xs:inline">Mandhi Seat</span>
+                      </span>
+                    )}
                     {isCurrentUser && (
-                      <span className="text-[9px] bg-gold/20 text-gold-highlight px-1.5 py-0.5 rounded font-mono font-bold">
+                      <span className="text-[9px] bg-gold/20 text-gold-highlight px-1.5 py-0.2 rounded font-mono font-bold">
                         YOU
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-casino-muted leading-tight font-sans mt-0.5">
+                  <p className="text-[10px] sm:text-xs text-casino-muted leading-tight font-sans mt-0.5 truncate">
                     {item.name} • <span className="font-mono uppercase">{item.admission}</span>
                   </p>
                 </div>
               </div>
 
-              <div className="text-right">
-                <p className="font-mono font-bold text-sm text-gold-highlight">
+              <div className="text-right shrink-0">
+                <p className="font-mono font-bold text-xs sm:text-sm text-gold-highlight">
                   {getMetricDisplay(item)}
                 </p>
-                <p className="text-[10px] text-casino-muted font-mono mt-0.5">
+                <p className="text-[9px] sm:text-[10px] text-casino-muted font-mono mt-0.5">
                   {item.winRate}% win rate
                 </p>
               </div>
@@ -346,6 +400,68 @@ export const LeaderboardPage: React.FC = () => {
           );
         })}
       </Card>
+
+      {/* GRAND PRIZE DETAIL MODAL */}
+      {prizeModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md">
+          <div className="w-full max-w-lg bg-[#0C0D14] border-2 border-amber-400/40 rounded-3xl p-5 sm:p-6 relative max-h-[90vh] overflow-y-auto shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🍗</span>
+                <div>
+                  <h3 className="font-display font-black text-lg text-white">Semester 4 Grand Prize</h3>
+                  <p className="text-[10px] font-mono text-amber-400 uppercase">Full Mandhi Feast • Top 4 Qualifier</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setPrizeModalOpen(false)}
+                className="p-1.5 rounded-lg bg-white/5 text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Poster Image */}
+            <div className="rounded-2xl overflow-hidden border border-amber-400/30 shadow-xl">
+              <img
+                src="/assets/aistudio/Sponsored_Mandhi_Feast_Poster_e8b7457a.png"
+                alt="Full Mandhi Grand Prize"
+                className="w-full h-auto object-cover"
+              />
+            </div>
+
+            {/* Sponsor Box */}
+            <div className="p-3.5 rounded-2xl bg-amber-400/10 border border-amber-400/25 flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-400 text-black flex items-center justify-center font-bold text-xl shrink-0 shadow">
+                👑
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-white">Sponsored by Abhinav (Varkkala / Pari)</h4>
+                <p className="text-[11px] text-slate-300 mt-0.5 leading-snug">
+                  "Honoring the top 4 tactical minds of MCA 2025 with the king of feasts! Climb the standings and join me at the Mandhi table at the end of Sem 4."
+                </p>
+              </div>
+            </div>
+
+            {/* Rules */}
+            <div className="space-y-2 text-xs text-slate-300">
+              <div className="font-mono font-bold text-amber-400 uppercase text-[11px]">Qualification Rules</div>
+              <ul className="space-y-1.5 text-[11px] text-slate-300 list-disc list-inside">
+                <li>Top 4 players with the highest points on the Overall Champion leaderboard at the end of Sem 4 qualify.</li>
+                <li>All 53 verified classmates from the <code className="text-amber-400">@ceconline.edu</code> roster are eligible.</li>
+                <li>The grand prize is a complete full chicken Mandhi feast with aromatic rice, dips, and sides.</li>
+              </ul>
+            </div>
+
+            <button
+              onClick={() => setPrizeModalOpen(false)}
+              className="w-full vip-gold-btn py-2.5 text-xs font-black uppercase tracking-wider"
+            >
+              Back to Hall of Fame
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -10,7 +10,8 @@ import {
   Clock,
   Landmark,
   Compass,
-  Coins
+  Coins,
+  Crown
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { CoinIcon } from '@/components/common/CoinIcon';
@@ -152,6 +153,64 @@ export const HomePage: React.FC = () => {
           </div>
           <div className="text-[11px] text-casino-muted mt-1">Coins won</div>
         </Card>
+      </div>
+
+      {/* SEMESTER 4 GRAND PRIZE BANNER — FULL MANDHI SPONSORED BY ABHINAV (VARKKALA/PARI) */}
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-black/70 via-[#190a10]/65 to-black/70 backdrop-blur-2xl border-2 border-amber-400/35 p-4 sm:p-5 lg:p-6 shadow-[0_0_35px_rgba(245,158,11,0.15)]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-center">
+          <div className="md:col-span-4 lg:col-span-3 flex items-center justify-center">
+            <Link to="/leaderboard" className="relative w-full max-w-[210px] rounded-2xl overflow-hidden border-2 border-amber-400/40 shadow-xl group block">
+              <img
+                src="/assets/aistudio/Sponsored_Mandhi_Feast_Poster_e8b7457a.png"
+                alt="Sem 4 Grand Prize Mandhi"
+                className="w-full aspect-[4/3] sm:aspect-square object-cover transform group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
+              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] font-mono">
+                <span className="text-amber-400 font-bold bg-black/85 px-2 py-0.5 rounded border border-amber-400/30">
+                  🍗 FULL MANDHI
+                </span>
+                <span className="text-emerald-400 font-bold bg-black/85 px-2 py-0.5 rounded border border-emerald-400/30">
+                  TOP 4
+                </span>
+              </div>
+            </Link>
+          </div>
+
+          <div className="md:col-span-8 lg:col-span-9 space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] sm:text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/25">
+                <Crown className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                <span>Semester 4 Grand Prize</span>
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="text-xs text-slate-300">
+                Sponsored by <strong className="text-amber-400">Abhinav (Varkkala / Pari)</strong>
+              </span>
+            </div>
+
+            <h2 className="font-display font-black text-lg sm:text-xl text-white">
+              Race for the Grand Feast: <span className="gold-shimmer-text">Full Mandhi for Top 4</span>
+            </h2>
+
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
+              At the final wrap-up of Semester 4, the top 4 contenders holding the highest points will be treated to a full authentic chicken Mandhi platter with fragrant rice, dips, and sides!
+            </p>
+
+            <div className="flex items-center gap-3 pt-1 flex-wrap">
+              <Link
+                to="/leaderboard"
+                className="vip-gold-btn px-4 py-2 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap cursor-pointer shadow-gold-glow"
+              >
+                <span>🍗 Check Mandhi Cutoff Standings</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-xl border border-emerald-500/20">
+                Top 4 MCA Students Qualify
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* FEATURED LIVE ARENA SHOWDOWN (dice-roll-showdown.jpg) */}
@@ -310,30 +369,34 @@ export const HomePage: React.FC = () => {
         {/* Right Col: Top Champions & Bank Preview */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-display font-black text-lg text-white flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-amber-400" />
-              <span>Classroom Top 3</span>
+            <h2 className="font-display font-black text-base sm:text-lg text-white flex items-center gap-1.5">
+              <span className="text-base">🍗</span>
+              <span>Top 4 Mandhi Qualifiers</span>
             </h2>
             <Link
               to="/leaderboard"
-              className="text-xs font-bold text-amber-400 hover:underline"
+              className="text-xs font-bold text-amber-400 hover:underline flex items-center gap-0.5"
             >
-              Full Ranks
+              <span>Full Ranks</span>
+              <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
-          <div className="casino-card p-4 space-y-3 border-white/10">
+          <div className="casino-card p-4 space-y-2.5 border-white/10">
             {/* Rank 1 */}
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-amber-500/30 hover:border-red-500/30 transition-all">
-              <div className="flex items-center gap-3">
-                <span className="font-mono font-black text-sm text-amber-400 w-4">
+            <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-amber-500/35 hover:border-red-500/30 transition-all">
+              <div className="flex items-center gap-2.5">
+                <span className="font-mono font-black text-xs sm:text-sm text-amber-400 w-4">
                   #1
                 </span>
                 <div className="w-8 h-8 rounded-full bg-amber-400/10 border border-amber-400 flex items-center justify-center font-bold text-xs text-amber-400">
                   👑
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-white leading-tight">Shadow</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs font-bold text-white leading-tight">Shadow</p>
+                    <span className="text-[9px] text-amber-400">🍗</span>
+                  </div>
                   <p className="text-[10px] text-casino-muted leading-tight">
                     Abhinav Krishna S
                   </p>
@@ -341,47 +404,76 @@ export const HomePage: React.FC = () => {
               </div>
               <div className="text-right">
                 <p className="font-mono font-bold text-xs text-amber-400">5,450 PTS</p>
-                <p className="text-[9px] text-emerald-400">88% Win</p>
+                <p className="text-[9px] text-emerald-400 font-mono">88% Win</p>
               </div>
             </div>
 
             {/* Rank 2 */}
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-white/10 hover:border-red-500/30 transition-all">
-              <div className="flex items-center gap-3">
-                <span className="font-mono font-black text-sm text-casino-muted w-4">
+            <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-amber-500/20 hover:border-red-500/30 transition-all">
+              <div className="flex items-center gap-2.5">
+                <span className="font-mono font-black text-xs sm:text-sm text-slate-300 w-4">
                   #2
                 </span>
                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs">
                   🥈
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-white leading-tight">Viper</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs font-bold text-white leading-tight">Viper</p>
+                    <span className="text-[9px] text-amber-400">🍗</span>
+                  </div>
                   <p className="text-[10px] text-casino-muted leading-tight">Adarsh S</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="font-mono font-bold text-xs text-white">4,120 PTS</p>
-                <p className="text-[9px] text-emerald-400">75% Win</p>
+                <p className="text-[9px] text-emerald-400 font-mono">75% Win</p>
               </div>
             </div>
 
             {/* Rank 3 */}
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-white/10 hover:border-red-500/30 transition-all">
-              <div className="flex items-center gap-3">
-                <span className="font-mono font-black text-sm text-casino-muted w-4">
+            <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-amber-500/20 hover:border-red-500/30 transition-all">
+              <div className="flex items-center gap-2.5">
+                <span className="font-mono font-black text-xs sm:text-sm text-slate-300 w-4">
                   #3
                 </span>
                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs">
                   🥉
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-white leading-tight">Oracle</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs font-bold text-white leading-tight">Oracle</p>
+                    <span className="text-[9px] text-amber-400">🍗</span>
+                  </div>
                   <p className="text-[10px] text-casino-muted leading-tight">Afna S Thaha</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="font-mono font-bold text-xs text-white">3,890 PTS</p>
-                <p className="text-[9px] text-emerald-400">71% Win</p>
+                <p className="text-[9px] text-emerald-400 font-mono">71% Win</p>
+              </div>
+            </div>
+
+            {/* Rank 4 — Cutoff seat */}
+            <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-amber-400/5 backdrop-blur-sm border border-amber-400/30 hover:border-amber-400/50 transition-all">
+              <div className="flex items-center gap-2.5">
+                <span className="font-mono font-black text-xs sm:text-sm text-amber-400 w-4">
+                  #4
+                </span>
+                <div className="w-8 h-8 rounded-full bg-amber-400/20 text-amber-300 flex items-center justify-center text-xs font-bold">
+                  🍗
+                </div>
+                <div>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs font-bold text-white leading-tight">Phoenix</p>
+                    <span className="text-[9px] font-mono text-amber-400 font-bold bg-amber-400/20 px-1 rounded">CUTOFF</span>
+                  </div>
+                  <p className="text-[10px] text-casino-muted leading-tight">Abhinand A Nair</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="font-mono font-bold text-xs text-amber-400">2,900 PTS</p>
+                <p className="text-[9px] text-emerald-400 font-mono">64% Win</p>
               </div>
             </div>
 

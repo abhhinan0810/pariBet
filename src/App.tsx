@@ -34,11 +34,11 @@ import { NotFoundPage } from '@/pages/NotFoundPage';
 // Main Layout Wrapper
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-[#07080B] text-[#F3F4F6] flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-transparent text-[#F3F4F6] flex flex-col lg:flex-row">
       <Navbar />
       <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
         <Header />
-        <main className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-3 sm:p-4 lg:p-8 max-w-7xl mx-auto w-full pb-24 lg:pb-8">
           {children}
         </main>
       </div>

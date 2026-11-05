@@ -55,7 +55,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
   };
 
   return (
-    <Card variant="interactive" className="p-5 relative flex flex-col justify-between border-white/5 hover:border-amber-500/30">
+    <Card variant="interactive" className="p-5 relative flex flex-col justify-between border-white/10 hover:border-red-500/40 hover:shadow-card-glow">
       <div>
         {/* Top Badges */}
         <div className="flex items-center justify-between text-xs mb-3">
@@ -97,7 +97,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
 
         {/* Dynamic Pool Distribution Preview for YES/NO */}
         {prediction.type === 'YES_NO' && prediction.options.length === 2 && (
-          <div className="mb-4 bg-background-elevated p-3 rounded-2xl border border-white/5">
+          <div className="mb-4 bg-black/40 backdrop-blur-md p-3 rounded-2xl border border-white/10">
             <div className="flex justify-between text-xs mb-1.5 font-mono">
               <span className="text-emerald-400 font-bold flex items-center gap-1">
                 <span>YES</span>
@@ -160,10 +160,10 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
               return (
                 <div
                   key={opt.id}
-                  className={`p-2.5 rounded-xl border text-xs flex items-center justify-between ${
+                  className={`p-2.5 rounded-xl border text-xs flex items-center justify-between transition-colors ${
                     isWinner
                       ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400 font-bold'
-                      : 'bg-background-elevated border-white/5 text-white'
+                      : 'bg-white/[0.04] backdrop-blur-sm border-white/10 text-white hover:bg-white/[0.08]'
                   }`}
                 >
                   <div className="flex items-center gap-2 truncate pr-2">
@@ -182,7 +182,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
 
         {/* Closest Answer Preview */}
         {prediction.type === 'CLOSEST_ANSWER' && (
-          <div className="p-3 rounded-2xl bg-background-elevated border border-white/5 mb-4 text-xs font-mono">
+          <div className="p-3 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 mb-4 text-xs font-mono">
             <div className="flex justify-between text-casino-muted mb-1">
               <span>Unit: {prediction.closestConfig?.unit || 'Number'}</span>
               <span>Range: {prediction.closestConfig?.minVal ?? 0} to {prediction.closestConfig?.maxVal ?? 'Any'}</span>
@@ -221,14 +221,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
             </button>
           )}
 
-          {isOpen ? (
-            <button
-              onClick={() => onParticipate(prediction)}
-              className="vip-gold-btn px-4 py-1.5 text-xs font-bold cursor-pointer"
-            >
-              Stake Coins
-            </button>
-          ) : (
+          {isAdmin ? (<span className="text-[10px] sm:text-xs text-red-400 bg-red-500/10 border border-red-500/25 px-2.5 py-1.5 rounded-xl font-mono font-bold whitespace-nowrap shrink-0">Admin View</span>) : isOpen ? (<button onClick={() => onParticipate(prediction)} className="vip-gold-btn px-3 sm:px-4 py-1.5 text-xs font-bold cursor-pointer whitespace-nowrap shrink-0">Stake Coins</button>) : (
             <span className="text-xs text-casino-muted px-2.5 py-1 bg-white/5 rounded-lg font-mono">
               {isFinalized ? 'Completed' : 'Locked'}
             </span>

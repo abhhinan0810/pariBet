@@ -51,7 +51,7 @@ export const HomePage: React.FC = () => {
   return (
     <div className="space-y-6 pb-20 lg:pb-10">
       {/* SECTION B: Welcome Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-[#0E0F15] border border-white/10 p-6 lg:p-8 shadow-card-glow">
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-black/40 backdrop-blur-2xl border border-white/10 p-4 sm:p-6 lg:p-8 shadow-card-glow">
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
@@ -66,9 +66,7 @@ export const HomePage: React.FC = () => {
                 <span className="text-[11px] font-mono uppercase tracking-widest text-amber-400 font-bold">
                   pariBET VIP ARENA
                 </span>
-                <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 px-2 py-0.5 rounded-full font-bold">
-                  VERIFIED
-                </span>
+                <span className="text-[10px] bg-amber-400/10 text-amber-400 border border-amber-400/25 px-2 py-0.5 rounded-full font-mono font-bold uppercase">{user?.role === 'admin' ? 'ADMIN' : 'MEMBER'}</span>
               </div>
               <h1 className="font-display font-black text-2xl lg:text-3xl text-white">
                 Welcome, {user?.nickname}
@@ -86,7 +84,7 @@ export const HomePage: React.FC = () => {
           <div className="flex items-center gap-3">
             <Link
               to="/create"
-              className="vip-gold-btn px-5 py-3 text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+              className="vip-gold-btn px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
             >
               <PlusCircle className="w-4 h-4 text-black" />
               <span>New Prediction</span>
@@ -104,7 +102,7 @@ export const HomePage: React.FC = () => {
       {/* SECTION A: Wallet Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         {/* Available Tokens */}
-        <Card variant="gold-border" className="p-4 relative bg-[#12131A] border-amber-500/25">
+        <Card variant="gold-border" className="p-4 relative hover:border-red-500/40">
           <div className="flex items-center justify-between text-xs text-casino-muted mb-2">
             <span className="text-amber-400 font-bold text-[11px] uppercase tracking-wider">Available Balance</span>
             <CoinIcon size={20} />
@@ -118,7 +116,7 @@ export const HomePage: React.FC = () => {
         </Card>
 
         {/* Locked Tokens */}
-        <Card variant="default" className="p-4 bg-[#0E0F15] border-white/5">
+        <Card variant="default" className="p-4 hover:border-red-500/30">
           <div className="flex items-center justify-between text-xs text-casino-muted mb-2">
             <span className="font-semibold text-[11px] uppercase tracking-wider">Locked in Pools</span>
             <Clock className="w-4 h-4 text-amber-400" />
@@ -132,7 +130,7 @@ export const HomePage: React.FC = () => {
         </Card>
 
         {/* Outstanding Loans */}
-        <Card variant="default" className="p-4 bg-[#0E0F15] border-white/5">
+        <Card variant="default" className="p-4 hover:border-red-500/30">
           <div className="flex items-center justify-between text-xs text-casino-muted mb-2">
             <span className="font-semibold text-[11px] uppercase tracking-wider">Loan Status</span>
             <Landmark className="w-4 h-4 text-amber-400" />
@@ -144,7 +142,7 @@ export const HomePage: React.FC = () => {
         </Card>
 
         {/* Total Rewards Earned */}
-        <Card variant="default" className="p-4 bg-[#0E0F15] border-white/5">
+        <Card variant="default" className="p-4 hover:border-red-500/30">
           <div className="flex items-center justify-between text-xs text-casino-muted mb-2">
             <span className="font-semibold text-[11px] uppercase tracking-wider">Total Rewards</span>
             <TrendingUp className="w-4 h-4 text-emerald-400" />
@@ -157,7 +155,7 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* FEATURED LIVE ARENA SHOWDOWN (dice-roll-showdown.jpg) */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0C0D13] to-[#14151F] border border-amber-500/20 p-5 sm:p-6 shadow-xl">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-black/45 via-[#180a0f]/40 to-black/45 backdrop-blur-2xl border border-red-500/25 p-5 sm:p-6 shadow-xl">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
           <div className="md:col-span-5 lg:col-span-4 relative flex items-center justify-center">
             <div className="relative w-full max-w-[260px] aspect-square rounded-2xl overflow-hidden border border-white/10 group shadow-xl">
@@ -225,7 +223,7 @@ export const HomePage: React.FC = () => {
           <Link
             key={cat}
             to={`/discover?category=${cat}`}
-            className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#0E0F15] border border-white/5 text-casino-muted hover:text-white shrink-0 hover:border-amber-400/30 transition-all"
+            className="px-4 py-2 rounded-xl text-xs font-semibold bg-black/40 backdrop-blur-md border border-white/10 text-casino-muted hover:text-white shrink-0 hover:border-red-500/30 transition-all"
           >
             {cat}
           </Link>
@@ -233,31 +231,31 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* SECTION D: User Statistics Bar */}
-      <div className="p-4 lg:p-5 rounded-2xl bg-[#0E0F15] border border-white/5">
+      <div className="p-4 lg:p-5 rounded-2xl bg-black/35 backdrop-blur-xl border border-white/10 shadow-xl">
         <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-casino-muted mb-3 flex items-center gap-2">
           <Flame className="w-4 h-4 text-amber-400" />
           <span>Your Performance Record</span>
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-          <div className="p-3 rounded-xl bg-[#12131A] border border-white/5">
+          <div className="p-3 rounded-xl bg-white/[0.04] backdrop-blur-sm border border-white/10 hover:border-red-500/30 transition-all">
             <span className="text-[11px] text-casino-muted block">Participations</span>
             <span className="text-xl font-bold font-mono text-white">
               {user?.statistics.predictionsParticipated || 0}
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-[#12131A] border border-white/5">
+          <div className="p-3 rounded-xl bg-white/[0.04] backdrop-blur-sm border border-white/10 hover:border-red-500/30 transition-all">
             <span className="text-[11px] text-casino-muted block">Predictions Won</span>
             <span className="text-xl font-bold font-mono text-emerald-400">
               {user?.statistics.predictionsWon || 0}
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-[#12131A] border border-white/5">
+          <div className="p-3 rounded-xl bg-white/[0.04] backdrop-blur-sm border border-white/10 hover:border-red-500/30 transition-all">
             <span className="text-[11px] text-casino-muted block">Win Rate</span>
             <span className="text-xl font-bold font-mono text-amber-400">
               {winRate}%
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-[#12131A] border border-white/5">
+          <div className="p-3 rounded-xl bg-white/[0.04] backdrop-blur-sm border border-white/10 hover:border-red-500/30 transition-all">
             <span className="text-[11px] text-casino-muted block">Winning Streak</span>
             <span className="text-xl font-bold font-mono text-amber-400">
               {user?.statistics.currentStreak || 0} W
@@ -324,9 +322,9 @@ export const HomePage: React.FC = () => {
             </Link>
           </div>
 
-          <div className="casino-card p-4 space-y-3 border-white/5">
+          <div className="casino-card p-4 space-y-3 border-white/10">
             {/* Rank 1 */}
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#12131A] border border-amber-500/30">
+            <div className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-amber-500/30 hover:border-red-500/30 transition-all">
               <div className="flex items-center gap-3">
                 <span className="font-mono font-black text-sm text-amber-400 w-4">
                   #1
@@ -348,7 +346,7 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Rank 2 */}
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-background-elevated border border-white/5">
+            <div className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-white/10 hover:border-red-500/30 transition-all">
               <div className="flex items-center gap-3">
                 <span className="font-mono font-black text-sm text-casino-muted w-4">
                   #2
@@ -368,7 +366,7 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Rank 3 */}
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-background-elevated border border-white/5">
+            <div className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-white/10 hover:border-red-500/30 transition-all">
               <div className="flex items-center gap-3">
                 <span className="font-mono font-black text-sm text-casino-muted w-4">
                   #3

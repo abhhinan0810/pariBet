@@ -23,6 +23,7 @@ import {
 import { walletService } from './walletService';
 import { pariMutuelEngine } from '@/utils/pariMutuel';
 import { notificationService } from './notificationService';
+import { userService } from './userService';
 
 const PREDICTIONS_COLLECTION = 'predictions';
 const PARTICIPATIONS_COLLECTION = 'participations';
@@ -280,6 +281,11 @@ export const predictionService = {
     const prediction = await this.getPredictionById(params.predictionId);
     if (!prediction) throw new Error('Prediction not found.');
 
+    const userProfile = await userService.getUserProfile(params.userId);
+    if (userProfile?.role === 'admin') {
+      throw new Error('Administrators cannot stake in predictions to maintain game integrity.');
+    }
+
     if (prediction.status !== 'OPEN') {
       throw new Error('Participation is closed for this prediction.');
     }
@@ -536,6 +542,53 @@ export const predictionService = {
       allPreds[idx] = updated;
       localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(allPreds));
     }
+  },
+
+  /**
+   * Permanently delete a prediction (Admin control)
+   */
+  async deletePrediction(predictionId: string): Promise<void> {
+    if (isFirebaseConfigured) {
+      try {
+        const { deleteDoc, doc: firestoreDoc } = await import('firebase/firestore');
+        await deleteDoc(firestoreDoc(db, 'predictions', predictionId));
+      } catch (err) {
+        console.warn('Failed to delete prediction from firestore:', err);
+      }
+    }
+    const allPreds = await this.getPredictions();
+    const filtered = allPreds.filter((p) => p.id !== predictionId);
+    localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(filtered));
+  },
+
+  /**
+   * Update prediction details (Admin / Creator control)
+   */
+  async updatePrediction(
+    predictionId: string,
+    updates: Partial<Prediction>
+  ): Promise<Prediction | null> {
+    const prediction = await this.getPredictionById(predictionId);
+    if (!prediction) return null;
+
+    const updated = { ...prediction, ...updates };
+
+    if (isFirebaseConfigured) {
+      try {
+        await updateDoc(doc(db, 'predictions', predictionId), updates);
+      } catch (err) {
+        console.warn('Failed to update prediction in firestore:', err);
+      }
+    }
+
+    const allPreds = await this.getPredictions();
+    const idx = allPreds.findIndex((p) => p.id === predictionId);
+    if (idx !== -1) {
+      allPreds[idx] = updated;
+      localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(allPreds));
+    }
+
+    return updated;
   }
 };
 

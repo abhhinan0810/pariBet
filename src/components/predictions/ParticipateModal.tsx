@@ -21,6 +21,7 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
 }) => {
   const { user, refreshUserProfile } = useAuth();
   const { success, error: toastError } = useToast();
+  const isAdmin = user?.role === 'admin';
 
   const [selectedOptionId, setSelectedOptionId] = useState<string>('');
   const [closestAnswerValue, setClosestAnswerValue] = useState<number | ''>('');
@@ -54,6 +55,11 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    if (isAdmin) {
+      toastError('Admin Restricted', 'Administrators cannot stake in predictions to maintain game integrity.');
+      return;
+    }
 
     if (prediction.type !== 'CLOSEST_ANSWER' && !selectedOptionId) {
       toastError('Option Required', 'Please select an option to stake on.');
@@ -262,24 +268,33 @@ export const ParticipateModal: React.FC<ParticipateModalProps> = ({
             </div>
           </div>
 
-          {isInsufficient && (
+          {isInsufficient && !isAdmin && (
             <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
               <span>Insufficient coins. Lower your stake or request a loan from the Token Bank.</span>
             </div>
           )}
 
+          {isAdmin && (
+            <div className="p-3.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-xs flex items-center gap-2.5">
+              <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+              <span>Administrator Mode: To maintain game integrity and fairness, administrators cannot stake in active student games.</span>
+            </div>
+          )}
+
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={submitting || isInsufficient || stakeAmount < minRequired}
-            className="w-full casino-pink-button py-3.5 px-4 flex items-center justify-center gap-2 text-sm font-bold cursor-pointer disabled:opacity-50 shadow-pink-glow"
+            disabled={submitting || isInsufficient || stakeAmount < minRequired || isAdmin}
+            className="w-full vip-gold-btn py-3.5 px-4 flex items-center justify-center gap-2 text-sm font-bold cursor-pointer disabled:opacity-40 whitespace-nowrap shadow-red-glow"
           >
             {submitting ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+            ) : isAdmin ? (
+              <span>Admin Staking Disabled (Spectator Mode)</span>
             ) : (
               <>
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="w-4 h-4 text-black" />
                 <span>Confirm Bet ({stakeAmount} Coins)</span>
               </>
             )}

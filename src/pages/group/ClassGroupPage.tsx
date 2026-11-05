@@ -76,7 +76,7 @@ export const ClassGroupPage: React.FC = () => {
   return (
     <div className="space-y-6 pb-20 lg:pb-10 max-w-6xl mx-auto">
       {/* Cinematic Syndicate Header Banner (squad-celebration.jpg) */}
-      <div className="relative overflow-hidden rounded-3xl bg-[#0E0F15] border border-white/10 p-6 lg:p-8 shadow-xl">
+      <div className="relative overflow-hidden rounded-3xl bg-black/40 backdrop-blur-2xl border border-white/10 p-6 lg:p-8 shadow-card-glow">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           <div className="lg:col-span-4 relative flex items-center justify-center">
             <div className="relative w-full max-w-[280px] aspect-[4/5] rounded-2xl overflow-hidden border border-white/10 group shadow-xl">
@@ -91,7 +91,7 @@ export const ClassGroupPage: React.FC = () => {
                   THE SYNDICATE
                 </span>
                 <span className="text-emerald-400 font-bold bg-[#07080B]/90 px-2.5 py-1 rounded-lg border border-emerald-400/20 backdrop-blur-md">
-                  53 SEATS VERIFIED
+                  MCA BATCH
                 </span>
               </div>
             </div>
@@ -116,7 +116,7 @@ export const ClassGroupPage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              <div className="p-3.5 rounded-xl bg-[#12131A] border border-white/5 flex items-start gap-3">
+              <div className="p-3.5 rounded-xl bg-white/[0.04] backdrop-blur-sm border border-white/10 flex items-start gap-3">
                 <GraduationCap className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="text-xs font-bold text-white block">Closed Roster Protocol</span>
@@ -126,7 +126,7 @@ export const ClassGroupPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#12131A] border border-white/5 flex items-start gap-3">
+              <div className="p-3.5 rounded-xl bg-white/[0.04] backdrop-blur-sm border border-white/10 flex items-start gap-3">
                 <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="text-xs font-bold text-white block">Sovereign Batch Vault</span>
@@ -156,7 +156,7 @@ export const ClassGroupPage: React.FC = () => {
                 placeholder={`What's your take on upcoming predictions, ${user?.nickname}?`}
                 value={newPostText}
                 onChange={(e) => setNewPostText(e.target.value)}
-                className="w-full bg-[#12121A] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-gold resize-none"
+                className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-gold resize-none"
               />
               <div className="flex justify-between items-center">
                 <span className="text-[11px] text-casino-muted">
@@ -205,7 +205,7 @@ export const ClassGroupPage: React.FC = () => {
               placeholder="Search by name or admission..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#12121A] border border-white/10 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-casino-muted/50 focus:outline-none focus:border-gold"
+              className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-casino-muted/50 focus:outline-none focus:border-gold"
             />
           </div>
 

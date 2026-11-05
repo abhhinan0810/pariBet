@@ -19,8 +19,8 @@ interface AuthContextType {
   isVerified: boolean;
   error: string | null;
   tempApprovedStudent: ApprovedStudent | null;
-  register: (email: string, password: string) => Promise<{ success: boolean; requiresVerification: boolean; studentData: ApprovedStudent }>;
-  login: (email: string, password: string) => Promise<{ success: boolean; isVerified: boolean }>;
+  register: (email: string, password: string, nickname?: string) => Promise<{ success: boolean; requiresVerification: boolean; studentData: ApprovedStudent; profile?: UserProfile }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; isVerified: boolean; isAdmin?: boolean }>;
   logout: () => Promise<void>;
   resendVerificationEmail: () => Promise<void>;
   confirmVerification: () => void;
@@ -34,6 +34,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const LOCAL_SESSION_KEY = 'paribet_mock_session_uid';
 const LOCAL_VERIFIED_KEY = 'paribet_email_verified';
+
+const ADMIN_EMAILS = [
+  (import.meta.env.VITE_ADMIN_EMAIL || 'admin@paribet.internal').toLowerCase(),
+  'admin@ceconline.edu',
+  'admin@paribet.internal'
+];
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'Admin@PariBet2025';
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -57,13 +64,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           const profile = await userService.getUserProfile(fbUser.uid);
           setUser(profile);
           if (profile) {
-            // If profile exists, user is definitely verified
             setIsVerified(true);
             localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
           }
         } else {
-          setUser(null);
-          setIsVerified(false);
+          // Check if admin session was saved locally
+          const savedUid = localStorage.getItem(LOCAL_SESSION_KEY);
+          if (savedUid === 'admin_master_account') {
+            const adminProfile = await userService.getUserProfile('admin_master_account');
+            if (adminProfile && adminProfile.role === 'admin') {
+              setUser(adminProfile);
+              setIsVerified(true);
+              setFirebaseUser({
+                uid: 'admin_master_account',
+                email: adminProfile.email,
+                emailVerified: true
+              } as any);
+            } else {
+              setUser(null);
+              setIsVerified(false);
+            }
+          } else {
+            setUser(null);
+            setIsVerified(false);
+          }
         }
         setLoading(false);
       });
@@ -102,15 +126,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   /**
-   * Register with College Email and Password
+   * Register with College Email and Password - Instant Setup, No Email Verification Waiting!
    */
-  const register = async (email: string, password: string) => {
+  const register = async (email: string, password: string, nickname?: string) => {
     setError(null);
     setLoading(true);
 
     try {
-      // 1. Authoritative Roster Validation
-      const verification = await studentService.verifyStudentEmail(email);
+      const normalizedEmail = email.trim().toLowerCase();
+
+      // 1. Authoritative Roster Validation against data/student_roster.csv
+      const verification = await studentService.verifyStudentEmail(normalizedEmail);
       if (!verification.isApproved || !verification.studentData) {
         throw new Error(verification.error || 'Registration rejected: Student not in MCA directory.');
       }
@@ -118,63 +144,52 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const student = verification.studentData;
       setTempApprovedStudent(student);
 
+      const finalNickname = nickname?.trim() || student.official_name.split(' ')[0];
+      let createdUid = `uid_${student.admission_number}`;
+      let fbUserObj: any = null;
+
       if (isFirebaseConfigured) {
-        // 2. Create user with Firebase Auth
-        let fbUser: any;
         try {
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          fbUser = userCredential.user;
-          try {
-            await sendEmailVerification(fbUser);
-          } catch (e) {
-            console.warn('[Auth] Verification email send warning:', e);
-          }
+          const userCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
+          fbUserObj = userCredential.user;
+          createdUid = fbUserObj.uid;
         } catch (authErr: any) {
-          // If already registered in auth, try signing in
           if (authErr.code === 'auth/email-already-in-use') {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            fbUser = userCredential.user;
+            const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
+            fbUserObj = userCredential.user;
+            createdUid = fbUserObj.uid;
           } else {
             throw authErr;
           }
         }
-
-        setFirebaseUser(fbUser);
-        setIsVerified(true);
-        localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
-
-        return {
-          success: true,
-          requiresVerification: false,
-          studentData: student
-        };
-      } else {
-        // Demo fallback
-        const mockUid = `uid_${student.admission_number}`;
-        const newProfile = await userService.createUserProfile({
-          uid: mockUid,
-          email: student.email,
-          officialName: student.official_name,
-          admissionNumber: student.admission_number,
-          nickname: student.official_name.split(' ')[0]
-        });
-
-        localStorage.setItem(LOCAL_SESSION_KEY, mockUid);
-        localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
-        setUser(newProfile);
-        setIsVerified(true);
-        setFirebaseUser({
-          uid: mockUid,
-          email: student.email,
-          emailVerified: true
-        } as any);
-
-        return {
-          success: true,
-          requiresVerification: false,
-          studentData: student
-        };
       }
+
+      // Immediately create active student profile with 1,000 welcome tokens
+      const newProfile = await userService.createUserProfile({
+        uid: createdUid,
+        email: student.email,
+        officialName: student.official_name,
+        admissionNumber: student.admission_number,
+        nickname: finalNickname,
+        role: 'regular_user' // Normal students are always regular users
+      });
+
+      localStorage.setItem(LOCAL_SESSION_KEY, createdUid);
+      localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
+      setUser(newProfile);
+      setIsVerified(true);
+      setFirebaseUser(fbUserObj || ({
+        uid: createdUid,
+        email: student.email,
+        emailVerified: true
+      } as any));
+
+      return {
+        success: true,
+        requiresVerification: false,
+        studentData: student,
+        profile: newProfile
+      };
     } catch (err: any) {
       console.error('[AuthContext] Registration failed:', err);
       setError(err.message || 'Registration failed');
@@ -185,20 +200,95 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   /**
-   * Login with email & password
+   * Login with email & password - Supports Dedicated Admin or MCA Students
    */
   const login = async (email: string, password: string) => {
     setError(null);
     setLoading(true);
 
     try {
-      const verification = await studentService.verifyStudentEmail(email);
+      const normalizedEmail = email.trim().toLowerCase();
+      const isAdminAttempt = ADMIN_EMAILS.includes(normalizedEmail);
+
+      // --- DEDICATED SEPARATE ADMIN ACCOUNT ---
+      if (isAdminAttempt) {
+        if (password !== ADMIN_PASSWORD) {
+          throw new Error('Invalid Administrator credentials. Please verify your password.');
+        }
+
+        const adminUid = 'admin_master_account';
+        let adminProfile: UserProfile = {
+          uid: adminUid,
+          email: normalizedEmail,
+          officialName: 'Master Administrator',
+          admissionNumber: 'ADMIN',
+          nickname: 'Administrator',
+          profilePicture: 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminMaster&backgroundColor=140d33',
+          createdAt: new Date().toISOString(),
+          role: 'admin',
+          accountStatus: 'active',
+          walletBalance: 100000,
+          lockedBalance: 0,
+          statistics: {
+            predictionsParticipated: 0,
+            predictionsWon: 0,
+            winRate: 0,
+            currentStreak: 0,
+            longestStreak: 0,
+            totalRewardsEarned: 0,
+            totalTokensCommitted: 0,
+            loansGiven: 0,
+            loansCompleted: 0
+          }
+        };
+
+        if (isFirebaseConfigured) {
+          try {
+            try {
+              await signInWithEmailAndPassword(auth, normalizedEmail, password);
+            } catch (fbErr: any) {
+              if (fbErr.code === 'auth/user-not-found' || fbErr.code === 'auth/invalid-credential') {
+                try {
+                  await createUserWithEmailAndPassword(auth, normalizedEmail, password);
+                } catch (_) {}
+              }
+            }
+            const existing = await userService.getUserProfile(adminUid);
+            if (existing) {
+              adminProfile = { ...existing, role: 'admin' };
+            } else {
+              await userService.createUserProfile(adminProfile);
+            }
+          } catch (e) {
+            console.warn('[AuthContext] Firebase admin setup warning:', e);
+          }
+        }
+
+        localStorage.setItem(LOCAL_SESSION_KEY, adminUid);
+        localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
+        const localUsers = JSON.parse(localStorage.getItem('paribet_mock_users') || '{}');
+        localUsers[adminUid] = adminProfile;
+        localStorage.setItem('paribet_mock_users', JSON.stringify(localUsers));
+
+        setUser(adminProfile);
+        setIsVerified(true);
+        setFirebaseUser({
+          uid: adminUid,
+          email: normalizedEmail,
+          emailVerified: true
+        } as any);
+
+        return { success: true, isVerified: true, isAdmin: true };
+      }
+
+      // --- REGULAR MCA STUDENT ACCOUNT ---
+      const verification = await studentService.verifyStudentEmail(normalizedEmail);
       if (!verification.isApproved || !verification.studentData) {
         throw new Error('Access denied: You are not an approved member of this MCA classroom.');
       }
 
       if (isFirebaseConfigured) {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
         const fbUser = userCredential.user;
         setFirebaseUser(fbUser);
         setIsVerified(true);
@@ -211,12 +301,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             email: verification.studentData.email,
             officialName: verification.studentData.official_name,
             admissionNumber: verification.studentData.admission_number,
-            nickname: verification.studentData.official_name.split(' ')[0]
+            nickname: verification.studentData.official_name.split(' ')[0],
+            role: 'regular_user'
           });
+        }
+        // Guarantee no student has admin privileges
+        if (profile.role === 'admin') {
+          profile.role = 'regular_user';
         }
         setUser(profile);
 
-        return { success: true, isVerified: true };
+        return { success: true, isVerified: true, isAdmin: false };
       } else {
         const student = verification.studentData;
         const mockUid = `uid_${student.admission_number}`;
@@ -228,8 +323,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             email: student.email,
             officialName: student.official_name,
             admissionNumber: student.admission_number,
-            nickname: student.official_name.split(' ')[0]
+            nickname: student.official_name.split(' ')[0],
+            role: 'regular_user'
           });
+        }
+        if (profile.role === 'admin') {
+          profile.role = 'regular_user';
         }
 
         localStorage.setItem(LOCAL_SESSION_KEY, mockUid);
@@ -242,7 +341,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           emailVerified: true
         } as any);
 
-        return { success: true, isVerified: true };
+        return { success: true, isVerified: true, isAdmin: false };
       }
     } catch (err: any) {
       console.error('[AuthContext] Login failed:', err);

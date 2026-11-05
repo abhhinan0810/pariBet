@@ -13,14 +13,14 @@ export const Card: React.FC<CardProps> = ({
   className = '',
   ...props
 }) => {
-  const baseClasses = 'rounded-2xl transition-all duration-200 overflow-hidden';
+  const baseClasses = 'rounded-2xl transition-all duration-200 overflow-hidden backdrop-blur-xl';
 
   const variantClasses = {
-    default: 'bg-background-card border border-white/5',
-    elevated: 'bg-background-elevated border border-white/10 shadow-card-glow',
-    'gold-border': 'bg-background-card border border-gold/30 shadow-gold-glow-sm',
+    default: 'bg-black/35 backdrop-blur-xl border border-white/10 shadow-xl',
+    elevated: 'bg-black/45 backdrop-blur-2xl border border-white/10 shadow-card-glow',
+    'gold-border': 'bg-black/40 backdrop-blur-xl border border-amber-500/30 shadow-card-glow',
     interactive:
-      'bg-background-card border border-white/5 hover:border-gold/40 hover:shadow-gold-glow-sm cursor-pointer',
+      'bg-black/35 backdrop-blur-xl border border-white/10 hover:border-red-500/40 hover:bg-[#140b10]/55 hover:shadow-card-glow cursor-pointer',
   }[variant];
 
   return (

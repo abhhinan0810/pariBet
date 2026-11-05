@@ -61,7 +61,7 @@ export const ProfilePage: React.FC = () => {
 
               <span className="self-center sm:self-start inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-xs">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>MCA VERIFIED</span>
+                <span>MCA MEMBER</span>
               </span>
             </div>
 
@@ -120,7 +120,7 @@ export const ProfilePage: React.FC = () => {
                 required
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
-                className="w-full bg-[#12121A] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold"
+                className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold"
               />
             </div>
 
@@ -134,7 +134,7 @@ export const ProfilePage: React.FC = () => {
                 placeholder="Share your gaming motto"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                className="w-full bg-[#12121A] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold"
+                className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold"
               />
             </div>
 

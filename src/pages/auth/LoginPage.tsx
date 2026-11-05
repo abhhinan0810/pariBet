@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Lock, Mail, ArrowRight, ShieldCheck, Sparkles, ArrowLeft } from 'lucide-react';
+import { Lock, Mail, ArrowRight, Sparkles, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 
@@ -23,20 +23,25 @@ export const LoginPage: React.FC = () => {
 
     setLoading(true);
     try {
-      await login(email, password);
-      success('Welcome back!', 'Signed in successfully.');
-      navigate(from, { replace: true });
+      const res = await login(email, password);
+      if (res?.isAdmin) {
+        success('Admin Access Granted', 'Welcome to Master Administrator Control.');
+        navigate('/admin', { replace: true });
+      } else {
+        success('Welcome back!', 'Signed in successfully.');
+        navigate(from, { replace: true });
+      }
     } catch (err: any) {
-      toastError('Login Failed', err.message || 'Please check your college email or password.');
+      toastError('Login Failed', err.message || 'Please check your email and password.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#07080B] flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
-      {/* Subtle Ambient Gold Glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-amber-500/5 blur-[160px] rounded-full pointer-events-none" />
+    <div className="min-h-screen bg-transparent flex flex-col justify-center items-center px-4 py-8 sm:py-12 relative overflow-hidden">
+      {/* Subtle Ambient Red/Gold Casino Glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-red-600/10 blur-[160px] rounded-full pointer-events-none" />
 
       {/* Back to Home Link */}
       <Link
@@ -44,7 +49,7 @@ export const LoginPage: React.FC = () => {
         className="absolute top-6 left-6 text-xs text-casino-muted hover:text-white flex items-center gap-1.5 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Back to Landing</span>
+        <span className="whitespace-nowrap">Back to Landing</span>
       </Link>
 
       <motion.div
@@ -53,15 +58,22 @@ export const LoginPage: React.FC = () => {
         transition={{ duration: 0.3 }}
         className="w-full max-w-md relative z-10"
       >
-        {/* Brand Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 p-0.5 shadow-gold-glow mb-4">
-            <div className="w-full h-full bg-[#0B0C10] rounded-[13px] flex items-center justify-center">
-              <span className="font-display font-black text-2xl text-amber-400">P</span>
-            </div>
+        {/* Brand Header with New Official PNG Logos */}
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <img
+              src="/images/mca.png"
+              alt="MCA"
+              className="w-12 h-12 rounded-xl object-contain p-1.5 bg-white/5 border border-white/10 shadow-red-glow"
+            />
+            <img
+              src="/images/logo.png"
+              alt="pariBET"
+              className="h-9 w-auto object-contain"
+            />
           </div>
-          <h1 className="font-display font-black text-3xl tracking-tight text-white mb-1.5">
-            Sign In to pari<span className="text-amber-400">BET</span>
+          <h1 className="font-display font-black text-2xl tracking-tight text-white mb-1">
+            Sign In to Lounge
           </h1>
           <p className="text-xs text-casino-muted">
             Private MCA Classroom Prediction & Virtual Gaming Club
@@ -69,21 +81,11 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Card */}
-        <div className="casino-card p-6 sm:p-8 border-white/5">
-          <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/5">
-            <span className="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4" />
-              <span>53 Verified MCA Seats</span>
-            </span>
-            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full font-bold">
-              ACTIVE
-            </span>
-          </div>
-
+        <div className="casino-card p-5 sm:p-8 border-white/5 shadow-card-glow">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-casino-muted mb-1.5">
-                College Email Address
+                Email Address
               </label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-casino-muted" />
@@ -93,7 +95,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="admission_number@ceconline.edu"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#12131A] border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all font-mono"
+                  className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none transition-all font-mono"
                 />
               </div>
             </div>
@@ -110,7 +112,7 @@ export const LoginPage: React.FC = () => {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#12131A] border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all font-mono"
+                  className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none transition-all font-mono"
                 />
               </div>
             </div>
@@ -118,7 +120,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 vip-gold-btn py-3.5 px-4 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-xs font-black uppercase tracking-wider"
+              className="w-full mt-2 vip-gold-btn py-3.5 px-4 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-xs font-black uppercase tracking-wider whitespace-nowrap"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
@@ -139,26 +141,11 @@ export const LoginPage: React.FC = () => {
             </p>
             <Link
               to="/register"
-              className="text-xs font-bold text-amber-400 hover:underline inline-flex items-center gap-1"
+              className="text-xs font-bold text-amber-400 hover:text-red-400 hover:underline inline-flex items-center gap-1 whitespace-nowrap"
             >
-              Verify Your College Email & Sign Up
+              Create Account & Claim 1,000 Coins
             </Link>
           </div>
-        </div>
-
-        {/* Quick Testing Helper */}
-        <div className="mt-5 p-3 rounded-xl bg-white/[0.03] border border-white/5 text-center text-xs text-casino-muted">
-          <p className="mb-1 text-white font-semibold">Testing credentials:</p>
-          <button
-            type="button"
-            onClick={() => {
-              setEmail('chn25mca055@ceconline.edu');
-              setPassword('password123');
-            }}
-            className="text-amber-400 font-mono underline hover:text-white transition-colors cursor-pointer"
-          >
-            Auto-fill: chn25mca055@ceconline.edu (Abhinav Krishna S)
-          </button>
         </div>
       </motion.div>
     </div>

@@ -9,7 +9,6 @@ import {
   ArrowRight,
   Flame,
   Landmark,
-  Trophy,
   Users,
   Zap,
   Dice5,
@@ -66,67 +65,6 @@ const HERO_CATEGORIES = [
   }
 ];
 
-// Live Betting Markets
-const LIVE_MARKETS = [
-  {
-    id: 'bet-1',
-    category: 'CAMPUS DRAMA',
-    title: 'Will Compiler Design Lab Viva finish before 1:00 PM?',
-    pool: '5,800',
-    participants: 28,
-    closesIn: 'Closes in 2h 15m',
-    options: [
-      { name: 'YES', multiplier: '1.55x', percentage: 65 },
-      { name: 'NO', multiplier: '2.85x', percentage: 35 }
-    ]
-  },
-  {
-    id: 'bet-2',
-    category: 'COLLEGE SPORTS',
-    title: 'MCA Cricket League: Who hits maximum sixes in Finals?',
-    pool: '12,400',
-    participants: 41,
-    closesIn: 'Closes tomorrow',
-    options: [
-      { name: 'Midhun (Striker)', multiplier: '2.10x', percentage: 48 },
-      { name: 'Arun (Opener)', multiplier: '3.40x', percentage: 30 },
-      { name: 'Field (Others)', multiplier: '4.50x', percentage: 22 }
-    ]
-  },
-  {
-    id: 'bet-3',
-    category: 'ACADEMIC BULLSEYE',
-    title: 'Closest Guess: Class highest score in Machine Learning Series test (out of 50)',
-    pool: '8,250',
-    participants: 34,
-    closesIn: 'Closes Friday',
-    options: [
-      { name: '46 - 47', multiplier: '2.20x', percentage: 40 },
-      { name: '48 - 49', multiplier: '3.10x', percentage: 35 },
-      { name: 'Perfect 50', multiplier: '5.80x', percentage: 25 }
-    ]
-  },
-  {
-    id: 'bet-4',
-    category: 'CANTEEN POLL',
-    title: 'Group Decision: Where is the Post-Internship Class Treat?',
-    pool: '15,600',
-    participants: 49,
-    closesIn: 'Closes Sunday',
-    options: [
-      { name: 'Kochi Cafe Crawl', multiplier: '1.90x', percentage: 52 },
-      { name: 'Chengannur Biryani Feast', multiplier: '2.15x', percentage: 48 }
-    ]
-  }
-];
-
-const LEADERBOARD_PREVIEW = [
-  { rank: 1, name: 'Midhun "The Whale"', coins: '24,850', winRate: '78%', badge: '👑 High Roller King' },
-  { rank: 2, name: 'Ananya "The Sharp"', coins: '19,400', winRate: '72%', badge: '⚡ Odds Whisperer' },
-  { rank: 3, name: 'Rahul "All-In"', coins: '16,200', winRate: '65%', badge: '🎲 Wild Gambler' },
-  { rank: 4, name: 'Fathima "Underdog"', coins: '14,750', winRate: '69%', badge: '🎯 Precision Ace' },
-];
-
 export const LandingPage: React.FC = () => {
   const { user } = useAuth();
 
@@ -164,7 +102,7 @@ export const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#07080B] text-[#F3F4F6] overflow-x-hidden selection:bg-amber-500 selection:text-black font-sans">
+    <div className="min-h-screen bg-transparent text-[#F3F4F6] overflow-x-hidden selection:bg-amber-500 selection:text-black font-sans">
       {/* 1. TOP MARQUEE TICKER (Minimalist Obsidian & Gold) */}
       <div className="bg-[#0B0C10] border-b border-white/5 py-2 overflow-hidden relative z-50">
         <div className="animate-marquee whitespace-nowrap flex items-center gap-8 text-xs font-mono">
@@ -214,21 +152,7 @@ export const LandingPage: React.FC = () => {
       <header className="sticky top-0 z-40 bg-[#07080B]/90 backdrop-blur-xl border-b border-white/5 px-4 lg:px-8 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo: pariBET */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 p-0.5 shadow-gold-glow">
-              <div className="w-full h-full bg-[#0B0C10] rounded-[7px] flex items-center justify-center">
-                <span className="font-display font-black text-lg text-amber-400">P</span>
-              </div>
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="font-display font-black text-2xl tracking-tight text-white">
-                pari<span className="text-amber-400">BET</span>
-              </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-400/10 text-amber-400 font-bold border border-amber-400/25 ml-1">
-                MCA
-              </span>
-            </div>
-          </Link>
+          <Link to="/" className="flex items-center gap-3 group shrink-0"><img src="/images/mca.png" alt="MCA" className="w-10 h-10 rounded-xl object-contain shrink-0 p-1 bg-white/5 border border-white/10" /><img src="/images/logo.png" alt="pariBET" className="h-8 w-auto object-contain shrink-0" /></Link>
 
           {/* Nav Links */}
           <nav className="hidden md:flex items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -239,7 +163,6 @@ export const LandingPage: React.FC = () => {
               <span>Spin & Win</span>
             </a>
             <a href="#poker-lounge" className="hover:text-amber-400 transition-colors">VIP Lounge</a>
-            <a href="#live-markets" className="hover:text-amber-400 transition-colors">Live Bets</a>
             <a href="#winners-circle" className="hover:text-amber-400 transition-colors flex items-center gap-1">
               <PartyPopper className="w-3.5 h-3.5 text-amber-400" />
               <span>Squad</span>
@@ -352,10 +275,10 @@ export const LandingPage: React.FC = () => {
                   </Link>
 
                   <a
-                    href="#live-markets"
+                    href="#categories"
                     className="px-6 py-3.5 rounded-xl bg-[#12141C] hover:bg-[#1A1D28] border border-white/10 text-xs font-bold text-white flex items-center justify-center gap-2 transition-all"
                   >
-                    <span>View Active Odds</span>
+                    <span>View Markets</span>
                   </a>
                 </>
               )}
@@ -433,7 +356,7 @@ export const LandingPage: React.FC = () => {
           {HERO_CATEGORIES.map((cat, idx) => (
             <div
               key={idx}
-              className="p-4 sm:p-5 rounded-2xl bg-[#0E0F15] border border-white/5 hover:border-amber-500/30 transition-all duration-200 flex flex-col justify-between group shadow-sm hover:-translate-y-0.5"
+              className="p-4 sm:p-5 rounded-2xl bg-black/35 backdrop-blur-xl border border-white/10 hover:border-red-500/40 hover:bg-[#140b10]/50 transition-all duration-200 flex flex-col justify-between group shadow-xl hover:shadow-card-glow hover:-translate-y-0.5"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -469,7 +392,7 @@ export const LandingPage: React.FC = () => {
 
       {/* 5. INTERACTIVE ROULETTE MINI-GAME (Minimalist VIP Slate & Gold) */}
       <section id="roulette-demo" className="py-16 px-4 lg:px-8 max-w-7xl mx-auto">
-        <div className="rounded-3xl bg-[#0C0D12] border border-white/8 p-6 sm:p-10 shadow-xl relative overflow-hidden">
+        <div className="rounded-3xl bg-black/40 backdrop-blur-2xl border border-white/10 p-6 sm:p-10 shadow-2xl relative overflow-hidden">
           {/* Subtle gold accent light */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
 
@@ -514,7 +437,7 @@ export const LandingPage: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
                 {/* Controls (6 cols) */}
-                <div className="md:col-span-6 space-y-4 bg-[#12131A] p-5 rounded-2xl border border-white/5">
+                <div className="md:col-span-6 space-y-4 bg-black/35 backdrop-blur-xl p-5 rounded-2xl border border-white/10">
                   <div>
                     <label className="text-xs font-mono font-bold uppercase text-slate-400 block mb-2">
                       1. Virtual Chips Stake
@@ -528,7 +451,7 @@ export const LandingPage: React.FC = () => {
                           className={`py-2 px-1.5 rounded-xl font-mono text-xs font-bold transition-all ${
                             selectedChip === chip
                               ? 'bg-amber-500 text-black shadow-gold-glow scale-105'
-                              : 'bg-[#181A24] text-slate-300 hover:bg-[#202230] border border-white/5'
+                              : 'bg-white/[0.05] text-slate-300 hover:bg-white/[0.1] backdrop-blur-sm border border-white/10'
                           }`}
                         >
                           <span>🪙 {chip}</span>
@@ -548,7 +471,7 @@ export const LandingPage: React.FC = () => {
                         className={`p-2.5 rounded-xl text-xs font-bold transition-all border ${
                           selectedSide === 'RED'
                             ? 'bg-rose-950/70 border-rose-500 text-rose-300 shadow-sm'
-                            : 'bg-[#181A24] border-white/5 text-slate-400 hover:bg-[#202230]'
+                            : 'bg-white/[0.05] border-white/10 text-slate-400 hover:bg-white/[0.1] backdrop-blur-sm'
                         }`}
                       >
                         <div className="text-xs font-bold">RED</div>
@@ -561,7 +484,7 @@ export const LandingPage: React.FC = () => {
                         className={`p-2.5 rounded-xl text-xs font-bold transition-all border ${
                           selectedSide === 'BLACK'
                             ? 'bg-slate-800 border-white text-white shadow-sm'
-                            : 'bg-[#181A24] border-white/5 text-slate-400 hover:bg-[#202230]'
+                            : 'bg-white/[0.05] border-white/10 text-slate-400 hover:bg-white/[0.1] backdrop-blur-sm'
                         }`}
                       >
                         <div className="text-xs font-bold">BLACK</div>
@@ -574,7 +497,7 @@ export const LandingPage: React.FC = () => {
                         className={`p-2.5 rounded-xl text-xs font-bold transition-all border ${
                           selectedSide === 'GOLD'
                             ? 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-sm'
-                            : 'bg-[#181A24] border-white/5 text-slate-400 hover:bg-[#202230]'
+                            : 'bg-white/[0.05] border-white/10 text-slate-400 hover:bg-white/[0.1] backdrop-blur-sm'
                         }`}
                       >
                         <div className="text-xs font-bold">JACKPOT</div>
@@ -604,7 +527,7 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 {/* Display (6 cols) */}
-                <div className="md:col-span-6 flex flex-col items-center justify-center p-6 bg-[#101117] rounded-2xl border border-white/5 text-center min-h-[260px]">
+                <div className="md:col-span-6 flex flex-col items-center justify-center p-6 bg-black/35 backdrop-blur-xl rounded-2xl border border-white/10 text-center min-h-[260px]">
                   {isSpinning ? (
                     <div className="flex flex-col items-center gap-3 py-6">
                       <motion.div
@@ -660,7 +583,7 @@ export const LandingPage: React.FC = () => {
                         </button>
                         <Link
                           to="/register"
-                          className="vip-gold-btn px-3.5 py-1.5 text-xs font-bold"
+                          className="vip-gold-btn px-3.5 py-1.5 text-xs font-bold whitespace-nowrap shrink-0"
                         >
                           Claim 1,000 Coins
                         </Link>
@@ -728,7 +651,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             <div className="space-y-3 pt-2">
-              <div className="p-4 rounded-xl bg-[#0E0F15] border border-white/5 flex items-start gap-3.5">
+              <div className="p-4 rounded-xl bg-black/30 backdrop-blur-xl border border-white/10 hover:border-red-500/30 transition-all flex items-start gap-3.5">
                 <TrendingUp className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="text-sm font-bold text-white">Dynamic Pari-Mutuel Odds</h4>
@@ -738,7 +661,7 @@ export const LandingPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#0E0F15] border border-white/5 flex items-start gap-3.5">
+              <div className="p-4 rounded-xl bg-black/30 backdrop-blur-xl border border-white/10 hover:border-red-500/30 transition-all flex items-start gap-3.5">
                 <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="text-sm font-bold text-white">53-Student Roster Whitelist</h4>
@@ -748,7 +671,7 @@ export const LandingPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#0E0F15] border border-white/5 flex items-start gap-3.5">
+              <div className="p-4 rounded-xl bg-black/30 backdrop-blur-xl border border-white/10 hover:border-red-500/30 transition-all flex items-start gap-3.5">
                 <Landmark className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="text-sm font-bold text-white">Peer Bank Bailouts</h4>
@@ -772,86 +695,7 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 7. LIVE BETTING FLOOR (Active Markets) */}
-      <section id="live-markets" className="py-20 px-4 lg:px-8 max-w-7xl mx-auto border-t border-white/5">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/25 text-xs font-mono font-bold uppercase mb-2">
-            <Flame className="w-3.5 h-3.5" /> Live Markets
-          </span>
-          <h2 className="font-display font-black text-3xl sm:text-4xl text-white">
-            The Active Betting Floor
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1.5">
-            Real prediction pools launched and staked by your classmates.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {LIVE_MARKETS.map((market) => (
-            <div
-              key={market.id}
-              className="p-6 rounded-2xl bg-[#0E0F15] border border-white/5 hover:border-amber-500/30 transition-all group"
-            >
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-slate-300 font-bold">
-                  {market.category}
-                </span>
-                <div className="flex items-center gap-1.5 text-xs font-mono text-slate-400">
-                  <Clock className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{market.closesIn}</span>
-                </div>
-              </div>
-
-              <h3 className="text-base font-bold text-white group-hover:text-amber-400 transition-colors">
-                {market.title}
-              </h3>
-
-              <div className="mt-4 flex items-center justify-between text-xs font-mono py-2 px-3 rounded-xl bg-[#13151D] border border-white/5">
-                <div className="flex items-center gap-1.5 text-amber-400 font-bold">
-                  <Coins className="w-4 h-4" />
-                  <span>POT: {market.pool} 🪙</span>
-                </div>
-                <div className="flex items-center gap-1 text-slate-400">
-                  <Users className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{market.participants} Bets Placed</span>
-                </div>
-              </div>
-
-              <div className="mt-5 space-y-2.5">
-                {market.options.map((opt, i) => (
-                  <div key={i} className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-300 font-medium">{opt.name}</span>
-                      <span className="font-mono font-bold text-amber-400">
-                        {opt.multiplier} <span className="text-slate-500 text-[10px]">({opt.percentage}%)</span>
-                      </span>
-                    </div>
-                    <div className="h-1.5 w-full bg-[#181A24] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-amber-500 rounded-full"
-                        style={{ width: `${opt.percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-5 pt-3.5 border-t border-white/5 flex items-center justify-between">
-                <span className="text-xs text-slate-500 font-mono">Pari-Mutuel Rules</span>
-                <Link
-                  to={user ? "/home" : "/register"}
-                  className="vip-gold-btn px-4 py-1.5 text-xs font-bold flex items-center gap-1"
-                >
-                  <span>Place Stake</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 7.5 THE WINNER'S CIRCLE & SQUAD GLORY (squad-celebration.jpg) */}
+      {/* 7. THE WINNER'S CIRCLE & SQUAD GLORY (squad-celebration.jpg) */}
       <section id="winners-circle" className="py-20 px-4 lg:px-8 max-w-7xl mx-auto border-t border-white/5">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left: Squad Celebration Artwork with Natural Aspect & Soft Edge Blend */}
@@ -905,7 +749,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             <div className="space-y-3 pt-2">
-              <div className="p-4 rounded-xl bg-[#0E0F15] border border-white/5 flex items-start gap-3.5">
+              <div className="p-4 rounded-xl bg-black/30 backdrop-blur-xl border border-white/10 hover:border-red-500/30 transition-all flex items-start gap-3.5">
                 <Users className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="text-sm font-bold text-white">Zero House Rake</h4>
@@ -915,7 +759,7 @@ export const LandingPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#0E0F15] border border-white/5 flex items-start gap-3.5">
+              <div className="p-4 rounded-xl bg-black/30 backdrop-blur-xl border border-white/10 hover:border-red-500/30 transition-all flex items-start gap-3.5">
                 <Zap className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="text-sm font-bold text-white">Instant Class Payouts</h4>
@@ -941,7 +785,7 @@ export const LandingPage: React.FC = () => {
 
       {/* 8. TOKEN BANK VAULT (chip-stacker-vault.jpg) */}
       <section id="bank-vault" className="py-16 px-4 lg:px-8 max-w-7xl mx-auto border-t border-white/5">
-        <div className="rounded-3xl bg-[#0D0E14] p-8 sm:p-12 border border-white/5">
+        <div className="rounded-3xl bg-black/40 backdrop-blur-2xl p-8 sm:p-12 border border-white/10 shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left 7 cols: Information */}
             <div className="lg:col-span-7 space-y-4">
@@ -957,7 +801,7 @@ export const LandingPage: React.FC = () => {
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="p-4 rounded-xl bg-[#12141C] border border-white/5">
+                <div className="p-4 rounded-xl bg-black/30 backdrop-blur-xl border border-white/10 hover:border-red-500/30 transition-all">
                   <div className="font-bold text-white text-sm flex items-center gap-2">
                     <Coins className="w-4 h-4 text-emerald-400" />
                     <span>Emergency Loans</span>
@@ -967,7 +811,7 @@ export const LandingPage: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#12141C] border border-white/5">
+                <div className="p-4 rounded-xl bg-black/30 backdrop-blur-xl border border-white/10 hover:border-red-500/30 transition-all">
                   <div className="font-bold text-white text-sm flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-amber-400" />
                     <span>Lend & Earn</span>
@@ -998,7 +842,7 @@ export const LandingPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-[#12141C] p-5 rounded-2xl border border-white/5 space-y-3">
+              <div className="bg-black/35 backdrop-blur-xl p-5 rounded-2xl border border-white/10 space-y-3">
                 <div className="text-xs font-mono text-amber-400 uppercase font-bold tracking-wider">
                   Live Reserve Summary
                 </div>
@@ -1025,58 +869,9 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 9. HALL OF FAME LEADERBOARD */}
-      <section className="py-20 px-4 lg:px-8 max-w-7xl mx-auto border-t border-white/5">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center justify-center gap-1.5">
-            <Trophy className="w-4 h-4 text-amber-400" />
-            Classroom Hall of Fame
-          </span>
-          <h2 className="font-display font-black text-3xl sm:text-4xl text-white mt-1">
-            Top High Rollers of MCA 2025
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1.5">
-            Weekly updated rankings. Compete for titles like "The Whale" and "The Sharp".
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {LEADERBOARD_PREVIEW.map((player) => (
-            <div
-              key={player.rank}
-              className="p-5 rounded-2xl bg-[#0E0F15] border border-white/5 hover:border-amber-500/30 transition-all text-center relative group"
-            >
-              <div className="absolute top-3 right-3 text-xs font-mono font-black text-slate-500 group-hover:text-amber-400">
-                #{player.rank}
-              </div>
-
-              <div className="w-12 h-12 mx-auto rounded-xl bg-amber-500/10 border border-amber-400/25 flex items-center justify-center font-black text-amber-400 text-base mb-3">
-                {player.name[0]}
-              </div>
-
-              <h4 className="font-bold text-white text-sm">{player.name}</h4>
-              <div className="text-[10px] font-mono text-amber-400 font-semibold mt-0.5">
-                {player.badge}
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-around text-xs font-mono">
-                <div>
-                  <div className="text-[10px] text-slate-500">NET WORTH</div>
-                  <div className="font-bold text-amber-400 mt-0.5">{player.coins} 🪙</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-slate-500">WIN RATE</div>
-                  <div className="font-bold text-emerald-400 mt-0.5">{player.winRate}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 10. FINAL VIP INVITATION BANNER */}
+      {/* 9. FINAL VIP INVITATION BANNER */}
       <section className="py-16 px-4 lg:px-8 max-w-5xl mx-auto">
-        <div className="p-8 sm:p-14 rounded-3xl bg-[#0E0F16] border border-white/10 text-center relative overflow-hidden shadow-2xl">
+        <div className="p-8 sm:p-14 rounded-3xl bg-black/40 backdrop-blur-2xl border border-white/10 text-center relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/5 blur-[100px] rounded-full pointer-events-none" />
 
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/25 text-xs font-mono font-bold uppercase mb-4">

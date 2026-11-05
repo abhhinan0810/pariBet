@@ -5,8 +5,21 @@
 @layer base {
   body {
     background-color: #07080B;
+    background-image: 
+      radial-gradient(ellipse 40% 70% at 0% 50%, rgba(185, 28, 28, 0.16), transparent 100%),
+      radial-gradient(ellipse 40% 70% at 100% 50%, rgba(185, 28, 28, 0.16), transparent 100%),
+      linear-gradient(90deg, rgba(153, 27, 27, 0.18) 0%, rgba(7, 8, 11, 0) 18%, rgba(7, 8, 11, 0) 82%, rgba(153, 27, 27, 0.18) 100%);
+    background-attachment: fixed;
     color: #F3F4F6;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* Global input focus styling with subtle crimson glow */
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: rgb(250, 240, 50) !important;
+    box-shadow: 0 0 18px -2px rgba(239, 68, 68, 0.35) !important;
   }
 }
 
@@ -23,7 +36,7 @@
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #F59E0B;
+  background: #EF4444;
 }
 
 /* Marquee Ticker */
@@ -57,22 +70,44 @@
   animation: goldShimmer 4s linear infinite;
 }
 
-/* Glassmorphism & Minimalist Gaming Cards */
-.casino-card {
-  background: linear-gradient(180deg, rgba(16, 17, 24, 0.95) 0%, rgba(11, 12, 17, 0.98) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+/* Casino Card & Glass Box - Luxurious Dark Blurred Frosted Glass with Crimson Glow */
+:root {
+  /* =========================================================================
+     ADJUST BOX TRANSPARENCY & BLUR HERE:
+     - Change 0.38 to lower (e.g. 0.25) for more transparency, or higher (e.g. 0.55)
+     - Change 16px to adjust blur strength (e.g. 12px, 20px, 24px)
+     ========================================================================= */
+  --casino-box-bg: rgba(10, 11, 18, 0.38);
+  --casino-box-bg-hover: rgba(22, 10, 15, 0.52);
+  --casino-box-blur: 16px;
+}
+
+.casino-card,
+.glass-box {
+  background: var(--casino-box-bg) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 1.25rem;
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.85);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(var(--casino-box-blur));
+  -webkit-backdrop-filter: blur(var(--casino-box-blur));
 }
 
-.casino-card:hover {
-  border-color: rgba(245, 158, 11, 0.35);
-  box-shadow: 0 14px 40px -10px rgba(245, 158, 11, 0.15);
+.casino-card:hover,
+.casino-card:focus-within,
+.glass-box:hover {
+  border-color: rgba(239, 68, 68, 0.45);
+  background: var(--casino-box-bg-hover) !important;
+  box-shadow: 0 14px 40px -10px rgba(0, 0, 0, 0.9), 0 0 25px -4px rgba(220, 38, 38, 0.35);
 }
 
-/* VIP Gold Action Buttons */
+.casino-card:active,
+.glass-box:active {
+  border-color: rgba(239, 68, 68, 0.65);
+  box-shadow: 0 16px 45px -8px rgba(0, 0, 0, 0.95), 0 0 35px -2px rgba(239, 68, 68, 0.5);
+}
+
+/* VIP Gold Action Buttons with Guaranteed Single-Line Label Alignment */
 .vip-gold-btn,
 .casino-gold-button,
 .casino-primary-button,
@@ -83,6 +118,7 @@
   border-radius: 0.75rem;
   box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35);
   transition: all 0.2s ease-in-out;
+  white-space: nowrap;
 }
 
 .vip-gold-btn:hover,
@@ -90,7 +126,7 @@
 .casino-primary-button:hover,
 .casino-pink-button:hover {
   background: linear-gradient(135deg, #FFFBEB 0%, #FBBF24 50%, #B45309 100%);
-  box-shadow: 0 6px 28px rgba(245, 158, 11, 0.55);
+  box-shadow: 0 6px 28px rgba(245, 158, 11, 0.45), 0 0 20px rgba(245, 158, 11, 0.35);
   transform: translateY(-1px);
 }
 

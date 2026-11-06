@@ -1,6 +1,6 @@
 {
-  "summary": "Comprehensive architectural implementation plan for upgrading the MCA classroom prediction platform into a cinematic 'Class Casino' experience. Covers inline expandable bet slips, 'The Table Is Moving' activity ticker, dynamic class personalities for roster members, the Hall of Disasters classroom upsets archive, and prominent showcase of the Semester 4 Grand Mandhi Feast sponsored by Abhinav.",
-  "updatedAt": "2026-11-05T15:55:12.744361549Z",
+  "summary": "Comprehensive architectural plan to wipe all mock/dummy bets, loans, and fake leaderboard data, establish DOB-based initial credential authentication with forced first-login password reset, instant 1,000 PTS credit, nickname customization, and real-user-only activity feeds.",
+  "updatedAt": "2026-11-06T11:42:25.190651749Z",
   "requestFeedback": true,
   "userFacing": true
 }

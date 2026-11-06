@@ -18,8 +18,10 @@ import { walletService } from '@/services/walletService';
 
 const FILTER_TABS: { label: string; value?: TransactionType }[] = [
   { label: 'All' },
-  { label: 'Predictions', value: 'PREDICTION_COMMITMENT' },
-  { label: 'Rewards', value: 'PREDICTION_REWARD' },
+  { label: 'Bets Placed', value: 'PREDICTION_COMMITMENT' },
+  { label: 'Rewards Won', value: 'PREDICTION_REWARD' },
+  { label: 'Daily & Wheel', value: 'DAILY_LOGIN_REWARD' },
+  { label: 'Settled Losses', value: 'PREDICTION_LOSS' },
   { label: 'Refunds', value: 'PREDICTION_REFUND' },
   { label: 'Loans', value: 'LOAN_RECEIVED' },
   { label: 'Admin Adjustments', value: 'ADMINISTRATIVE_ADJUSTMENT' },
@@ -36,7 +38,16 @@ export const WalletPage: React.FC = () => {
   const fetchTransactions = async () => {
     if (!user) return;
     try {
-      const data = await walletService.getUserTransactions(user.uid, selectedFilter.value);
+      let data = await walletService.getUserTransactions(user.uid);
+      if (selectedFilter.value) {
+        if (selectedFilter.value === 'DAILY_LOGIN_REWARD') {
+          data = data.filter(
+            (t) => t.type === 'DAILY_LOGIN_REWARD' || t.type === 'LUCKY_WHEEL_REWARD'
+          );
+        } else {
+          data = data.filter((t) => t.type === selectedFilter.value);
+        }
+      }
       setTransactions(data);
     } finally {
       setLoading(false);
@@ -56,8 +67,13 @@ export const WalletPage: React.FC = () => {
     switch (type) {
       case 'PREDICTION_REWARD':
         return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+      case 'DAILY_LOGIN_REWARD':
+      case 'LUCKY_WHEEL_REWARD':
+        return 'bg-amber-400/15 text-amber-300 border-amber-400/30';
       case 'PREDICTION_COMMITMENT':
         return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+      case 'PREDICTION_LOSS':
+        return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
       case 'PREDICTION_REFUND':
         return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
       case 'LOAN_GIVEN':
@@ -203,7 +219,14 @@ export const WalletPage: React.FC = () => {
         ) : (
           <div className="space-y-2.5">
             {transactions.map((tx) => {
+              const isLoss = tx.type === 'PREDICTION_LOSS';
               const isPositive = tx.amount > 0;
+              const displayAmount = isLoss
+                ? `-${(tx.metadata?.lostAmount || Math.abs(tx.amount)).toLocaleString()}`
+                : isPositive
+                ? `+${tx.amount.toLocaleString()}`
+                : `${tx.amount.toLocaleString()}`;
+
               return (
                 <div
                   key={tx.id}
@@ -231,7 +254,7 @@ export const WalletPage: React.FC = () => {
                             tx.type
                           )}`}
                         >
-                          {tx.type.replace('_', ' ')}
+                          {tx.type.replace(/_/g, ' ')}
                         </span>
                         <span className="text-[10px] text-casino-muted font-mono">
                           {new Date(tx.createdAt).toLocaleDateString()} •{' '}
@@ -250,8 +273,7 @@ export const WalletPage: React.FC = () => {
                         isPositive ? 'text-emerald-400' : 'text-rose-400'
                       }`}
                     >
-                      {isPositive ? `+${tx.amount.toLocaleString()}` : tx.amount.toLocaleString()}{' '}
-                      PTS
+                      {displayAmount} PTS
                     </p>
                     <p className="text-[10px] text-casino-muted font-mono">
                       Bal: {tx.balanceAfter.toLocaleString()}

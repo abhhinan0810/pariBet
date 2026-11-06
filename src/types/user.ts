@@ -30,12 +30,17 @@ export interface UserProfile {
   lockedBalance?: number;
   statistics: UserStatistics;
   bio?: string;
+  hasChangedPassword?: boolean;
+  dob?: string;
 }
 
 export interface ApprovedStudent {
   email: string;
   official_name: string;
   admission_number: string;
+  dob?: string;
+  hasChangedPassword?: boolean;
+  passwordHash?: string;
   isRegistered?: boolean;
   registeredUid?: string;
   registeredAt?: string;

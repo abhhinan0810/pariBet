@@ -17,7 +17,11 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { Card } from '@/components/common/Card';
 import { CoinIcon } from '@/components/common/CoinIcon';
+import { TargetGapCalculator } from '@/components/engagement/TargetGapCalculator';
 import approvedStudentsSeed from '@/data/approved_students.json';
+
+import { userService } from '@/services/userService';
+import { UserProfile, ApprovedStudent } from '@/types/user';
 
 type LeaderboardCategory =
   | 'CHAMPION'
@@ -35,94 +39,86 @@ export const LeaderboardPage: React.FC = () => {
   const [category, setCategory] = useState<LeaderboardCategory>('CHAMPION');
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('ALL_TIME');
   const [prizeModalOpen, setPrizeModalOpen] = useState(false);
+  const [registeredUsers, setRegisteredUsers] = useState<UserProfile[]>([]);
 
-  // Authoritative ranking dataset based on 53 MCA students
-  const leaderboardEntries = [
-    {
-      id: 'uid_chn25mca055',
-      name: 'Abhinav Krishna S',
-      nickname: 'Shadow',
-      admission: 'chn25mca055',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=ShadowAce',
-      championPoints: 5450,
-      victories: 24,
-      streak: 7,
-      winRate: 88,
-      participated: 28,
-      loansCompleted: 6,
-      rankChange: 4,
-    },
-    {
-      id: 'uid_chn25mca069',
-      name: 'Adarsh S',
-      nickname: 'Viper',
-      admission: 'chn25mca069',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=ViperX',
-      championPoints: 4120,
-      victories: 19,
-      streak: 5,
-      winRate: 75,
-      participated: 25,
-      loansCompleted: 4,
-      rankChange: 2,
-    },
-    {
-      id: 'uid_chn25mca005',
-      name: 'Afna S Thaha',
-      nickname: 'Oracle',
-      admission: 'chn25mca005',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=GoldenOracle',
-      championPoints: 3890,
-      victories: 17,
-      streak: 4,
-      winRate: 71,
-      participated: 24,
-      loansCompleted: 5,
-      rankChange: 1,
-    },
-    {
-      id: 'uid_chn25mca045',
-      name: 'Abhinand A Nair',
-      nickname: 'Phoenix',
-      admission: 'chn25mca045',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=CryptoKing',
-      championPoints: 2900,
-      victories: 14,
-      streak: 3,
-      winRate: 64,
-      participated: 22,
-      loansCompleted: 2,
-      rankChange: 5,
-    },
-    {
-      id: 'uid_chn25mca067',
-      name: 'Akshay J Chandran',
-      nickname: 'Ace',
-      admission: 'chn25mca067',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=NeonBlade',
-      championPoints: 2600,
-      victories: 12,
-      streak: 4,
-      winRate: 60,
-      participated: 20,
-      loansCompleted: 3,
-      rankChange: -1,
-    },
-    {
-      id: 'uid_chn25mca021',
-      name: 'Alex Antony',
-      nickname: 'Blaze',
-      admission: 'chn25mca021',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=QuantumGod',
-      championPoints: 2200,
-      victories: 10,
-      streak: 2,
-      winRate: 58,
-      participated: 18,
-      loansCompleted: 1,
-      rankChange: 3,
-    },
-  ];
+  React.useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const users = await userService.getAllUsers();
+        setRegisteredUsers(users);
+      } catch (err) {
+        console.warn('Failed to load registered users:', err);
+      }
+    };
+    fetchUsers();
+  }, [user]);
+
+  // Authoritative ranking dataset based strictly on real registered students and active roster
+  const leaderboardEntries = React.useMemo(() => {
+    const entriesMap = new Map<string, any>();
+
+    // 1. Add all registered students who have activated their profiles
+    registeredUsers.forEach((u) => {
+      entriesMap.set(u.admissionNumber.toLowerCase(), {
+        id: u.uid,
+        name: u.officialName,
+        nickname: u.nickname || u.officialName.split(' ')[0],
+        admission: u.admissionNumber,
+        avatar: u.profilePicture || `https://api.dicebear.com/7.x/bottts/svg?seed=${u.admissionNumber}`,
+        championPoints: u.walletBalance,
+        victories: u.statistics?.predictionsWon || 0,
+        streak: u.statistics?.currentStreak || 0,
+        winRate: u.statistics?.winRate || 0,
+        participated: u.statistics?.predictionsParticipated || 0,
+        loansCompleted: u.statistics?.loansCompleted || 0,
+        rankChange: 0,
+        isRegistered: true,
+      });
+    });
+
+    // 2. Ensure currently logged-in user is freshest
+    if (user && user.role !== 'admin' && user.admissionNumber !== 'ADMIN') {
+      entriesMap.set(user.admissionNumber.toLowerCase(), {
+        id: user.uid,
+        name: user.officialName,
+        nickname: user.nickname || user.officialName.split(' ')[0],
+        admission: user.admissionNumber,
+        avatar: user.profilePicture || `https://api.dicebear.com/7.x/bottts/svg?seed=${user.admissionNumber}`,
+        championPoints: user.walletBalance,
+        victories: user.statistics?.predictionsWon || 0,
+        streak: user.statistics?.currentStreak || 0,
+        winRate: user.statistics?.winRate || 0,
+        participated: user.statistics?.predictionsParticipated || 0,
+        loansCompleted: user.statistics?.loansCompleted || 0,
+        rankChange: 0,
+        isRegistered: true,
+      });
+    }
+
+    // 3. Include remaining 53 roster students at baseline starting 1,000 PTS
+    (approvedStudentsSeed as ApprovedStudent[]).forEach((student) => {
+      const key = student.admission_number.toLowerCase();
+      if (!entriesMap.has(key)) {
+        entriesMap.set(key, {
+          id: `uid_${student.admission_number}`,
+          name: student.official_name,
+          nickname: student.official_name.split(' ')[0],
+          admission: student.admission_number,
+          avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${student.admission_number}`,
+          championPoints: 1000,
+          victories: 0,
+          streak: 0,
+          winRate: 0,
+          participated: 0,
+          loansCompleted: 0,
+          rankChange: 0,
+          isRegistered: false,
+        });
+      }
+    });
+
+    return Array.from(entriesMap.values());
+  }, [registeredUsers, user]);
 
   // Dynamically sort entries based on selected category
   const sortedEntries = [...leaderboardEntries].sort((a, b) => {
@@ -332,6 +328,27 @@ export const LeaderboardPage: React.FC = () => {
         </div>
       </div>
 
+      {/* TARGET GAP CALCULATOR & WHAT-IF SIMULATOR */}
+      {(() => {
+        const userRankIndex = sortedEntries.findIndex(
+          (e) =>
+            e.admission.toLowerCase() === (user?.admissionNumber || '').toLowerCase() ||
+            e.id === user?.uid
+        );
+        const currentUserRank = userRankIndex !== -1 ? userRankIndex + 1 : sortedEntries.length;
+        const currentUserPoints = user?.walletBalance || 0;
+
+        return (
+          <TargetGapCalculator
+            cutoffPoints={cutoffPoints}
+            cutoffHolderName={sortedEntries[3]?.nickname || 'Rank 4 Qualifier'}
+            rank5Points={sortedEntries[4]?.championPoints || 2600}
+            userRank={currentUserRank}
+            userPoints={currentUserPoints}
+          />
+        );
+      })()}
+
       {/* Full Leaderboard Table */}
       <Card variant="default" className="divide-y divide-white/5">
         <div className="p-3 sm:p-4 bg-background-elevated flex items-center justify-between text-[11px] sm:text-xs font-mono uppercase text-casino-muted">
@@ -343,7 +360,8 @@ export const LeaderboardPage: React.FC = () => {
           const rank = index + 1;
           const isTop4 = rank <= 4;
           const isCurrentUser =
-            item.admission.toLowerCase() === user?.admissionNumber.toLowerCase();
+            (user?.admissionNumber && item.admission.toLowerCase() === user.admissionNumber.toLowerCase()) ||
+            item.id === user?.uid;
 
           return (
             <div

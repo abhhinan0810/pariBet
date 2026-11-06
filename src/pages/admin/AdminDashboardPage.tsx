@@ -16,10 +16,12 @@ import {
   Sparkles,
   RefreshCw,
   Sliders,
-  Award
+  Award,
+  KeyRound
 } from 'lucide-react';
 import { adminService } from '@/services/adminService';
 import { predictionService } from '@/services/predictionService';
+import { studentService } from '@/services/studentService';
 import { SystemStats, AdminLog } from '@/types/admin';
 import { Prediction } from '@/types/prediction';
 import { UserProfile } from '@/types/user';
@@ -249,6 +251,17 @@ export const AdminDashboardPage: React.FC = () => {
     }
   };
 
+  const handleResetPasswordToDob = (targetUser: UserProfile) => {
+    try {
+      studentService.resetStudentPasswordToDob(targetUser.admissionNumber);
+      targetUser.hasChangedPassword = false;
+      success('Password Reset', `${targetUser.officialName}'s password was reset to initial DOB.`);
+      fetchAdminData();
+    } catch (err: any) {
+      toastError('Reset Failed', err.message);
+    }
+  };
+
   // Filtered lists
   const filteredUsers = usersList.filter(
     (u) =>
@@ -475,6 +488,14 @@ export const AdminDashboardPage: React.FC = () => {
 
                     {u.role !== 'admin' && (
                       <>
+                        <button
+                          onClick={() => handleResetPasswordToDob(u)}
+                          className="p-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-colors"
+                          title="Reset Password to Initial DOB"
+                        >
+                          <KeyRound className="w-3.5 h-3.5" />
+                        </button>
+
                         <button
                           onClick={() => handleToggleSuspend(u)}
                           className={`px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-colors ${

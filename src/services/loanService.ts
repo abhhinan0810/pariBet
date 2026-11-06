@@ -23,27 +23,9 @@ const LOCAL_REQUESTS_KEY = 'paribet_mock_loan_requests';
 const LOCAL_OFFERS_KEY = 'paribet_mock_loan_offers';
 const LOCAL_LOANS_KEY = 'paribet_mock_loans';
 
-// Initial seed loan requests
-const INITIAL_SEED_REQUESTS: LoanRequest[] = [
-  {
-    id: 'req_1',
-    borrowerId: 'uid_chn25mca060',
-    borrowerNickname: 'Apex',
-    borrowerOfficialName: 'Avinash AR',
-    amount: 300,
-    maxInterestRate: 10,
-    requestedRepaymentDays: 7,
-    description: 'Need virtual tokens for the inter-batch cricket tournament pool!',
-    status: 'OPEN',
-    createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
-    expiresAt: new Date(Date.now() + 3600000 * 48).toISOString(),
-    offersCount: 1,
-  }
-];
-
 export const loanService = {
   /**
-   * Get all loan requests
+   * Get all loan requests (Real user requests only)
    */
   async getLoanRequests(status?: LoanStatus): Promise<LoanRequest[]> {
     let list: LoanRequest[] = [];
@@ -60,11 +42,18 @@ export const loanService = {
     if (list.length === 0) {
       const stored = localStorage.getItem(LOCAL_REQUESTS_KEY);
       if (stored) {
-        list = JSON.parse(stored);
+        try {
+          const parsed: LoanRequest[] = JSON.parse(stored);
+          list = parsed.filter((r) => r.id !== 'req_1');
+          localStorage.setItem(LOCAL_REQUESTS_KEY, JSON.stringify(list));
+        } catch {
+          list = [];
+        }
       } else {
-        list = INITIAL_SEED_REQUESTS;
-        localStorage.setItem(LOCAL_REQUESTS_KEY, JSON.stringify(list));
+        list = [];
       }
+    } else {
+      list = list.filter((r) => r.id !== 'req_1');
     }
 
     if (status) {

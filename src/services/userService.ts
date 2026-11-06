@@ -120,6 +120,32 @@ export const userService = {
     }
 
     return null;
+  },
+
+  /**
+   * Get all registered student users for real leaderboard
+   */
+  async getAllUsers(): Promise<UserProfile[]> {
+    let list: UserProfile[] = [];
+    if (isFirebaseConfigured) {
+      try {
+        const { getDocs, collection } = await import('firebase/firestore');
+        const snap = await getDocs(collection(db, USERS_COLLECTION));
+        list = snap.docs.map((d) => d.data() as UserProfile);
+      } catch (err) {
+        console.warn('[userService] Failed to get all users from Firestore:', err);
+      }
+    }
+    if (list.length === 0) {
+      try {
+        const localUsers = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}');
+        list = Object.values(localUsers) as UserProfile[];
+      } catch {
+        list = [];
+      }
+    }
+    // Exclude master administrator account from player leaderboard
+    return list.filter((u) => u.role !== 'admin' && u.admissionNumber !== 'ADMIN');
   }
 };
 

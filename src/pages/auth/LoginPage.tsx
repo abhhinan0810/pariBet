@@ -82,37 +82,48 @@ export const LoginPage: React.FC = () => {
 
         {/* Card */}
         <div className="casino-card p-5 sm:p-8 border-white/5 shadow-card-glow">
+          {/* DOB Classroom Instruction Banner */}
+          <div className="mb-5 p-3 rounded-2xl bg-amber-400/10 border border-amber-400/25 flex items-start gap-2.5">
+            <span className="text-base shrink-0 mt-0.5">🎫</span>
+            <div className="text-[11px] leading-snug text-slate-300">
+              <span className="font-bold text-amber-300 block mb-0.5 font-mono uppercase text-[10px]">
+                Classroom Direct Login
+              </span>
+              First time logging in? Enter your <span className="text-white font-mono font-semibold">admission number</span> and your <span className="text-amber-400 font-mono font-semibold">Date of Birth (DDMMYYYY)</span> as your initial password. No email verification required!
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-casino-muted mb-1.5">
-                Email Address
+              <label className="block text-xs font-semibold uppercase tracking-wider text-casino-muted mb-1.5 font-mono">
+                Admission No. or College Email
               </label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-casino-muted" />
                 <input
-                  type="email"
+                  type="text"
                   required
-                  placeholder="admission_number@ceconline.edu"
+                  placeholder="e.g. chn25mca045 or chn25mca045@ceconline.edu"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none transition-all font-mono"
+                  className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-amber-400/60 transition-all font-mono"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-casino-muted mb-1.5">
-                Password
+              <label className="block text-xs font-semibold uppercase tracking-wider text-casino-muted mb-1.5 font-mono">
+                Password / Initial DOB (DDMMYYYY)
               </label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-casino-muted" />
                 <input
                   type="password"
                   required
-                  placeholder="Enter your password"
+                  placeholder="Date of Birth (DDMMYYYY) or Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none transition-all font-mono"
+                  className="w-full bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl px-10 py-3 text-sm text-white placeholder-casino-muted/50 focus:outline-none focus:border-amber-400/60 transition-all font-mono"
                 />
               </div>
             </div>
@@ -134,17 +145,14 @@ export const LoginPage: React.FC = () => {
             </button>
           </form>
 
-          {/* Quick Register Link */}
+          {/* Quick Roster Note */}
           <div className="mt-6 pt-5 border-t border-white/5 text-center">
-            <p className="text-xs text-casino-muted mb-1.5">
-              Don't have an account yet?
+            <p className="text-xs text-casino-muted mb-1">
+              Verified CEC MCA Class of 2025 Member?
             </p>
-            <Link
-              to="/register"
-              className="text-xs font-bold text-amber-400 hover:text-red-400 hover:underline inline-flex items-center gap-1 whitespace-nowrap"
-            >
-              Create Account & Claim 1,000 Coins
-            </Link>
+            <p className="text-[11px] text-amber-300 font-mono">
+              All 53 students are pre-registered on the roster. Simply sign in with your Admission No. and DOB above!
+            </p>
           </div>
         </div>
       </motion.div>

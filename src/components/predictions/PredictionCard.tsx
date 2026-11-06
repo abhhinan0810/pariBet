@@ -57,6 +57,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
   const [stakeAmount, setStakeAmount] = useState<number>(
     Math.max(prediction.minCommitment, 100)
   );
+  const [isPhantomWager, setIsPhantomWager] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const userBalance = user?.walletBalance || 0;
@@ -157,17 +158,21 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
       await predictionService.participate({
         predictionId: prediction.id,
         userId: user.uid,
-        userNickname: user.nickname,
-        userOfficialName: user.officialName,
-        userAvatar: user.profilePicture,
+        userNickname: isPhantomWager ? 'Shadow Punter 🕶️' : user.nickname,
+        userOfficialName: isPhantomWager ? 'Classmate #??' : user.officialName,
+        userAvatar: isPhantomWager
+          ? 'https://api.dicebear.com/7.x/bottts/svg?seed=ShadowPhantom'
+          : user.profilePicture,
         optionId: selectedOptionId,
         tokensCommitted: stakeAmount,
       });
 
       await refreshUserProfile();
       toastSuccess(
-        'Bet Locked In!',
-        `Committed ${stakeAmount.toLocaleString()} PTS on "${selectedOption?.text || 'Option'}"`
+        isPhantomWager ? 'Phantom Bet Locked In!' : 'Bet Locked In!',
+        isPhantomWager
+          ? `Committed ${stakeAmount.toLocaleString()} PTS anonymously on "${selectedOption?.text || 'Option'}"`
+          : `Committed ${stakeAmount.toLocaleString()} PTS on "${selectedOption?.text || 'Option'}"`
       );
       setIsSlipOpen(false);
       if (onBetPlaced) onBetPlaced();
@@ -453,6 +458,22 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                     +{estimatedPayout.toLocaleString()} PTS
                   </span>
                 </div>
+              </div>
+
+              {/* Incognito Phantom Bet Toggle */}
+              <div className="flex items-center justify-between p-2 rounded-xl bg-purple-950/20 border border-purple-500/25 text-[11px] font-mono">
+                <label className="flex items-center gap-2 cursor-pointer text-purple-300">
+                  <input
+                    type="checkbox"
+                    checked={isPhantomWager}
+                    onChange={(e) => setIsPhantomWager(e.target.checked)}
+                    className="rounded border-purple-400 text-purple-600 focus:ring-0 cursor-pointer"
+                  />
+                  <span className="font-bold">🕶️ Incognito Phantom Wager</span>
+                </label>
+                <span className="text-[10px] text-slate-400 hidden xs:inline">
+                  {isPhantomWager ? 'Name masked on ticker' : 'Public wager'}
+                </span>
               </div>
             </div>
 

@@ -228,88 +228,51 @@ export const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* SEMESTER 4 GRAND PRIZE BANNER — FULL MANDHI SPONSORED BY ABHINAV (VARKKALA/PARI) */}
-      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-black/70 via-[#190a10]/65 to-black/70 backdrop-blur-2xl border-2 border-amber-400/35 p-4 sm:p-5 lg:p-6 shadow-[0_0_35px_rgba(245,158,11,0.15)]">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-center">
-          <div className="md:col-span-4 lg:col-span-3 flex items-center justify-center">
-            <Link to="/leaderboard" className="relative w-full max-w-[210px] rounded-2xl overflow-hidden border-2 border-amber-400/40 shadow-xl group block">
-              <img
-                src="/assets/aistudio/Sponsored_Mandhi_Feast_Poster_e8b7457a.png"
-                alt="Sem 4 Grand Prize Mandhi"
-                className="w-full aspect-[4/3] sm:aspect-square object-cover transform group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
-              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] font-mono">
-                <span className="text-amber-400 font-bold bg-black/85 px-2 py-0.5 rounded border border-amber-400/30">
-                  🍗 FULL MANDHI
-                </span>
-                <span className="text-emerald-400 font-bold bg-black/85 px-2 py-0.5 rounded border border-emerald-400/30">
-                  TOP 4
-                </span>
-              </div>
-            </Link>
+      {/* FEATURED ARENA & MANDHI GRAND PRIZE SHOWCASE */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        {/* MAIN FEATURED ARENA: Roll The Dice Showdown with Merged Craps Table Image */}
+        <div className="lg:col-span-7 xl:col-span-8 relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0d0408] via-[#1f0b15] via-[#180811] to-[#0f040a] backdrop-blur-2xl border border-red-500/25 shadow-2xl flex flex-col justify-between group min-h-[340px]">
+          {/* Ambient image glow extending across the entire card for color uniformity */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <img
+              src="/images/craps-table-arena.jpg"
+              alt=""
+              className="w-full h-full object-cover object-center filter blur-3xl scale-125 opacity-35 sm:opacity-45"
+            />
+            {/* Rich gradient overlay that smoothly darkens the blurred image into deep wine, mahogany, and amber */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#1a0712]/75 via-[#16060f]/85 to-[#0d0408]/95" />
+            {/* Ambient Chandelier & Champagne Glow extending into the top right */}
+            <div className="absolute top-0 right-0 w-[75%] h-full bg-[radial-gradient(ellipse_at_top_right,rgba(245,158,11,0.22)_0%,rgba(190,24,93,0.15)_35%,transparent_70%)]" />
+            {/* Subtle emerald craps felt reflection in the bottom right corner */}
+            <div className="absolute bottom-0 right-0 w-[50%] h-[60%] bg-[radial-gradient(ellipse_at_bottom_right,rgba(16,185,129,0.08)_0%,transparent_70%)]" />
           </div>
 
-          <div className="md:col-span-8 lg:col-span-9 space-y-2">
+          {/* Crisp craps table photo on the left, seamlessly blending into the right-side gradient */}
+          <div className="absolute inset-y-0 left-0 w-full sm:w-3/5 lg:w-[58%] overflow-hidden pointer-events-none">
+            <img
+              src="/images/craps-table-arena.jpg"
+              alt="Live Craps Arena"
+              className="w-full h-full object-cover object-center sm:object-left-top transform group-hover:scale-105 transition-transform duration-1000 opacity-85 sm:opacity-95"
+            />
+            {/* Soft gradient blend carrying the image's lighting into the extended right gradient */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/15 via-transparent via-[#1a0712]/50 to-[#1a0712] hidden sm:block" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#14060d] via-black/40 to-transparent sm:hidden" />
+          </div>
+
+          {/* Floating Arena Badges */}
+          <div className="relative z-10 p-5 sm:p-6 pb-0 flex items-center gap-2">
+            <span className="text-[10px] font-mono font-bold text-amber-400 bg-black/85 px-2.5 py-1 rounded-lg border border-amber-400/30 backdrop-blur-md shadow-md flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              FEATURED ARENA
+            </span>
+            <span className="text-[10px] font-mono font-bold text-emerald-400 bg-black/85 px-2.5 py-1 rounded-lg border border-emerald-400/30 backdrop-blur-md shadow-md">
+              LIVE ACTION
+            </span>
+          </div>
+
+          {/* Content pushed to the right side on sm/md/lg screens */}
+          <div className="relative z-10 sm:ml-auto sm:w-[58%] lg:w-[55%] xl:w-[50%] p-5 sm:p-6 pt-4 sm:pt-6 space-y-3">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] sm:text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/25">
-                <Crown className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                <span>Semester 4 Grand Prize</span>
-              </span>
-              <span className="text-white/20">•</span>
-              <span className="text-xs text-slate-300">
-                Sponsored by <strong className="text-amber-400">Abhinav (Varkkala / Pari)</strong>
-              </span>
-            </div>
-
-            <h2 className="font-display font-black text-lg sm:text-xl text-white">
-              Race for the Grand Feast: <span className="gold-shimmer-text">Full Mandhi for Top 4</span>
-            </h2>
-
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
-              At the final wrap-up of Semester 4, the top 4 contenders holding the highest points will be treated to a full authentic chicken Mandhi platter with fragrant rice, dips, and sides!
-            </p>
-
-            <div className="flex items-center gap-3 pt-1 flex-wrap">
-              <Link
-                to="/leaderboard"
-                className="vip-gold-btn px-4 py-2 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap cursor-pointer shadow-gold-glow"
-              >
-                <span>🍗 Check Mandhi Cutoff Standings</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-              <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-xl border border-emerald-500/20">
-                Top 4 MCA Students Qualify
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* FEATURED LIVE ARENA SHOWDOWN (dice-roll-showdown.jpg) */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-black/45 via-[#180a0f]/40 to-black/45 backdrop-blur-2xl border border-red-500/25 p-5 sm:p-6 shadow-xl">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-          <div className="md:col-span-5 lg:col-span-4 relative flex items-center justify-center">
-            <div className="relative w-full max-w-[260px] aspect-square rounded-2xl overflow-hidden border border-white/10 group shadow-xl">
-              <img
-                src="/images/dice-roll-showdown.jpg"
-                alt="Live Craps Arena"
-                className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0C0D13]/70 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[10px] font-mono">
-                <span className="text-amber-400 font-bold bg-[#07080B]/90 px-2.5 py-1 rounded-lg border border-amber-400/20 backdrop-blur-md">
-                  FEATURED ARENA
-                </span>
-                <span className="text-emerald-400 font-bold bg-[#07080B]/90 px-2.5 py-1 rounded-lg border border-emerald-400/20 backdrop-blur-md">
-                  LIVE ACTION
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="md:col-span-7 lg:col-span-8 space-y-2.5">
-            <div className="flex items-center gap-2">
               <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                 <Flame className="w-3.5 h-3.5 text-amber-400" />
                 Campus Main Event
@@ -317,27 +280,93 @@ export const HomePage: React.FC = () => {
               <span className="text-white/20">•</span>
               <span className="text-xs text-slate-400 font-medium">All 53 Classmates Eligible</span>
             </div>
-            <h2 className="font-display font-black text-xl lg:text-2xl text-white">
+
+            <h2 className="font-display font-black text-xl sm:text-2xl xl:text-3xl text-white leading-tight">
               Roll The Dice on Tomorrow's Big Outcomes
             </h2>
-            <p className="text-xs lg:text-sm text-slate-400 leading-relaxed max-w-xl">
+
+            <p className="text-xs sm:text-sm text-slate-300/90 leading-relaxed">
               Turn everyday classroom banter into high-stakes pari-mutuel showdowns. Predict lab surprises, sports finals, or seminar dates before the pool locks.
             </p>
-            <div className="flex items-center gap-3 pt-1">
+
+            <div className="flex items-center gap-3 pt-2 flex-wrap">
               <Link
                 to="/create"
-                className="vip-gold-btn px-4 py-2 text-xs font-extrabold flex items-center gap-1.5 cursor-pointer"
+                className="vip-gold-btn px-4 py-2.5 text-xs font-extrabold flex items-center gap-1.5 cursor-pointer shadow-gold-glow"
               >
                 <PlusCircle className="w-3.5 h-3.5 text-black" />
                 <span>Launch Prediction</span>
               </Link>
               <Link
                 to="/discover"
-                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-semibold transition-all"
+                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-semibold transition-all backdrop-blur-sm"
               >
                 Explore Active Pools
               </Link>
             </div>
+          </div>
+        </div>
+
+        {/* SEMESTER 4 GRAND PRIZE MANDHI SIDECARD */}
+        <div className="lg:col-span-5 xl:col-span-4 relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#1d0d14]/85 via-black/85 to-[#12070b]/90 backdrop-blur-2xl border-2 border-amber-400/35 p-5 sm:p-6 shadow-[0_0_35px_rgba(245,158,11,0.15)] flex flex-col justify-between group hover:border-amber-400/60 transition-all">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/10 blur-[70px] rounded-full pointer-events-none" />
+
+          <div className="space-y-3 relative z-10">
+            {/* Header Badges */}
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <span className="text-[10px] sm:text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/25">
+                <Crown className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                <span>Semester 4 Grand Prize</span>
+              </span>
+              <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                TOP 4 QUALIFY
+              </span>
+            </div>
+
+            {/* Poster Preview */}
+            <Link
+              to="/leaderboard"
+              className="relative w-full h-36 sm:h-40 rounded-2xl overflow-hidden border border-amber-400/30 group/img block shadow-lg"
+            >
+              <img
+                src="/assets/aistudio/Sponsored_Mandhi_Feast_Poster_e8b7457a.png"
+                alt="Sem 4 Grand Prize Mandhi"
+                className="w-full h-full object-cover object-center transform group-hover/img:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent pointer-events-none" />
+              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] font-mono">
+                <span className="text-amber-400 font-bold bg-black/85 px-2 py-0.5 rounded border border-amber-400/30 backdrop-blur-sm">
+                  🍗 FULL MANDHI
+                </span>
+                <span className="text-emerald-400 font-bold bg-black/85 px-2 py-0.5 rounded border border-emerald-400/30 backdrop-blur-sm">
+                  TOP 4 SEATS
+                </span>
+              </div>
+            </Link>
+
+            {/* Sponsor & Title */}
+            <div>
+              <p className="text-[11px] text-slate-300 mb-1">
+                Sponsored by <strong className="text-amber-400 font-bold">Abhinav (Varkkala / Pari)</strong>
+              </p>
+              <h3 className="font-display font-black text-base sm:text-lg text-white leading-snug">
+                Race for the Grand Feast: <span className="gold-shimmer-text">Full Mandhi for Top 4</span>
+              </h3>
+              <p className="text-xs text-slate-300/85 leading-relaxed mt-1 line-clamp-3">
+                At the final wrap-up of Semester 4, the top 4 contenders holding the highest points will be treated to a full authentic chicken Mandhi platter with fragrant rice, dips, and sides!
+              </p>
+            </div>
+          </div>
+
+          {/* Action Link */}
+          <div className="pt-3 relative z-10">
+            <Link
+              to="/leaderboard"
+              className="vip-gold-btn w-full py-2.5 text-xs font-bold flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer shadow-gold-glow"
+            >
+              <span>🍗 Check Mandhi Cutoff Standings</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </div>

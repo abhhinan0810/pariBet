@@ -1,4 +1,5 @@
 import { NotificationItem, NotificationType } from '@/types/notification';
+import { syncStorage } from './storageSync';
 
 const LOCAL_NOTIFS_KEY = 'paribet_mock_notifications';
 
@@ -15,7 +16,7 @@ const INITIAL_WELCOME_NOTIF: NotificationItem = {
 export const notificationService = {
   async getUserNotifications(userId: string): Promise<NotificationItem[]> {
     const all: NotificationItem[] = JSON.parse(
-      localStorage.getItem(LOCAL_NOTIFS_KEY) || JSON.stringify([INITIAL_WELCOME_NOTIF])
+      syncStorage.getItem(LOCAL_NOTIFS_KEY) || JSON.stringify([INITIAL_WELCOME_NOTIF])
     );
     return all
       .filter((n) => n.userId === userId || n.userId === 'all')
@@ -43,35 +44,35 @@ export const notificationService = {
     };
 
     const all: NotificationItem[] = JSON.parse(
-      localStorage.getItem(LOCAL_NOTIFS_KEY) || '[]'
+      syncStorage.getItem(LOCAL_NOTIFS_KEY) || '[]'
     );
     all.unshift(notif);
-    localStorage.setItem(LOCAL_NOTIFS_KEY, JSON.stringify(all));
+    syncStorage.setItem(LOCAL_NOTIFS_KEY, JSON.stringify(all));
 
     return notif;
   },
 
   async markAsRead(id: string): Promise<void> {
     const all: NotificationItem[] = JSON.parse(
-      localStorage.getItem(LOCAL_NOTIFS_KEY) || '[]'
+      syncStorage.getItem(LOCAL_NOTIFS_KEY) || '[]'
     );
     const item = all.find((n) => n.id === id);
     if (item) {
       item.read = true;
-      localStorage.setItem(LOCAL_NOTIFS_KEY, JSON.stringify(all));
+      syncStorage.setItem(LOCAL_NOTIFS_KEY, JSON.stringify(all));
     }
   },
 
   async markAllAsRead(userId: string): Promise<void> {
     const all: NotificationItem[] = JSON.parse(
-      localStorage.getItem(LOCAL_NOTIFS_KEY) || '[]'
+      syncStorage.getItem(LOCAL_NOTIFS_KEY) || '[]'
     );
     all.forEach((n) => {
       if (n.userId === userId || n.userId === 'all') {
         n.read = true;
       }
     });
-    localStorage.setItem(LOCAL_NOTIFS_KEY, JSON.stringify(all));
+    syncStorage.setItem(LOCAL_NOTIFS_KEY, JSON.stringify(all));
   }
 };
 

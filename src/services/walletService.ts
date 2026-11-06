@@ -13,6 +13,7 @@ import {
 } from 'firebase/firestore';
 import { Transaction, TransactionType, Wallet } from '@/types/wallet';
 import { userService } from './userService';
+import { syncStorage } from './storageSync';
 
 const TRANSACTIONS_COLLECTION = 'transactions';
 const WALLETS_COLLECTION = 'wallets';
@@ -41,7 +42,7 @@ export const walletService = {
       }
     }
 
-    const allTx: Transaction[] = JSON.parse(localStorage.getItem(LOCAL_TX_KEY) || '[]');
+    const allTx: Transaction[] = JSON.parse(syncStorage.getItem(LOCAL_TX_KEY) || '[]');
     let userTx = allTx.filter((t) => t.userId === userId);
     if (filterType) {
       userTx = userTx.filter((t) => t.type === filterType);
@@ -162,14 +163,14 @@ export const walletService = {
       }
     }
 
-    // Update local storage
-    const localUsers = JSON.parse(localStorage.getItem('paribet_mock_users') || '{}');
+    // Update central & local storage
+    const localUsers = JSON.parse(syncStorage.getItem('paribet_mock_users') || '{}');
     localUsers[params.userId] = updatedProfile;
-    localStorage.setItem('paribet_mock_users', JSON.stringify(localUsers));
+    syncStorage.setItem('paribet_mock_users', JSON.stringify(localUsers));
 
-    const allTx: Transaction[] = JSON.parse(localStorage.getItem(LOCAL_TX_KEY) || '[]');
+    const allTx: Transaction[] = JSON.parse(syncStorage.getItem(LOCAL_TX_KEY) || '[]');
     allTx.unshift(newTx);
-    localStorage.setItem(LOCAL_TX_KEY, JSON.stringify(allTx));
+    syncStorage.setItem(LOCAL_TX_KEY, JSON.stringify(allTx));
 
     return newTx;
   }

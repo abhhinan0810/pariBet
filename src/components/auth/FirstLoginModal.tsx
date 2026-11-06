@@ -57,7 +57,7 @@ export const FirstLoginModal: React.FC<FirstLoginModalProps> = ({ isOpen, onComp
     setSubmitting(true);
     try {
       // 1. Save permanent password in credential store
-      studentService.setStudentPermanentPassword(user.admissionNumber, password);
+      await studentService.setStudentPermanentPassword(user.admissionNumber, password);
 
       // 2. Complete profile setup with chosen nickname & avatar
       await completeProfileSetup(nickname.trim(), selectedAvatar);

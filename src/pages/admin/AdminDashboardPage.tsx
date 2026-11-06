@@ -251,12 +251,12 @@ export const AdminDashboardPage: React.FC = () => {
     }
   };
 
-  const handleResetPasswordToDob = (targetUser: UserProfile) => {
+  const handleResetPasswordToDob = async (targetUser: UserProfile) => {
     try {
-      studentService.resetStudentPasswordToDob(targetUser.admissionNumber);
+      await studentService.resetStudentPasswordToDob(targetUser.admissionNumber);
       targetUser.hasChangedPassword = false;
       success('Password Reset', `${targetUser.officialName}'s password was reset to initial DOB.`);
-      fetchAdminData();
+      await fetchAdminData();
     } catch (err: any) {
       toastError('Reset Failed', err.message);
     }

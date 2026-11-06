@@ -6,6 +6,7 @@ import { loanService } from './loanService';
 import { walletService } from './walletService';
 import { db, isFirebaseConfigured } from '@/config/firebase';
 import { doc, getDocs, collection, deleteDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { syncStorage } from './storageSync';
 
 const LOCAL_ADMIN_LOGS_KEY = 'paribet_mock_admin_logs';
 const LOCAL_USERS_KEY = 'paribet_mock_users';
@@ -37,9 +38,9 @@ export const adminService = {
       timestamp: new Date().toISOString(),
     };
 
-    const logs: AdminLog[] = JSON.parse(localStorage.getItem(LOCAL_ADMIN_LOGS_KEY) || '[]');
+    const logs: AdminLog[] = JSON.parse(syncStorage.getItem(LOCAL_ADMIN_LOGS_KEY) || '[]');
     logs.unshift(log);
-    localStorage.setItem(LOCAL_ADMIN_LOGS_KEY, JSON.stringify(logs));
+    syncStorage.setItem(LOCAL_ADMIN_LOGS_KEY, JSON.stringify(logs));
 
     return log;
   },
@@ -48,7 +49,7 @@ export const adminService = {
    * Get administrative audit logs
    */
   async getLogs(): Promise<AdminLog[]> {
-    return JSON.parse(localStorage.getItem(LOCAL_ADMIN_LOGS_KEY) || '[]');
+    return JSON.parse(syncStorage.getItem(LOCAL_ADMIN_LOGS_KEY) || '[]');
   },
 
   /**
@@ -56,7 +57,7 @@ export const adminService = {
    */
   async getAllUsers(): Promise<UserProfile[]> {
     const localUsers: Record<string, UserProfile> = JSON.parse(
-      localStorage.getItem(LOCAL_USERS_KEY) || '{}'
+      syncStorage.getItem(LOCAL_USERS_KEY) || '{}'
     );
 
     let usersList = Object.values(localUsers);
@@ -135,10 +136,10 @@ export const adminService = {
     }
 
     const localUsers: Record<string, UserProfile> = JSON.parse(
-      localStorage.getItem(LOCAL_USERS_KEY) || '{}'
+      syncStorage.getItem(LOCAL_USERS_KEY) || '{}'
     );
     localUsers[uid] = newUser;
-    localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
+    syncStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
 
     await this.logAction({
       adminUid: params.adminUid,
@@ -162,7 +163,7 @@ export const adminService = {
     reason: string
   ): Promise<UserProfile | null> {
     const localUsers: Record<string, UserProfile> = JSON.parse(
-      localStorage.getItem(LOCAL_USERS_KEY) || '{}'
+      syncStorage.getItem(LOCAL_USERS_KEY) || '{}'
     );
 
     if (!localUsers[userId]) return null;
@@ -174,7 +175,7 @@ export const adminService = {
     };
 
     localUsers[userId] = updated;
-    localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
+    syncStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
 
     if (isFirebaseConfigured) {
       try {
@@ -201,12 +202,12 @@ export const adminService = {
    */
   async deleteUser(userId: string, adminUid: string, reason: string): Promise<boolean> {
     const localUsers: Record<string, UserProfile> = JSON.parse(
-      localStorage.getItem(LOCAL_USERS_KEY) || '{}'
+      syncStorage.getItem(LOCAL_USERS_KEY) || '{}'
     );
 
     const userToDelete = localUsers[userId];
     delete localUsers[userId];
-    localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
+    syncStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
 
     if (isFirebaseConfigured) {
       try {
@@ -287,7 +288,7 @@ export const adminService = {
     const overdueLoans = allLoans.filter((l) => l.status === 'OVERDUE').length;
 
     const localUsers: Record<string, UserProfile> = JSON.parse(
-      localStorage.getItem(LOCAL_USERS_KEY) || '{}'
+      syncStorage.getItem(LOCAL_USERS_KEY) || '{}'
     );
     const usersList = Object.values(localUsers);
     const totalTokens = usersList.reduce((acc, u) => acc + (u.walletBalance || 0), 0);
@@ -315,11 +316,11 @@ export const adminService = {
     reason: string
   ): Promise<void> {
     const localUsers: Record<string, UserProfile> = JSON.parse(
-      localStorage.getItem(LOCAL_USERS_KEY) || '{}'
+      syncStorage.getItem(LOCAL_USERS_KEY) || '{}'
     );
     if (localUsers[userId]) {
       localUsers[userId].accountStatus = status;
-      localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
+      syncStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
 
       if (isFirebaseConfigured) {
         try {

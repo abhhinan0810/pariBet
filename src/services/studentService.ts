@@ -2,6 +2,7 @@ import { db, isFirebaseConfigured } from '@/config/firebase';
 import { collection, query, where, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
 import { ApprovedStudent } from '@/types/user';
 import approvedStudentsSeed from '@/data/approved_students.json';
+import { syncStorage } from '@/services/storageSync';
 
 const APPROVED_COLLECTION = 'approved_students';
 const CREDENTIALS_KEY = 'paribet_student_credentials';
@@ -45,31 +46,54 @@ export const studentService = {
   },
 
   /**
-   * Get student credential record from local storage
+   * Get student credential record from central storage / local cache
    */
-  getStudentCredential(admissionNumber: string): StudentCredentialRecord | null {
+  async getStudentCredential(admissionNumber: string): Promise<StudentCredentialRecord | null> {
+    const cleanAdmission = admissionNumber.toLowerCase();
     try {
-      const stored = localStorage.getItem(CREDENTIALS_KEY);
-      if (!stored) return null;
-      const creds: Record<string, StudentCredentialRecord> = JSON.parse(stored);
-      return creds[admissionNumber.toLowerCase()] || null;
+      const stored = await syncStorage.getItemAsync(CREDENTIALS_KEY);
+      if (stored) {
+        const creds: Record<string, StudentCredentialRecord> = typeof stored === 'string' ? JSON.parse(stored) : stored;
+        return creds[cleanAdmission] || null;
+      }
+    } catch (err) {
+      console.warn('[studentService] Failed to read credentials from central storage:', err);
+    }
+
+    // Synchronous fallback from local cache
+    try {
+      const fallback = syncStorage.getItem(CREDENTIALS_KEY);
+      if (!fallback) return null;
+      const creds: Record<string, StudentCredentialRecord> = JSON.parse(fallback);
+      return creds[cleanAdmission] || null;
     } catch {
       return null;
     }
   },
 
   /**
-   * Save student credential record to local storage
+   * Save student credential record to central storage and local storage
    */
-  saveStudentCredential(cred: StudentCredentialRecord): void {
+  async saveStudentCredential(cred: StudentCredentialRecord): Promise<void> {
+    const cleanAdmission = cred.admissionNumber.toLowerCase();
+    let creds: Record<string, StudentCredentialRecord> = {};
+
     try {
-      const stored = localStorage.getItem(CREDENTIALS_KEY);
-      const creds: Record<string, StudentCredentialRecord> = stored ? JSON.parse(stored) : {};
-      creds[cred.admissionNumber.toLowerCase()] = cred;
-      localStorage.setItem(CREDENTIALS_KEY, JSON.stringify(creds));
-    } catch (err) {
-      console.warn('[studentService] Failed to save credential:', err);
+      const stored = await syncStorage.getItemAsync(CREDENTIALS_KEY);
+      if (stored) {
+        creds = typeof stored === 'string' ? JSON.parse(stored) : stored;
+      }
+    } catch {
+      const local = syncStorage.getItem(CREDENTIALS_KEY);
+      if (local) {
+        try {
+          creds = JSON.parse(local);
+        } catch {}
+      }
     }
+
+    creds[cleanAdmission] = { ...cred, admissionNumber: cleanAdmission };
+    await syncStorage.setItemAsync(CREDENTIALS_KEY, JSON.stringify(creds));
   },
 
   /**
@@ -96,7 +120,8 @@ export const studentService = {
       };
     }
 
-    const cred = this.getStudentCredential(student.admission_number);
+    // Fetch authoritative credentials from central storage
+    const cred = await this.getStudentCredential(student.admission_number);
 
     // Case 1: Student has already set a permanent password
     if (cred && cred.hasChangedPassword && cred.password) {
@@ -141,29 +166,40 @@ export const studentService = {
   /**
    * Update student's permanent password & nickname on first login
    */
-  setStudentPermanentPassword(admissionNumber: string, newPassword: string): void {
+  async setStudentPermanentPassword(admissionNumber: string, newPassword: string): Promise<void> {
+    const cleanAdmission = admissionNumber.toLowerCase();
     const cred: StudentCredentialRecord = {
-      admissionNumber: admissionNumber.toLowerCase(),
+      admissionNumber: cleanAdmission,
       hasChangedPassword: true,
       password: newPassword,
       updatedAt: new Date().toISOString()
     };
-    this.saveStudentCredential(cred);
+    await this.saveStudentCredential(cred);
   },
 
   /**
    * Admin tool: Reset student password back to initial DOB login
    */
-  resetStudentPasswordToDob(admissionNumber: string): void {
+  async resetStudentPasswordToDob(admissionNumber: string): Promise<void> {
+    const cleanAdmission = admissionNumber.toLowerCase();
+    let creds: Record<string, StudentCredentialRecord> = {};
+
     try {
-      const stored = localStorage.getItem(CREDENTIALS_KEY);
-      if (!stored) return;
-      const creds: Record<string, StudentCredentialRecord> = JSON.parse(stored);
-      delete creds[admissionNumber.toLowerCase()];
-      localStorage.setItem(CREDENTIALS_KEY, JSON.stringify(creds));
-    } catch (err) {
-      console.warn('[studentService] Failed to reset student password:', err);
+      const stored = await syncStorage.getItemAsync(CREDENTIALS_KEY);
+      if (stored) {
+        creds = typeof stored === 'string' ? JSON.parse(stored) : stored;
+      }
+    } catch {
+      const local = syncStorage.getItem(CREDENTIALS_KEY);
+      if (local) {
+        try {
+          creds = JSON.parse(local);
+        } catch {}
+      }
     }
+
+    delete creds[cleanAdmission];
+    await syncStorage.setItemAsync(CREDENTIALS_KEY, JSON.stringify(creds));
   },
 
   /**

@@ -24,6 +24,7 @@ import { walletService } from './walletService';
 import { pariMutuelEngine } from '@/utils/pariMutuel';
 import { notificationService } from './notificationService';
 import { userService } from './userService';
+import { syncStorage } from './storageSync';
 
 const PREDICTIONS_COLLECTION = 'predictions';
 const PARTICIPATIONS_COLLECTION = 'participations';
@@ -52,13 +53,13 @@ export const predictionService = {
     }
 
     if (list.length === 0) {
-      const stored = localStorage.getItem(LOCAL_PREDICTIONS_KEY);
+      const stored = syncStorage.getItem(LOCAL_PREDICTIONS_KEY);
       if (stored) {
         try {
           const parsed: Prediction[] = JSON.parse(stored);
           // Purge legacy dummy seed bets
           list = parsed.filter((p) => !['pred_1', 'pred_2', 'pred_3', 'pred_4'].includes(p.id));
-          localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(list));
+          syncStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(list));
         } catch {
           list = [];
         }
@@ -171,10 +172,10 @@ export const predictionService = {
       }
     }
 
-    // Persist locally
+    // Persist locally & sync
     const current = await this.getPredictions();
     current.unshift(prediction);
-    localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(current));
+    syncStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(current));
 
     return prediction;
   },
@@ -264,18 +265,18 @@ export const predictionService = {
       }
     }
 
-    // Persist participations and predictions locally
+    // Persist participations and predictions locally & sync
     const allParts: Participation[] = JSON.parse(
-      localStorage.getItem(LOCAL_PARTICIPATIONS_KEY) || '[]'
+      syncStorage.getItem(LOCAL_PARTICIPATIONS_KEY) || '[]'
     );
     allParts.push(participation);
-    localStorage.setItem(LOCAL_PARTICIPATIONS_KEY, JSON.stringify(allParts));
+    syncStorage.setItem(LOCAL_PARTICIPATIONS_KEY, JSON.stringify(allParts));
 
     const allPreds = await this.getPredictions();
     const idx = allPreds.findIndex((p) => p.id === prediction.id);
     if (idx !== -1) {
       allPreds[idx] = updatedPrediction;
-      localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(allPreds));
+      syncStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(allPreds));
     }
 
     // Notify creator that someone participated
@@ -310,7 +311,7 @@ export const predictionService = {
     }
 
     const allParts: Participation[] = JSON.parse(
-      localStorage.getItem(LOCAL_PARTICIPATIONS_KEY) || '[]'
+      syncStorage.getItem(LOCAL_PARTICIPATIONS_KEY) || '[]'
     );
     return allParts.filter((p) => p.predictionId === predictionId);
   },
@@ -434,7 +435,7 @@ export const predictionService = {
     const idx = allPreds.findIndex((p) => p.id === prediction.id);
     if (idx !== -1) {
       allPreds[idx] = updatedPrediction;
-      localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(allPreds));
+      syncStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(allPreds));
     }
 
     return {
@@ -481,7 +482,7 @@ export const predictionService = {
     const idx = allPreds.findIndex((pr) => pr.id === predictionId);
     if (idx !== -1) {
       allPreds[idx] = updated;
-      localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(allPreds));
+      syncStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(allPreds));
     }
   },
 
@@ -499,7 +500,7 @@ export const predictionService = {
     }
     const allPreds = await this.getPredictions();
     const filtered = allPreds.filter((p) => p.id !== predictionId);
-    localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(filtered));
+    syncStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(filtered));
   },
 
   /**
@@ -526,7 +527,7 @@ export const predictionService = {
     const idx = allPreds.findIndex((p) => p.id === predictionId);
     if (idx !== -1) {
       allPreds[idx] = updated;
-      localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(allPreds));
+      syncStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(allPreds));
     }
 
     return updated;

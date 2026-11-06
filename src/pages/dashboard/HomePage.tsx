@@ -21,12 +21,16 @@ import { predictionService } from '@/services/predictionService';
 import { PredictionCard } from '@/components/predictions/PredictionCard';
 import { ParticipateModal } from '@/components/predictions/ParticipateModal';
 import { FinalizeModal } from '@/components/predictions/FinalizeModal';
+import { DailyStreakModal } from '@/components/engagement/DailyStreakModal';
+import { WeeklyJackpotBanner } from '@/components/engagement/WeeklyJackpotBanner';
+import { TargetGapCalculator } from '@/components/engagement/TargetGapCalculator';
 
 export const HomePage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, refreshUserProfile } = useAuth();
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [selectedPrediction, setSelectedPrediction] = useState<Prediction | null>(null);
   const [finalizingPrediction, setFinalizingPrediction] = useState<Prediction | null>(null);
+  const [streakModalOpen, setStreakModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchLivePredictions = async () => {
@@ -82,10 +86,18 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Quick CTA Buttons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setStreakModalOpen(true)}
+              className="px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-300 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+            >
+              <Flame className="w-4 h-4 text-amber-400 fill-amber-400 animate-pulse" />
+              <span>Daily Rewards</span>
+            </button>
             <Link
               to="/create"
-              className="vip-gold-btn px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
+              className="vip-gold-btn px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap shrink-0 shadow-gold-glow"
             >
               <PlusCircle className="w-4 h-4 text-black" />
               <span>New Prediction</span>
@@ -153,6 +165,21 @@ export const HomePage: React.FC = () => {
           </div>
           <div className="text-[11px] text-casino-muted mt-1">Coins won</div>
         </Card>
+      </div>
+
+      {/* RETENTION MECHANICS: Target Gap Calculator & Friday Jackpot Banner */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className="lg:col-span-7">
+          <TargetGapCalculator
+            cutoffPoints={2900}
+            cutoffHolderName="Phoenix (Abhinand)"
+            userRank={7}
+            userPoints={walletBalance}
+          />
+        </div>
+        <div className="lg:col-span-5 flex flex-col justify-center">
+          <WeeklyJackpotBanner />
+        </div>
       </div>
 
       {/* SEMESTER 4 GRAND PRIZE BANNER — FULL MANDHI SPONSORED BY ABHINAV (VARKKALA/PARI) */}
@@ -580,6 +607,12 @@ export const HomePage: React.FC = () => {
         prediction={finalizingPrediction}
         onClose={() => setFinalizingPrediction(null)}
         onSuccess={fetchLivePredictions}
+      />
+
+      <DailyStreakModal
+        isOpen={streakModalOpen}
+        onClose={() => setStreakModalOpen(false)}
+        onRewardClaimed={() => refreshUserProfile()}
       />
     </div>
   );

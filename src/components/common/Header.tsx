@@ -20,10 +20,12 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { CoinIcon } from './CoinIcon';
+import { DailyStreakModal } from '@/components/engagement/DailyStreakModal';
 
 export const Header: React.FC = () => {
-  const { user } = useAuth();
+  const { user, refreshUserProfile } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [streakModalOpen, setStreakModalOpen] = useState(false);
   const isAdmin = user?.role === 'admin';
 
   return (
@@ -88,6 +90,19 @@ export const Header: React.FC = () => {
               <Plus className="w-3.5 h-3.5 text-black" />
               <span>New Bet</span>
             </Link>
+
+            {/* Daily Streak Flame Button */}
+            <button
+              onClick={() => setStreakModalOpen(true)}
+              className="relative p-1.5 sm:p-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition-all shrink-0 cursor-pointer"
+              title="Daily Check-in & Lucky Wheel"
+            >
+              <Flame className="w-4 h-4 text-amber-400 fill-amber-400 animate-pulse" />
+              <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400" />
+              </span>
+            </button>
 
             {/* Leaderboard Shortcut with Mandhi Crown Highlight */}
             <Link
@@ -278,6 +293,13 @@ export const Header: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Daily Streak & Lucky Wheel Modal */}
+      <DailyStreakModal
+        isOpen={streakModalOpen}
+        onClose={() => setStreakModalOpen(false)}
+        onRewardClaimed={() => refreshUserProfile()}
+      />
     </>
   );
 };

@@ -17,6 +17,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { Card } from '@/components/common/Card';
 import { CoinIcon } from '@/components/common/CoinIcon';
+import { TargetGapCalculator } from '@/components/engagement/TargetGapCalculator';
 import approvedStudentsSeed from '@/data/approved_students.json';
 
 type LeaderboardCategory =
@@ -331,6 +332,15 @@ export const LeaderboardPage: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* TARGET GAP CALCULATOR & WHAT-IF SIMULATOR */}
+      <TargetGapCalculator
+        cutoffPoints={cutoffPoints}
+        cutoffHolderName={sortedEntries[3]?.nickname || 'Phoenix'}
+        rank5Points={sortedEntries[4]?.championPoints || 2600}
+        userRank={7}
+        userPoints={user?.walletBalance || 2150}
+      />
 
       {/* Full Leaderboard Table */}
       <Card variant="default" className="divide-y divide-white/5">

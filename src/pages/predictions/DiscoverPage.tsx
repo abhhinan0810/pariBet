@@ -124,10 +124,21 @@ export const DiscoverPage: React.FC = () => {
           <span>Loading prediction pools...</span>
         </div>
       ) : predictions.length === 0 ? (
-        <div className="p-12 text-center text-casino-muted casino-card">
-          <Filter className="w-8 h-8 text-gold-highlight mx-auto mb-2 opacity-50" />
-          <p className="text-sm font-semibold text-white">No predictions match your filter</p>
-          <p className="text-xs text-casino-muted mt-1">Try resetting the category or create a new prediction!</p>
+        <div className="p-12 text-center text-casino-muted casino-card border border-white/5 rounded-3xl">
+          <div className="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/25 text-amber-400 flex items-center justify-center text-2xl mx-auto mb-3 shadow">
+            🎲
+          </div>
+          <h3 className="text-base font-bold text-white">The Floor is Open</h3>
+          <p className="text-xs text-casino-muted mt-1 max-w-sm mx-auto">
+            No classmate has opened a prediction pool for this filter yet. Be the first to start a classroom wager!
+          </p>
+          <Link
+            to="/create"
+            className="inline-flex items-center gap-2 vip-gold-btn px-4 py-2 mt-4 text-xs font-black uppercase tracking-wider"
+          >
+            <span>Create First Prediction</span>
+            <span>→</span>
+          </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

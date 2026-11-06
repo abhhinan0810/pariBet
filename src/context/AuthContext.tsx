@@ -19,8 +19,10 @@ interface AuthContextType {
   isVerified: boolean;
   error: string | null;
   tempApprovedStudent: ApprovedStudent | null;
+  isFirstLogin: boolean;
+  setIsFirstLogin: (val: boolean) => void;
   register: (email: string, password: string, nickname?: string) => Promise<{ success: boolean; requiresVerification: boolean; studentData: ApprovedStudent; profile?: UserProfile }>;
-  login: (email: string, password: string) => Promise<{ success: boolean; isVerified: boolean; isAdmin?: boolean }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; isVerified: boolean; isAdmin?: boolean; isFirstLogin?: boolean }>;
   logout: () => Promise<void>;
   resendVerificationEmail: () => Promise<void>;
   confirmVerification: () => void;
@@ -46,6 +48,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<UserProfile | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isFirstLogin, setIsFirstLogin] = useState<boolean>(false);
   const [isVerified, setIsVerified] = useState<boolean>(() => {
     return localStorage.getItem(LOCAL_VERIFIED_KEY) === 'true';
   });
@@ -282,67 +285,50 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       // --- REGULAR MCA STUDENT ACCOUNT ---
-      const verification = await studentService.verifyStudentEmail(normalizedEmail);
-      if (!verification.isApproved || !verification.studentData) {
-        throw new Error('Access denied: You are not an approved member of this MCA classroom.');
+      const credCheck = await studentService.verifyStudentCredential(normalizedEmail, password);
+      if (!credCheck.isApproved || !credCheck.studentData) {
+        throw new Error(credCheck.error || 'Access denied: You are not an approved member of this MCA classroom.');
       }
 
-      if (isFirebaseConfigured) {
-        const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
-        const fbUser = userCredential.user;
-        setFirebaseUser(fbUser);
-        setIsVerified(true);
-        localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
+      const student = credCheck.studentData;
+      const mockUid = `uid_${student.admission_number}`;
+      let profile = await userService.getUserProfile(mockUid);
 
-        let profile = await userService.getUserProfile(fbUser.uid);
-        if (!profile) {
-          profile = await userService.createUserProfile({
-            uid: fbUser.uid,
-            email: verification.studentData.email,
-            officialName: verification.studentData.official_name,
-            admissionNumber: verification.studentData.admission_number,
-            nickname: verification.studentData.official_name.split(' ')[0],
-            role: 'regular_user'
-          });
-        }
-        // Guarantee no student has admin privileges
-        if (profile.role === 'admin') {
-          profile.role = 'regular_user';
-        }
-        setUser(profile);
-
-        return { success: true, isVerified: true, isAdmin: false };
-      } else {
-        const student = verification.studentData;
-        const mockUid = `uid_${student.admission_number}`;
-        let profile = await userService.getUserProfile(mockUid);
-
-        if (!profile) {
-          profile = await userService.createUserProfile({
-            uid: mockUid,
-            email: student.email,
-            officialName: student.official_name,
-            admissionNumber: student.admission_number,
-            nickname: student.official_name.split(' ')[0],
-            role: 'regular_user'
-          });
-        }
-        if (profile.role === 'admin') {
-          profile.role = 'regular_user';
-        }
-
-        localStorage.setItem(LOCAL_SESSION_KEY, mockUid);
-        localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
-        setUser(profile);
-        setIsVerified(true);
-        setFirebaseUser({
+      if (!profile) {
+        profile = await userService.createUserProfile({
           uid: mockUid,
           email: student.email,
-          emailVerified: true
-        } as any);
-
-        return { success: true, isVerified: true, isAdmin: false };
+          officialName: student.official_name,
+          admissionNumber: student.admission_number,
+          nickname: student.official_name.split(' ')[0],
+          role: 'regular_user'
+        });
       }
+
+      // Guarantee no student has admin privileges
+      if (profile.role === 'admin') {
+        profile.role = 'regular_user';
+      }
+
+      localStorage.setItem(LOCAL_SESSION_KEY, mockUid);
+      localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
+      setUser(profile);
+      setIsVerified(true);
+      setFirebaseUser({
+        uid: mockUid,
+        email: student.email,
+        emailVerified: true
+      } as any);
+
+      const requiresFirstLogin = credCheck.isFirstLogin || !profile.hasChangedPassword;
+      setIsFirstLogin(requiresFirstLogin);
+
+      return {
+        success: true,
+        isVerified: true,
+        isAdmin: false,
+        isFirstLogin: requiresFirstLogin
+      };
     } catch (err: any) {
       console.error('[AuthContext] Login failed:', err);
       setError(err.message || 'Login failed');
@@ -381,7 +367,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     if (updated) {
+      updated.hasChangedPassword = true;
+      const localUsers = JSON.parse(localStorage.getItem('paribet_mock_users') || '{}');
+      localUsers[currentUid] = updated;
+      localStorage.setItem('paribet_mock_users', JSON.stringify(localUsers));
+
       setUser(updated);
+      setIsFirstLogin(false);
       setIsVerified(true);
       localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
       localStorage.setItem(LOCAL_SESSION_KEY, currentUid);
@@ -424,6 +416,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isVerified,
         error,
         tempApprovedStudent,
+        isFirstLogin,
+        setIsFirstLogin,
         register,
         login,
         logout,

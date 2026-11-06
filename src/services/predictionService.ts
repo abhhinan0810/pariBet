@@ -30,104 +30,9 @@ const PARTICIPATIONS_COLLECTION = 'participations';
 const LOCAL_PREDICTIONS_KEY = 'paribet_mock_predictions';
 const LOCAL_PARTICIPATIONS_KEY = 'paribet_mock_participations';
 
-// Sample Seed Predictions for immediate classroom interaction
-const INITIAL_SEED_PREDICTIONS: Prediction[] = [
-  {
-    id: 'pred_1',
-    title: 'Will our college announce a holiday tomorrow for the annual sports festival?',
-    description: 'The college sports meet committee is meeting this evening. Official circular expected by 9 PM.',
-    type: 'YES_NO',
-    category: 'College',
-    creatorId: 'uid_chn25mca055',
-    creatorName: 'Abhinav Krishna S',
-    creatorNickname: 'Shadow',
-    createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-    participationDeadline: new Date(Date.now() + 3600000 * 6).toISOString(),
-    resultSubmissionDeadline: new Date(Date.now() + 3600000 * 24).toISOString(),
-    minCommitment: 50,
-    status: 'OPEN',
-    options: [
-      { id: 'opt_yes', text: 'YES (Holiday Declared)', totalTokensCommitted: 800, totalParticipants: 6 },
-      { id: 'opt_no', text: 'NO (Regular Classes)', totalTokensCommitted: 400, totalParticipants: 3 }
-    ],
-    totalPoolTokens: 1200,
-    totalParticipantsCount: 9
-  },
-  {
-    id: 'pred_2',
-    title: 'Which batch team will win the MCA inter-batch Cricket Premier League?',
-    description: 'Final match between MCA 1st Year (2025) and MCA 2nd Year (2024).',
-    type: 'MULTIPLE_CHOICE',
-    category: 'Sports',
-    creatorId: 'uid_chn25mca045',
-    creatorName: 'Abhinand A Nair',
-    creatorNickname: 'Phoenix',
-    createdAt: new Date(Date.now() - 3600000 * 12).toISOString(),
-    participationDeadline: new Date(Date.now() + 3600000 * 18).toISOString(),
-    resultSubmissionDeadline: new Date(Date.now() + 3600000 * 36).toISOString(),
-    minCommitment: 100,
-    status: 'OPEN',
-    options: [
-      { id: 'opt_mca25', text: 'MCA 2025 (Our Batch)', totalTokensCommitted: 1500, totalParticipants: 12 },
-      { id: 'opt_mca24', text: 'MCA 2024 (Seniors)', totalTokensCommitted: 900, totalParticipants: 7 },
-      { id: 'opt_draw', text: 'Tied / Match Rained Out', totalTokensCommitted: 200, totalParticipants: 2 }
-    ],
-    totalPoolTokens: 2600,
-    totalParticipantsCount: 21
-  },
-  {
-    id: 'pred_3',
-    title: 'Closest Answer: What will be the exact score of the highest scorer in Data Structures lab viva?',
-    description: 'Professor Kurien is conducting the external lab evaluation tomorrow. Marks out of 50.',
-    type: 'CLOSEST_ANSWER',
-    category: 'College',
-    creatorId: 'uid_chn25mca069',
-    creatorName: 'Adarsh S',
-    creatorNickname: 'Viper',
-    createdAt: new Date(Date.now() - 3600000 * 8).toISOString(),
-    participationDeadline: new Date(Date.now() + 3600000 * 14).toISOString(),
-    resultSubmissionDeadline: new Date(Date.now() + 3600000 * 30).toISOString(),
-    minCommitment: 50,
-    status: 'OPEN',
-    closestConfig: {
-      unit: 'Marks',
-      isInteger: true,
-      minVal: 0,
-      maxVal: 50
-    },
-    options: [
-      { id: 'opt_closest', text: 'Numerical Guess Pool', totalTokensCommitted: 650, totalParticipants: 5 }
-    ],
-    totalPoolTokens: 650,
-    totalParticipantsCount: 5
-  },
-  {
-    id: 'pred_4',
-    title: 'Group Poll: Which movie should our MCA class watch this weekend at Cinepolis?',
-    description: 'Vote and stake on your pick! The movie option with the highest total votes wins the pool.',
-    type: 'GROUP_POLL',
-    category: 'Entertainment',
-    creatorId: 'uid_chn25mca005',
-    creatorName: 'Afna S Thaha',
-    creatorNickname: 'Oracle',
-    createdAt: new Date(Date.now() - 3600000 * 20).toISOString(),
-    participationDeadline: new Date(Date.now() + 3600000 * 10).toISOString(),
-    resultSubmissionDeadline: new Date(Date.now() + 3600000 * 20).toISOString(),
-    minCommitment: 100,
-    status: 'OPEN',
-    options: [
-      { id: 'opt_m1', text: 'Interstellar (Re-release)', totalTokensCommitted: 800, totalParticipants: 8 },
-      { id: 'opt_m2', text: 'Dune: Part Two', totalTokensCommitted: 600, totalParticipants: 6 },
-      { id: 'opt_m3', text: 'Deadpool & Wolverine', totalTokensCommitted: 400, totalParticipants: 4 }
-    ],
-    totalPoolTokens: 1800,
-    totalParticipantsCount: 18
-  }
-];
-
 export const predictionService = {
   /**
-   * Get all predictions with optional filtering
+   * Get all predictions with optional filtering (Real user predictions only)
    */
   async getPredictions(filters?: {
     category?: PredictionCategory;
@@ -149,11 +54,20 @@ export const predictionService = {
     if (list.length === 0) {
       const stored = localStorage.getItem(LOCAL_PREDICTIONS_KEY);
       if (stored) {
-        list = JSON.parse(stored);
+        try {
+          const parsed: Prediction[] = JSON.parse(stored);
+          // Purge legacy dummy seed bets
+          list = parsed.filter((p) => !['pred_1', 'pred_2', 'pred_3', 'pred_4'].includes(p.id));
+          localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(list));
+        } catch {
+          list = [];
+        }
       } else {
-        list = INITIAL_SEED_PREDICTIONS;
-        localStorage.setItem(LOCAL_PREDICTIONS_KEY, JSON.stringify(list));
+        list = [];
       }
+    } else {
+      // Also filter out any dummy seed items from Firestore if they were previously stored
+      list = list.filter((p) => !['pred_1', 'pred_2', 'pred_3', 'pred_4'].includes(p.id));
     }
 
     // Apply filters
@@ -440,16 +354,19 @@ export const predictionService = {
 
     // Distribute rewards via wallet transactions
     let totalAwarded = 0;
+    const winningPartIds = new Set<string>();
+
     for (const res of payoutResults) {
       if (res.totalPayout > 0) {
+        winningPartIds.add(res.participationId);
         const isWin = res.rewardShare > 0;
         await walletService.recordTransaction({
           userId: res.userId,
           type: 'PREDICTION_REWARD',
           amount: res.totalPayout,
           description: isWin
-            ? `Reward won from "${prediction.title}": ${res.totalPayout} tokens`
-            : `Stake refund from "${prediction.title}": ${res.totalPayout} tokens`,
+            ? `Reward won from "${prediction.title}": ${res.totalPayout} PTS`
+            : `Stake refund from "${prediction.title}": ${res.totalPayout} PTS`,
           referenceId: prediction.id,
           metadata: {
             originalStake: res.originalStake,
@@ -464,11 +381,35 @@ export const predictionService = {
           type: isWin ? 'PREDICTION_WON' : 'PREDICTION_FINALIZED',
           title: isWin ? 'Prediction Victory!' : 'Prediction Resolved',
           message: isWin
-            ? `You won ${res.totalPayout} tokens on "${prediction.title}"!`
+            ? `You won ${res.totalPayout} PTS on "${prediction.title}"!`
             : `Prediction "${prediction.title}" has finalized.`,
           referenceId: prediction.id,
         });
       }
+    }
+
+    // Process losing participations: release locked balance and reset winning streak
+    const losingParticipations = participations.filter((p) => !winningPartIds.has(p.id));
+    for (const lossPart of losingParticipations) {
+      await walletService.recordTransaction({
+        userId: lossPart.userId,
+        type: 'PREDICTION_LOSS',
+        amount: 0,
+        description: `Prediction settled: Lost ${lossPart.tokensCommitted} PTS on "${prediction.title}"`,
+        referenceId: prediction.id,
+        metadata: {
+          lostAmount: lossPart.tokensCommitted,
+        }
+      });
+
+      // Notify participant
+      await notificationService.sendNotification({
+        userId: lossPart.userId,
+        type: 'PREDICTION_FINALIZED',
+        title: 'Prediction Resolved',
+        message: `Prediction "${prediction.title}" concluded. Your stake of ${lossPart.tokensCommitted} PTS was not on the winning side.`,
+        referenceId: prediction.id,
+      });
     }
 
     // Update prediction status to FINALIZED

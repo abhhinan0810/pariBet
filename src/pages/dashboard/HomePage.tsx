@@ -24,6 +24,8 @@ import { FinalizeModal } from '@/components/predictions/FinalizeModal';
 import { DailyStreakModal } from '@/components/engagement/DailyStreakModal';
 import { WeeklyJackpotBanner } from '@/components/engagement/WeeklyJackpotBanner';
 import { TargetGapCalculator } from '@/components/engagement/TargetGapCalculator';
+import { userService } from '@/services/userService';
+import approvedStudentsSeed from '@/data/approved_students.json';
 
 export const HomePage: React.FC = () => {
   const { user, refreshUserProfile } = useAuth();
@@ -32,6 +34,7 @@ export const HomePage: React.FC = () => {
   const [finalizingPrediction, setFinalizingPrediction] = useState<Prediction | null>(null);
   const [streakModalOpen, setStreakModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [topUsers, setTopUsers] = useState<any[]>([]);
 
   const fetchLivePredictions = async () => {
     try {
@@ -44,7 +47,50 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     fetchLivePredictions();
-  }, []);
+
+    const fetchTopRankings = async () => {
+      try {
+        const users = await userService.getAllUsers();
+        const map = new Map<string, any>();
+        users.forEach((u) => {
+          map.set(u.admissionNumber.toLowerCase(), {
+            nickname: u.nickname || u.officialName.split(' ')[0],
+            name: u.officialName,
+            points: u.walletBalance,
+            winRate: u.statistics?.winRate || 0,
+            avatar: u.profilePicture,
+          });
+        });
+        if (user && user.role !== 'admin' && user.admissionNumber !== 'ADMIN') {
+          map.set(user.admissionNumber.toLowerCase(), {
+            nickname: user.nickname,
+            name: user.officialName,
+            points: user.walletBalance,
+            winRate: user.statistics?.winRate || 0,
+            avatar: user.profilePicture,
+          });
+        }
+        (approvedStudentsSeed as any[]).forEach((s) => {
+          if (!map.has(s.admission_number.toLowerCase())) {
+            map.set(s.admission_number.toLowerCase(), {
+              nickname: s.official_name.split(' ')[0],
+              name: s.official_name,
+              points: 1000,
+              winRate: 0,
+              avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${s.admission_number}`,
+            });
+          }
+        });
+        const sorted = Array.from(map.values())
+          .sort((a, b) => b.points - a.points)
+          .slice(0, 4);
+        setTopUsers(sorted);
+      } catch (err) {
+        console.warn('Failed to load top rankings:', err);
+      }
+    };
+    fetchTopRankings();
+  }, [user]);
 
   const walletBalance = user?.walletBalance || 0;
   const lockedBalance = user?.lockedBalance || 0;
@@ -411,99 +457,58 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="casino-card p-4 space-y-2.5 border-white/10">
-            {/* Rank 1 */}
-            <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-amber-500/35 hover:border-red-500/30 transition-all">
-              <div className="flex items-center gap-2.5">
-                <span className="font-mono font-black text-xs sm:text-sm text-amber-400 w-4">
-                  #1
-                </span>
-                <div className="w-8 h-8 rounded-full bg-amber-400/10 border border-amber-400 flex items-center justify-center font-bold text-xs text-amber-400">
-                  👑
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs font-bold text-white leading-tight">Shadow</p>
-                    <span className="text-[9px] text-amber-400">🍗</span>
+            {topUsers.map((item, idx) => {
+              const rank = idx + 1;
+              const isCutoff = rank === 4;
+              return (
+                <div
+                  key={item.name + idx}
+                  className={`flex items-center justify-between p-2.5 sm:p-3 rounded-2xl backdrop-blur-sm border transition-all ${
+                    isCutoff
+                      ? 'bg-amber-400/5 border-amber-400/30 hover:border-amber-400/50'
+                      : rank === 1
+                      ? 'bg-white/[0.04] border-amber-500/35 hover:border-red-500/30'
+                      : 'bg-white/[0.04] border-white/10 hover:border-white/20'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span
+                      className={`font-mono font-black text-xs sm:text-sm w-4 shrink-0 ${
+                        rank <= 3 || isCutoff ? 'text-amber-400' : 'text-slate-400'
+                      }`}
+                    >
+                      #{rank}
+                    </span>
+                    <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs shrink-0 overflow-hidden">
+                      {rank === 1 ? '👑' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '🍗'}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1">
+                        <p className="text-xs font-bold text-white leading-tight truncate">
+                          {item.nickname}
+                        </p>
+                        {isCutoff && (
+                          <span className="text-[9px] font-mono text-amber-400 font-bold bg-amber-400/20 px-1 rounded shrink-0">
+                            CUTOFF
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-casino-muted leading-tight truncate font-sans">
+                        {item.name}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-[10px] text-casino-muted leading-tight">
-                    Abhinav Krishna S
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="font-mono font-bold text-xs text-amber-400">5,450 PTS</p>
-                <p className="text-[9px] text-emerald-400 font-mono">88% Win</p>
-              </div>
-            </div>
-
-            {/* Rank 2 */}
-            <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-amber-500/20 hover:border-red-500/30 transition-all">
-              <div className="flex items-center gap-2.5">
-                <span className="font-mono font-black text-xs sm:text-sm text-slate-300 w-4">
-                  #2
-                </span>
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs">
-                  🥈
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs font-bold text-white leading-tight">Viper</p>
-                    <span className="text-[9px] text-amber-400">🍗</span>
+                  <div className="text-right shrink-0">
+                    <p className="font-mono font-bold text-xs text-amber-400">
+                      {item.points.toLocaleString()} PTS
+                    </p>
+                    <p className="text-[9px] text-emerald-400 font-mono">
+                      {item.winRate}% Win
+                    </p>
                   </div>
-                  <p className="text-[10px] text-casino-muted leading-tight">Adarsh S</p>
                 </div>
-              </div>
-              <div className="text-right">
-                <p className="font-mono font-bold text-xs text-white">4,120 PTS</p>
-                <p className="text-[9px] text-emerald-400 font-mono">75% Win</p>
-              </div>
-            </div>
-
-            {/* Rank 3 */}
-            <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-amber-500/20 hover:border-red-500/30 transition-all">
-              <div className="flex items-center gap-2.5">
-                <span className="font-mono font-black text-xs sm:text-sm text-slate-300 w-4">
-                  #3
-                </span>
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs">
-                  🥉
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs font-bold text-white leading-tight">Oracle</p>
-                    <span className="text-[9px] text-amber-400">🍗</span>
-                  </div>
-                  <p className="text-[10px] text-casino-muted leading-tight">Afna S Thaha</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="font-mono font-bold text-xs text-white">3,890 PTS</p>
-                <p className="text-[9px] text-emerald-400 font-mono">71% Win</p>
-              </div>
-            </div>
-
-            {/* Rank 4 — Cutoff seat */}
-            <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-amber-400/5 backdrop-blur-sm border border-amber-400/30 hover:border-amber-400/50 transition-all">
-              <div className="flex items-center gap-2.5">
-                <span className="font-mono font-black text-xs sm:text-sm text-amber-400 w-4">
-                  #4
-                </span>
-                <div className="w-8 h-8 rounded-full bg-amber-400/20 text-amber-300 flex items-center justify-center text-xs font-bold">
-                  🍗
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs font-bold text-white leading-tight">Phoenix</p>
-                    <span className="text-[9px] font-mono text-amber-400 font-bold bg-amber-400/20 px-1 rounded">CUTOFF</span>
-                  </div>
-                  <p className="text-[10px] text-casino-muted leading-tight">Abhinand A Nair</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="font-mono font-bold text-xs text-amber-400">2,900 PTS</p>
-                <p className="text-[9px] text-emerald-400 font-mono">64% Win</p>
-              </div>
-            </div>
+              );
+            })}
 
             {/* Bank Shortcut Card */}
             <div className="mt-4 pt-3 border-t border-white/5 space-y-2.5">

@@ -31,8 +31,13 @@ import { SettingsPage } from '@/pages/settings/SettingsPage';
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 
+import { FirstLoginModal } from '@/components/auth/FirstLoginModal';
+import { useAuth } from '@/context/AuthContext';
+
 // Main Layout Wrapper
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isFirstLogin, setIsFirstLogin } = useAuth();
+
   return (
     <div className="min-h-screen bg-transparent text-[#F3F4F6] flex flex-col lg:flex-row">
       <Navbar />
@@ -42,6 +47,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           {children}
         </main>
       </div>
+      <FirstLoginModal isOpen={isFirstLogin} onComplete={() => setIsFirstLogin(false)} />
     </div>
   );
 };

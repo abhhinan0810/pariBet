@@ -80,9 +80,16 @@ export const walletService = {
     } else if (params.type === 'PREDICTION_REWARD') {
       newBalance = currentBalance + params.amount;
       newLocked = Math.max(0, currentLocked - (params.metadata?.originalStake || 0));
+    } else if (params.type === 'PREDICTION_LOSS') {
+      // Stake was already subtracted from walletBalance at commitment time.
+      // Now release it from lockedBalance.
+      const lost = params.metadata?.lostAmount || Math.abs(params.amount) || 0;
+      newLocked = Math.max(0, currentLocked - lost);
     } else if (params.type === 'PREDICTION_REFUND') {
       newBalance = currentBalance + params.amount;
       newLocked = Math.max(0, currentLocked - params.amount);
+    } else if (params.type === 'DAILY_LOGIN_REWARD' || params.type === 'LUCKY_WHEEL_REWARD') {
+      newBalance = currentBalance + Math.abs(params.amount);
     } else if (params.type === 'LOAN_GIVEN') {
       if (currentBalance < Math.abs(params.amount)) {
         throw new Error('Insufficient balance to fund this loan.');
@@ -113,18 +120,23 @@ export const walletService = {
       metadata: params.metadata,
     };
 
-    // Update user record
+    // Update user record & statistics rigorously
     const updatedStats = { ...userProfile.statistics };
     if (params.type === 'PREDICTION_REWARD') {
       updatedStats.predictionsWon += 1;
-      updatedStats.totalRewardsEarned += params.amount;
+      const profit = Math.max(0, params.amount - (params.metadata?.originalStake || 0));
+      updatedStats.totalRewardsEarned += profit > 0 ? profit : params.amount;
       updatedStats.currentStreak += 1;
       if (updatedStats.currentStreak > updatedStats.longestStreak) {
         updatedStats.longestStreak = updatedStats.currentStreak;
       }
+    } else if (params.type === 'PREDICTION_LOSS') {
+      updatedStats.currentStreak = 0; // Streak breaks on loss
     } else if (params.type === 'PREDICTION_COMMITMENT') {
       updatedStats.predictionsParticipated += 1;
       updatedStats.totalTokensCommitted += Math.abs(params.amount);
+    } else if (params.type === 'DAILY_LOGIN_REWARD' || params.type === 'LUCKY_WHEEL_REWARD') {
+      updatedStats.totalRewardsEarned += Math.abs(params.amount);
     }
 
     if (updatedStats.predictionsParticipated > 0) {

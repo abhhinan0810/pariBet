@@ -1,83 +1,133 @@
-# Implementation Plan — Semester-Long Engagement & Retention System
+# Real User Data Transition & DOB-Based Classroom Authentication
 
-> **Goal**: Keep all 53 MCA students returning every single day until the end of Semester 4 to compete for the **Full Mandhi Feast sponsored by Abhinav (Varkkala / pari)**.  
-> **Key Themes**: Daily habit loops, secret social wagers, Friday jackpot events, and intense mathematical race tracking.
+Transition pariBet from mock/seed data to a 100% real-user system for the 53 MCA students of College of Engineering Chengannur. Replace email verification with a frictionless **Date of Birth (`DDMMYYYY`) initial password** mechanism, mandatory first-login password reset, instant 1,000 PTS bonus, nickname onboarding, and clean real-user leaderboards and prediction feeds.
 
 ---
 
 ## User Review & Critical Decisions
 
-Based on user selections:
-1. **Daily Check-in Streak + Lucky Spin Wheel**:
-   - A daily reward drawer/modal accessible from the top navbar and dashboard.
-   - Consecutive daily check-ins grant escalating PTS (`+50`, `+100`, `+150`, `+250`, `+500` PTS on Day 7).
-   - Once every 24 hours, users get 1 free spin on the **Daily Lucky Wheel** to win instant tokens (`+25` to `+500` PTS) or Friday Jackpot tickets.
-2. **End-of-Week Classroom Jackpot Lottery**:
-   - Active participation in bets throughout the week automatically enters the student into the **Friday 5:00 PM Batch Jackpot**.
-   - A communal prize pot funded by a slice of weekly pool turnover, drawn every Friday with a live reveal animation.
-3. **Anonymous Predictions & Secret Wagers ("Phantom Mode")**:
-   - When placing an inline bet or creating a market, students can check **"Incognito / Phantom Wager"**.
-   - Their identity remains masked as *"Shadow Punter"* or *"Classmate #??"* until the market resolves, allowing bold contrarian bets without immediate classroom peer pressure.
-4. **Mandhi Race Target Gap Calculator**:
-   - Embedded directly on the **Dashboard** and **Leaderboard**.
-   - Dynamically calculates the exact PTS gap between the logged-in student and the **#4 Cutoff Seat** (the threshold for the free Mandhi feast).
-   - Features an interactive "What-If" betting simulator: *"Win 2 bets of 200 PTS at 2.2x to claim Seat #4!"*
+> [!IMPORTANT]
+> The following decisions were confirmed by the user in Phase 1:
+> - **Initial Password**: Date of birth in `DDMMYYYY` format used as initial default password for all 53 roster students (e.g., `15082001`). No verification emails will be sent.
+> - **First Login Onboarding**: Students must change their password on first login, select their custom player nickname/avatar, and receive an instant 1,000 PTS welcome credit.
+> - **Data Cleanup**: Remove all dummy predictions, mock bets, mock loans, and fake leaderboard entries, while retaining the approved 53-student roster and administrative controls.
+> - **Admin Reset Fallback**: The Master Administrator can reset any student's password back to their initial DOB if forgotten.
 
 ---
 
-## Feature Architecture & Specifications
+## 1. Overview & Core Concept
 
-### 1. Daily Check-in Streak & Lucky Spin Wheel
-- **Location**: Floating action pill in header/navbar + widget on `HomePage.tsx`.
-- **Logic**:
-  - Checks `lastCheckInDate` stored in user profile or local storage.
-  - If consecutive day, increments `currentStreak`; if missed >48 hours, resets streak with a one-time "Streak Shield" option.
-  - Interactive tactile wheel with spin animation, audio-visual celebration, and instant wallet balance credit.
-
-### 2. Friday Batch Jackpot Lottery Pool
-- **Location**: `HomePage.tsx` (right sidebar) & `TokenBankPage.tsx`.
-- **Mechanics**:
-  - Every 100 PTS staked in any market generates 1 Lottery Ticket.
-  - Friday 5:00 PM countdown ticker (e.g. *"Next Vault Draw in 2d 14h • Current Jackpot: 4,500 PTS"*).
-  - Clean modal displaying ticket holder distribution and previous week's winner.
-
-### 3. Anonymous "Phantom Wagers" & Secret Pools
-- **Location**: `PredictionCard.tsx` (inline slip) & `CreatePredictionPage.tsx`.
-- **Slip Control**: A sleek toggle button: `🕶️ Anonymous Phantom Bet`.
-- When checked:
-  - The public bet log / feed records the wager under a mysterious moniker (e.g., *"Phantom Whale committed 500 PTS"*).
-  - Only when the prediction resolves to a winner is their identity unveiled in the Hall of Fame.
-
-### 4. Mandhi Cutoff Target Gap Calculator
-- **Location**: `LeaderboardPage.tsx` & `HomePage.tsx`.
-- **Features**:
-  - Displays user's live rank relative to Seat #4.
-  - **Chaser Mode** (Ranks 5–53): Shows points deficit to #4, required win count, and suggested odds.
-  - **Defender Mode** (Ranks 1–4): Shows cushion over Rank #5 and warns if a chaser is within 300 PTS.
-  - Interactive slider allowing students to calculate how many PTS they need to stake to breach the Mandhi zone.
+- **What It Does**: 
+  1. Students log in directly using their college email (or admission number) and their Date of Birth (`DDMMYYYY`) without waiting for email verification links.
+  2. On first sign-in, an onboarding flow prompts them to create a permanent password and choose their casino nickname.
+  3. Their wallet is credited with 1,000 virtual PTS, and their profile is permanently activated.
+  4. All dummy bets, mock loan requests, and synthetic leaderboard rows are replaced by live data generated strictly by registered classmates.
+- **Target Audience**: The 53 verified students of CEC MCA Class of 2025 (`@ceconline.edu`) and the Master Administrator.
+- **Key Value**: Immediate zero-friction adoption in the physical classroom. No student gets locked out by missing email verification links or spam filters.
 
 ---
 
-## Component & File Changes
+## 2. User Experience & Flow Architecture
 
-1. **`src/components/engagement/DailyStreakModal.tsx`** *(New Component)*:
-   - 7-day streak tracker + interactive Lucky Spin Wheel canvas/animation + claim button.
-2. **`src/components/engagement/TargetGapCalculator.tsx`** *(New Component)*:
-   - Dynamic math widget calculating live deficit or cushion relative to the #4 Mandhi cutoff seat with what-if simulator.
-3. **`src/components/engagement/WeeklyJackpotBanner.tsx`** *(New Component)*:
-   - Countdown to Friday 5 PM draw, live communal pot size, user's ticket count.
-4. **`src/components/predictions/PredictionCard.tsx`**:
-   - Add the `🕶️ Phantom Wager` toggle inside the inline bet slip.
-5. **`src/pages/dashboard/HomePage.tsx`**:
-   - Dock the Streak button, Weekly Jackpot card, and Target Gap preview.
-6. **`src/pages/leaderboard/LeaderboardPage.tsx`**:
-   - Integrate the Target Gap Calculator directly above the leaderboard table.
+### A. Frictionless Sign-In Flow
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. Student enters College Email / Admission Number           │
+│    + Initial Password (DOB: DDMMYYYY)                       │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 2. System validates against 53-Student Roster               │
+│    - If first login: Shows "First-Time Lounge Activation"   │
+│    - If returning student: Enforces their custom password    │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ (First Login)
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 3. First-Time Setup Modal                                    │
+│    - Set New Permanent Password (min 6 characters)          │
+│    - Choose Player Nickname (e.g. "Shadow", "Ace")           │
+│    - Select DiceBear Bottts Casino Avatar                   │
+│    - Claim 1,000 PTS Welcome Bankroll                       │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 4. Direct Entry to Cinematic Class Casino Lounge             │
+│    - Live Wallet: 1,000 PTS                                  │
+│    - Ready to create predictions or wager                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### B. Clean Slate Experience (Zero Dummy Data)
+- **Live Bets (`/discover` & Home)**: 
+  - When no active predictions exist yet: Shows an inviting "The Table is Ready" state with a prominent "Create First Class Prediction" button.
+- **Hall of Fame (`/leaderboard`)**:
+  - Populates strictly with real students who have registered and activated their accounts, ranked by real points and streak statistics.
+  - Pre-registered roster students are shown in an "Awaiting First Table Entry" section or cleanly integrated with default 1,000 PTS once active.
+- **Classroom Activity Feed**:
+  - Powered strictly by actual ledger transactions (`walletService`) and real prediction stakes placed by students.
 
 ---
 
-## Verification & Build Plan
+## 3. Technical Architecture & Component Mapping
 
-1. Co-execute `compile_applet` and `lint_applet` to ensure clean TypeScript compilation with zero errors.
-2. Verify local persistence of streaks and lottery ticket counts.
-3. Verify that the Target Gap Calculator dynamically adjusts when switching categories or viewing different student profiles.
-4. Restart development server and ensure smooth mobile responsiveness across all modal and wheel animations.
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Data Layer                               │
+│  src/data/approved_students.json (53 verified students with DOB)│
+│  localStorage / Firestore ('users', 'predictions', 'txs')       │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     Authentication Service                      │
+│  - src/services/studentService.ts (Roster lookup & DOB verify)  │
+│  - src/context/AuthContext.tsx (DOB auth, firstLogin flag)       │
+│  - src/services/userService.ts (1,000 PTS grant & profile save) │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                        UI Interfaces                            │
+│  - src/pages/auth/LoginPage.tsx (DOB helper text & guidance)    │
+│  - src/components/auth/FirstLoginModal.tsx (Password & Nickname)│
+│  - src/pages/leaderboard/LeaderboardPage.tsx (Real users only)  │
+│  - src/services/predictionService.ts (Zero mock seed data)      │
+│  - src/services/loanService.ts (Zero mock seed data)            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Key Implementation Details:
+1. **Roster Enrichment (`src/data/approved_students.json`)**:
+   - Ensure each of the 53 students has a valid `dob` entry in standard `DDMMYYYY` format (e.g., `01012002` as standard batch baseline or individual DOBs) and `isFirstLogin: true`.
+2. **Authentication Refactoring (`src/context/AuthContext.tsx`)**:
+   - Allow login with either full email (`chn25mca045@ceconline.edu`) or bare admission number (`chn25mca045`).
+   - If user has not changed their password yet, accept their `dob` as the valid credential, set `isFirstLogin: true`, and present the `FirstLoginModal`.
+   - On completion of `FirstLoginModal`, encrypt/store their new password, update profile with their chosen nickname, credit 1,000 PTS, and set `isFirstLogin: false`.
+3. **Dummy Data Wipe**:
+   - Purge `INITIAL_MOCK_PREDICTIONS` from `predictionService.ts`.
+   - Purge `INITIAL_SEED_REQUESTS` from `loanService.ts`.
+   - Clear existing local mock storage keys (`paribet_mock_predictions`, `paribet_mock_loans`, `paribet_mock_transactions`) so the browser begins in a pristine, real-user state.
+4. **Leaderboard Roster Real-Time Sync (`LeaderboardPage.tsx`)**:
+   - Eliminate hardcoded `baseEntries` with fake points.
+   - Aggregate actual registered users from `paribet_mock_users` / Firestore, showing real active rankings and qualifying spots for the Sem 4 Mandhi Grand Prize.
+
+---
+
+## 4. Verification & Testing Steps
+
+1. **Test Initial DOB Login**:
+   - Sign in with an approved student email / admission number and default DOB `DDMMYYYY`.
+   - Verify that no email verification prompt appears.
+   - Verify that the `FirstLoginModal` opens immediately.
+2. **Test Password Reset & Nickname Selection**:
+   - Set a new password and custom nickname.
+   - Confirm 1,000 PTS is credited to `walletBalance`.
+   - Log out and log back in using the *new* password (verify old DOB is no longer accepted).
+3. **Verify Empty/Pristine State**:
+   - Verify that no synthetic bets, fake loans, or artificial users exist.
+   - Create a real prediction as a student, place a wager, and verify that the activity feed and leaderboard reflect only that real action.
+4. **Compile & Lint**:
+   - Run `compile_applet` and `lint_applet` together to verify zero syntax or typing errors.

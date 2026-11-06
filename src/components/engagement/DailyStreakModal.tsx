@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
+import { walletService } from '@/services/walletService';
 
 interface DailyStreakModalProps {
   isOpen: boolean;
@@ -73,48 +74,75 @@ export const DailyStreakModal: React.FC<DailyStreakModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleClaimDailyCheckIn = () => {
-    if (checkedInToday) return;
+  const handleClaimDailyCheckIn = async () => {
+    if (checkedInToday || !user) return;
 
     const nextStreak = streakDays >= 7 ? 1 : streakDays + 1;
     const rewardPts = STREAK_REWARDS[streakDays - 1]?.pts || 100;
     const todayStr = new Date().toDateString();
 
-    localStorage.setItem('paribet_last_checkin_date', todayStr);
-    localStorage.setItem('paribet_streak_days', nextStreak.toString());
+    try {
+      await walletService.recordTransaction({
+        userId: user.uid,
+        type: 'DAILY_LOGIN_REWARD',
+        amount: rewardPts,
+        description: `Day ${streakDays} Daily Check-In Reward (+${rewardPts} PTS)`,
+        metadata: { streakDays }
+      });
 
-    setStreakDays(nextStreak);
-    setCheckedInToday(true);
+      localStorage.setItem('paribet_last_checkin_date', todayStr);
+      localStorage.setItem('paribet_streak_days', nextStreak.toString());
 
-    success(
-      'Daily Streak Reward Claimed!',
-      `Earned +${rewardPts} PTS for Day ${streakDays} classroom check-in.`
-    );
-    if (onRewardClaimed) onRewardClaimed(rewardPts);
+      setStreakDays(nextStreak);
+      setCheckedInToday(true);
+
+      success(
+        'Daily Streak Reward Claimed!',
+        `Earned +${rewardPts} PTS for Day ${streakDays} classroom check-in.`
+      );
+      if (onRewardClaimed) onRewardClaimed(rewardPts);
+    } catch (err: any) {
+      console.error('Failed to claim daily reward:', err);
+    }
   };
 
   const handleSpinLuckyWheel = () => {
-    if (wheelSpunToday || isSpinning) return;
+    if (wheelSpunToday || isSpinning || !user) return;
 
     setIsSpinning(true);
     setWheelResult(null);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const selectedIndex = Math.floor(Math.random() * WHEEL_PRIZES.length);
       const prize = WHEEL_PRIZES[selectedIndex];
       const todayStr = new Date().toDateString();
 
-      localStorage.setItem('paribet_last_wheel_date', todayStr);
+      try {
+        if (prize.pts > 0) {
+          await walletService.recordTransaction({
+            userId: user.uid,
+            type: 'LUCKY_WHEEL_REWARD',
+            amount: prize.pts,
+            description: `Daily Lucky Wheel: ${prize.label}`,
+            metadata: { prizeLabel: prize.label }
+          });
+        }
 
-      setWheelResult(prize);
-      setWheelSpunToday(true);
-      setIsSpinning(false);
+        localStorage.setItem('paribet_last_wheel_date', todayStr);
 
-      success(
-        'Lucky Wheel Prize Won!',
-        `You won ${prize.label}! Added to your classroom balance.`
-      );
-      if (onRewardClaimed) onRewardClaimed(prize.pts);
+        setWheelResult(prize);
+        setWheelSpunToday(true);
+        setIsSpinning(false);
+
+        success(
+          'Lucky Wheel Prize Won!',
+          `You won ${prize.label}! Added to your classroom balance.`
+        );
+        if (onRewardClaimed) onRewardClaimed(prize.pts);
+      } catch (err: any) {
+        console.error('Failed to credit wheel prize:', err);
+        setIsSpinning(false);
+      }
     }, 1400);
   };
 

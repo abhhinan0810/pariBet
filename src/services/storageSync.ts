@@ -179,10 +179,19 @@ class StorageSyncService {
         const serverData: Record<string, any> = await res.json();
         const pendingUploads: Record<string, any> = {};
 
-        // 1. Download server data to client cache
+        // 1. Download & merge server data to client cache
         for (const [k, v] of Object.entries(serverData)) {
           if (v !== undefined && v !== null) {
-            const strVal = typeof v === 'string' ? v : JSON.stringify(v);
+            let finalVal = v;
+            const localRaw = typeof window !== 'undefined' && window.localStorage ? localStorage.getItem(k) : null;
+            if (localRaw && typeof v === 'object' && !Array.isArray(v)) {
+              try {
+                const localObj = JSON.parse(localRaw);
+                finalVal = { ...localObj, ...v };
+              } catch {}
+            }
+
+            const strVal = typeof finalVal === 'string' ? finalVal : JSON.stringify(finalVal);
             this.cache.set(k, strVal);
             if (typeof window !== 'undefined' && window.localStorage) {
               try {
@@ -192,16 +201,27 @@ class StorageSyncService {
           }
         }
 
-        // 2. Upload any local items not yet in server (e.g. initial seed from laptop)
+        // 2. Upload any local items not yet in server or merge missing keys
         if (typeof window !== 'undefined' && window.localStorage) {
           for (const key of SHARED_STORAGE_KEYS) {
-            if (!(key in serverData)) {
-              const localVal = localStorage.getItem(key);
-              if (localVal) {
-                try {
-                  pendingUploads[key] = JSON.parse(localVal);
-                } catch {
-                  pendingUploads[key] = localVal;
+            const localVal = localStorage.getItem(key);
+            if (localVal) {
+              let parsedLocal: any;
+              try { parsedLocal = JSON.parse(localVal); } catch { parsedLocal = localVal; }
+
+              const serverVal = serverData[key];
+              if (!serverVal) {
+                pendingUploads[key] = parsedLocal;
+              } else if (typeof parsedLocal === 'object' && !Array.isArray(parsedLocal) && typeof serverVal === 'object') {
+                let hasNewKeys = false;
+                for (const subKey of Object.keys(parsedLocal)) {
+                  if (!(subKey in serverVal)) {
+                    hasNewKeys = true;
+                    break;
+                  }
+                }
+                if (hasNewKeys) {
+                  pendingUploads[key] = { ...serverVal, ...parsedLocal };
                 }
               }
             }

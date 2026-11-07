@@ -52,6 +52,38 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
+// Route wrapper that automatically forwards authenticated members to /home
+const RootRoute: React.FC = () => {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#090616] flex flex-col items-center justify-center p-4">
+        <div className="w-12 h-12 border-2 border-brand-violet border-t-transparent rounded-full animate-spin mb-4" />
+      </div>
+    );
+  }
+  if (user && user.accountStatus === 'active') {
+    return <Navigate to={user.role === 'admin' ? '/admin' : '/home'} replace />;
+  }
+  return <LandingPage />;
+};
+
+// Route wrapper that keeps authenticated users inside the app rather than displaying login forms
+const PublicOnlyRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#090616] flex flex-col items-center justify-center p-4">
+        <div className="w-12 h-12 border-2 border-brand-violet border-t-transparent rounded-full animate-spin mb-4" />
+      </div>
+    );
+  }
+  if (user && user.accountStatus === 'active') {
+    return <Navigate to={user.role === 'admin' ? '/admin' : '/home'} replace />;
+  }
+  return <>{children}</>;
+};
+
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
@@ -59,11 +91,11 @@ export const App: React.FC = () => {
         <ToastProvider>
           <Routes>
             {/* Public Landing Page */}
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<RootRoute />} />
 
             {/* Public Authentication Routes */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+            <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/registration-rejected" element={<RegistrationRejectedPage />} />
             <Route path="/setup-profile" element={<SetupProfilePage />} />

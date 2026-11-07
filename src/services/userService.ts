@@ -1,7 +1,8 @@
 import { db, isFirebaseConfigured } from '@/config/firebase';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { UserProfile, UserRole } from '@/types/user';
+import { UserProfile, UserRole, ApprovedStudent } from '@/types/user';
 import { syncStorage } from '@/services/storageSync';
+import approvedStudentsSeed from '@/data/approved_students.json';
 
 const USERS_COLLECTION = 'users';
 const LOCAL_USERS_KEY = 'paribet_mock_users';
@@ -41,9 +42,83 @@ export const userService = {
       const fallback = syncStorage.getItem(LOCAL_USERS_KEY);
       if (fallback) {
         const localUsers = JSON.parse(fallback);
-        return localUsers[uid] || null;
+        if (localUsers[uid]) return localUsers[uid];
       }
     } catch {}
+
+    // Master Admin fallback
+    if (uid === 'admin_master_account') {
+      const adminProfile: UserProfile = {
+        uid: 'admin_master_account',
+        email: 'admin@paribet.internal',
+        officialName: 'Master Administrator',
+        admissionNumber: 'ADMIN',
+        nickname: 'Administrator',
+        profilePicture: 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminMaster&backgroundColor=140d33',
+        createdAt: new Date().toISOString(),
+        role: 'admin',
+        accountStatus: 'active',
+        walletBalance: 100000,
+        lockedBalance: 0,
+        statistics: {
+          predictionsParticipated: 0,
+          predictionsWon: 0,
+          winRate: 0,
+          currentStreak: 0,
+          longestStreak: 0,
+          totalRewardsEarned: 0,
+          totalTokensCommitted: 0,
+          loansGiven: 0,
+          loansCompleted: 0
+        }
+      };
+      return adminProfile;
+    }
+
+    // Authoritative roster fallback: prevent session drop on page reload
+    if (uid.startsWith('uid_')) {
+      const admission = uid.replace('uid_', '').toLowerCase();
+      const student = (approvedStudentsSeed as ApprovedStudent[]).find(
+        (s) => s.admission_number.toLowerCase() === admission
+      );
+      if (student) {
+        const fallbackProfile: UserProfile = {
+          uid,
+          email: student.email,
+          officialName: student.official_name,
+          admissionNumber: student.admission_number,
+          nickname: student.official_name.split(' ')[0],
+          profilePicture: `https://api.dicebear.com/7.x/bottts/svg?seed=${student.admission_number}`,
+          createdAt: new Date().toISOString(),
+          role: 'regular_user',
+          accountStatus: 'active',
+          walletBalance: INITIAL_WELCOME_TOKENS,
+          lockedBalance: 0,
+          hasChangedPassword: true,
+          statistics: {
+            predictionsParticipated: 0,
+            predictionsWon: 0,
+            winRate: 0,
+            currentStreak: 0,
+            longestStreak: 0,
+            totalRewardsEarned: 0,
+            totalTokensCommitted: 0,
+            loansGiven: 0,
+            loansCompleted: 0
+          }
+        };
+
+        // Cache it asynchronously
+        try {
+          const raw = syncStorage.getItem(LOCAL_USERS_KEY);
+          const users = raw ? JSON.parse(raw) : {};
+          users[uid] = fallbackProfile;
+          syncStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
+        } catch {}
+
+        return fallbackProfile;
+      }
+    }
 
     return null;
   },

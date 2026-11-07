@@ -330,19 +330,31 @@ export const LeaderboardPage: React.FC = () => {
 
       {/* TARGET GAP CALCULATOR & WHAT-IF SIMULATOR */}
       {(() => {
-        const userRankIndex = sortedEntries.findIndex(
+        // The Mandhi Race is ALWAYS determined by Champion Points (total PTS)
+        const championSorted = [...leaderboardEntries].sort((a, b) => {
+          if (b.championPoints !== a.championPoints) return b.championPoints - a.championPoints;
+          if (b.victories !== a.victories) return b.victories - a.victories;
+          return a.name.localeCompare(b.name);
+        });
+        const seat4 = championSorted[3];
+        const seat5 = championSorted[4];
+        const cutoffPts = seat4 ? seat4.championPoints : 1000;
+        const cutoffName = seat4 ? seat4.nickname : 'Seat #4 Qualifier';
+        const rank5Pts = seat5 ? seat5.championPoints : 1000;
+
+        const userRankIndex = championSorted.findIndex(
           (e) =>
             e.admission.toLowerCase() === (user?.admissionNumber || '').toLowerCase() ||
             e.id === user?.uid
         );
-        const currentUserRank = userRankIndex !== -1 ? userRankIndex + 1 : sortedEntries.length;
+        const currentUserRank = userRankIndex !== -1 ? userRankIndex + 1 : championSorted.length;
         const currentUserPoints = user?.walletBalance || 0;
 
         return (
           <TargetGapCalculator
-            cutoffPoints={cutoffPoints}
-            cutoffHolderName={sortedEntries[3]?.nickname || 'Rank 4 Qualifier'}
-            rank5Points={sortedEntries[4]?.championPoints || 2600}
+            cutoffPoints={cutoffPts}
+            cutoffHolderName={cutoffName}
+            rank5Points={rank5Pts}
             userRank={currentUserRank}
             userPoints={currentUserPoints}
           />

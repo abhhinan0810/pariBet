@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import {
   Trophy,
   Calculator,
   TrendingUp,
   Sparkles,
   ArrowRight,
-  ShieldAlert,
   Crown,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  ShieldCheck,
+  Target,
+  Flame
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { leaderboardService, MandhiRaceStats } from '@/services/leaderboardService';
 
 interface TargetGapCalculatorProps {
   cutoffPoints?: number;
@@ -22,25 +24,60 @@ interface TargetGapCalculatorProps {
 }
 
 export const TargetGapCalculator: React.FC<TargetGapCalculatorProps> = ({
-  cutoffPoints = 2900,
-  cutoffHolderName = 'Phoenix (Abhinand)',
-  rank5Points = 2600,
-  userRank = 7,
-  userPoints = 2150,
+  cutoffPoints: propCutoffPoints,
+  cutoffHolderName: propCutoffHolderName,
+  rank5Points: propRank5Points,
+  userRank: propUserRank,
+  userPoints: propUserPoints,
 }) => {
   const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
   const [simStake, setSimStake] = useState<number>(200);
   const [simOdds, setSimOdds] = useState<number>(2.4);
 
-  const isQualifying = userRank <= 4;
-  const deficit = Math.max(0, cutoffPoints + 10 - userPoints);
+  // Live calculated stats
+  const [liveStats, setLiveStats] = useState<MandhiRaceStats | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchStats = async () => {
+      try {
+        const stats = await leaderboardService.getMandhiRaceStats(user);
+        if (isMounted) {
+          setLiveStats(stats);
+        }
+      } catch (err) {
+        console.warn('[TargetGapCalculator] Failed to load live race stats:', err);
+      }
+    };
+
+    fetchStats();
+    return () => {
+      isMounted = false;
+    };
+  }, [user, user?.walletBalance]);
+
+  // Derive final values prioritizing props if passed from LeaderboardPage, falling back to liveStats
+  const cutoffPoints = propCutoffPoints ?? liveStats?.cutoffPoints ?? 1000;
+  const cutoffHolderName = propCutoffHolderName ?? liveStats?.cutoffHolderName ?? 'Seat #4 Qualifier';
+  const rank5Points = propRank5Points ?? liveStats?.rank5Points ?? 1000;
+  const userRank = propUserRank ?? liveStats?.userRank ?? 53;
+  const userPoints = propUserPoints ?? liveStats?.userPoints ?? user?.walletBalance ?? 1000;
+
+  const isAdmin = user?.role === 'admin' || user?.admissionNumber === 'ADMIN';
+  const isQualifying = !isAdmin && userRank <= 4;
+  
+  // Deficit to claim Seat #4 (must exceed cutoff by at least 1 PT):
+  const deficit = isQualifying ? 0 : Math.max(1, cutoffPoints - userPoints + 1);
+  // Cushion over the first non-qualifier (Seat #5):
   const cushion = isQualifying ? Math.max(0, userPoints - rank5Points) : 0;
 
   // Simulation math
   const projectedProfit = Math.round(simStake * (simOdds - 1));
   const projectedTotal = userPoints + projectedProfit;
   const willQualifyWithSim = projectedTotal > cutoffPoints;
+  const remainingDeficit = Math.max(0, deficit - projectedProfit);
+  const additionalBetsNeeded = Math.ceil(remainingDeficit / Math.max(1, projectedProfit));
 
   return (
     <div className="rounded-2xl sm:rounded-3xl bg-gradient-to-br from-black/60 via-[#150a10]/70 to-black/60 border-2 border-amber-400/35 p-4 sm:p-5 shadow-xl">
@@ -55,14 +92,19 @@ export const TargetGapCalculator: React.FC<TargetGapCalculatorProps> = ({
                 MANDHI RACE CALCULATOR
               </span>
               <span className="text-[11px] font-mono text-slate-400">
-                Sem 4 Cutoff Seat #4
+                Sem 4 Grand Prize Cutoff
               </span>
             </div>
             <h3 className="text-sm sm:text-base font-bold text-white mt-0.5">
-              {isQualifying ? (
+              {isAdmin ? (
+                <span className="text-amber-400 flex items-center gap-1.5">
+                  <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
+                  <span>Master Administrator View • Cutoff at {cutoffPoints.toLocaleString()} PTS</span>
+                </span>
+              ) : isQualifying ? (
                 <span className="text-emerald-400 flex items-center gap-1.5">
                   <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
-                  <span>You're in Seat #{userRank}! (+{cushion} PTS cushion)</span>
+                  <span>You're in Seat #{userRank}! (+{cushion.toLocaleString()} PTS cushion)</span>
                 </span>
               ) : (
                 <span>
@@ -88,7 +130,7 @@ export const TargetGapCalculator: React.FC<TargetGapCalculatorProps> = ({
         <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5">
           <span className="text-[10px] text-slate-400 block uppercase">Your Position</span>
           <span className={`text-sm font-bold ${isQualifying ? 'text-amber-400' : 'text-white'}`}>
-            Rank #{userRank} ({userPoints.toLocaleString()} PTS)
+            {isAdmin ? 'Admin View' : `Rank #${userRank} (${userPoints.toLocaleString()} PTS)`}
           </span>
         </div>
 
@@ -102,14 +144,14 @@ export const TargetGapCalculator: React.FC<TargetGapCalculatorProps> = ({
         <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5">
           <span className="text-[10px] text-slate-400 block uppercase">Seat #4 Holder</span>
           <span className="text-sm font-bold text-slate-300 truncate block">
-            {cutoffHolderName}
+            {userRank === 4 ? 'You (Defending Cutoff)' : cutoffHolderName}
           </span>
         </div>
 
         <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5">
           <span className="text-[10px] text-slate-400 block uppercase">Target Requirement</span>
-          <span className={`text-sm font-bold ${isQualifying ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {isQualifying ? `Defend +${cushion} PTS` : `Need +${deficit} PTS`}
+          <span className={`text-sm font-bold ${isAdmin ? 'text-amber-400' : isQualifying ? 'text-emerald-400' : 'text-rose-400'}`}>
+            {isAdmin ? 'Top 4 Awarded' : isQualifying ? `Defend +${cushion.toLocaleString()} PTS` : `Need +${deficit.toLocaleString()} PTS`}
           </span>
         </div>
       </div>
@@ -175,18 +217,26 @@ export const TargetGapCalculator: React.FC<TargetGapCalculatorProps> = ({
                 1 Winning Bet of <strong className="text-white">{simStake} PTS</strong> at <strong className="text-amber-400">{simOdds.toFixed(1)}x</strong> yields:
               </div>
               <div className="text-sm font-mono font-bold text-emerald-400 mt-0.5">
-                +{projectedProfit.toLocaleString()} PTS Net Profit → New Total: {projectedTotal.toLocaleString()} PTS
+                +{projectedProfit.toLocaleString()} PTS Net Profit → Projected Total: {projectedTotal.toLocaleString()} PTS
               </div>
             </div>
 
             <div className="shrink-0">
-              {willQualifyWithSim ? (
+              {isQualifying ? (
                 <div className="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono font-bold text-xs flex items-center gap-1.5">
-                  <span>🍗 Mandhi Seat Reached!</span>
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Cushion +{(cushion + projectedProfit).toLocaleString()} PTS</span>
+                </div>
+              ) : willQualifyWithSim ? (
+                <div className="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono font-bold text-xs flex items-center gap-1.5">
+                  <span>🍗 Mandhi Seat Reached! (+{(projectedTotal - cutoffPoints).toLocaleString()} PTS)</span>
                 </div>
               ) : (
-                <div className="text-[11px] font-mono text-amber-300">
-                  {Math.ceil(deficit / Math.max(1, projectedProfit))} similar bets needed
+                <div className="text-[11px] font-mono text-amber-300 text-right sm:text-left">
+                  <span>Need +{remainingDeficit.toLocaleString()} more PTS</span>
+                  <span className="block text-[10px] text-slate-400 font-normal">
+                    ({additionalBetsNeeded} more win{additionalBetsNeeded === 1 ? '' : 's'} like this)
+                  </span>
                 </div>
               )}
             </div>

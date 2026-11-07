@@ -10,8 +10,9 @@ import {
 import { auth, isFirebaseConfigured } from '@/config/firebase';
 import { UserProfile, ApprovedStudent } from '@/types/user';
 import { studentService } from '@/services/studentService';
-import { userService } from '@/services/userService';
+import { userService, INITIAL_WELCOME_TOKENS } from '@/services/userService';
 import { syncStorage } from '@/services/storageSync';
+import approvedStudentsSeed from '@/data/approved_students.json';
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -46,12 +47,114 @@ const ADMIN_EMAILS = [
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'Admin@PariBet2025';
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  // Synchronous initial state restoration so page reload never flashes null user or drops to /login
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const savedUid = localStorage.getItem(LOCAL_SESSION_KEY);
+      if (!savedUid) return null;
+
+      // 1. Try local users map
+      const raw = localStorage.getItem('paribet_mock_users');
+      if (raw) {
+        const users = JSON.parse(raw);
+        if (users[savedUid] && users[savedUid].accountStatus === 'active') {
+          return users[savedUid];
+        }
+      }
+
+      // 2. Admin account
+      if (savedUid === 'admin_master_account') {
+        return {
+          uid: 'admin_master_account',
+          email: 'admin@paribet.internal',
+          officialName: 'Master Administrator',
+          admissionNumber: 'ADMIN',
+          nickname: 'Administrator',
+          profilePicture: 'https://api.dicebear.com/7.x/bottts/svg?seed=AdminMaster&backgroundColor=140d33',
+          createdAt: new Date().toISOString(),
+          role: 'admin',
+          accountStatus: 'active',
+          walletBalance: 100000,
+          lockedBalance: 0,
+          statistics: {
+            predictionsParticipated: 0,
+            predictionsWon: 0,
+            winRate: 0,
+            currentStreak: 0,
+            longestStreak: 0,
+            totalRewardsEarned: 0,
+            totalTokensCommitted: 0,
+            loansGiven: 0,
+            loansCompleted: 0
+          }
+        };
+      }
+
+      // 3. Authoritative roster fallback for student accounts
+      if (savedUid.startsWith('uid_')) {
+        const admission = savedUid.replace('uid_', '').toLowerCase();
+        const student = (approvedStudentsSeed as ApprovedStudent[]).find(
+          (s) => s.admission_number.toLowerCase() === admission
+        );
+        if (student) {
+          return {
+            uid: savedUid,
+            email: student.email,
+            officialName: student.official_name,
+            admissionNumber: student.admission_number,
+            nickname: student.official_name.split(' ')[0],
+            profilePicture: `https://api.dicebear.com/7.x/bottts/svg?seed=${student.admission_number}`,
+            createdAt: new Date().toISOString(),
+            role: 'regular_user',
+            accountStatus: 'active',
+            walletBalance: INITIAL_WELCOME_TOKENS,
+            lockedBalance: 0,
+            hasChangedPassword: true,
+            statistics: {
+              predictionsParticipated: 0,
+              predictionsWon: 0,
+              winRate: 0,
+              currentStreak: 0,
+              longestStreak: 0,
+              totalRewardsEarned: 0,
+              totalTokensCommitted: 0,
+              loansGiven: 0,
+              loansCompleted: 0
+            }
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('[AuthContext] Synchronous session restore warning:', e);
+    }
+    return null;
+  });
+
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const savedUid = localStorage.getItem(LOCAL_SESSION_KEY);
+    if (savedUid) {
+      return {
+        uid: savedUid,
+        email: savedUid.startsWith('uid_') ? `${savedUid.replace('uid_', '')}@ceconline.edu` : 'admin@paribet.internal',
+        emailVerified: true
+      } as any;
+    }
+    return null;
+  });
+
+  // Only show full loading blocker if we have NO saved local session
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const saved = localStorage.getItem(LOCAL_SESSION_KEY);
+    return !saved && isFirebaseConfigured;
+  });
+
   const [isFirstLogin, setIsFirstLogin] = useState<boolean>(false);
   const [isVerified, setIsVerified] = useState<boolean>(() => {
-    return localStorage.getItem(LOCAL_VERIFIED_KEY) === 'true';
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem(LOCAL_VERIFIED_KEY) === 'true' || Boolean(localStorage.getItem(LOCAL_SESSION_KEY));
   });
   const [error, setError] = useState<string | null>(null);
   const [tempApprovedStudent, setTempApprovedStudent] = useState<ApprovedStudent | null>(null);
@@ -59,67 +162,75 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Initialize auth listener & central storage sync
   useEffect(() => {
-    // Initial sync with central server so any device gets latest users and credentials
-    syncStorage.syncAll().catch(() => {});
+    let isMounted = true;
 
-    if (isFirebaseConfigured) {
-      const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
-        setFirebaseUser(fbUser);
-        if (fbUser) {
-          const verified = fbUser.emailVerified || localStorage.getItem(LOCAL_VERIFIED_KEY) === 'true';
-          setIsVerified(verified);
-          const profile = await userService.getUserProfile(fbUser.uid);
-          setUser(profile);
-          if (profile) {
-            setIsVerified(true);
-            localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
-          }
-        } else {
-          // Check if admin session was saved locally
-          const savedUid = localStorage.getItem(LOCAL_SESSION_KEY);
-          if (savedUid === 'admin_master_account') {
-            const adminProfile = await userService.getUserProfile('admin_master_account');
-            if (adminProfile && adminProfile.role === 'admin') {
-              setUser(adminProfile);
+    const initAuth = async () => {
+      // 1. Initial bi-directional sync with central server
+      try {
+        await syncStorage.syncAll();
+      } catch (e) {
+        console.warn('[AuthContext] syncAll warning:', e);
+      }
+
+      if (!isMounted) return;
+
+      if (isFirebaseConfigured) {
+        const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+          if (!isMounted) return;
+          setFirebaseUser(fbUser);
+          if (fbUser) {
+            const verified = fbUser.emailVerified || localStorage.getItem(LOCAL_VERIFIED_KEY) === 'true';
+            setIsVerified(verified);
+            const profile = await userService.getUserProfile(fbUser.uid);
+            if (isMounted && profile) {
+              setUser(profile);
               setIsVerified(true);
-              setFirebaseUser({
-                uid: 'admin_master_account',
-                email: adminProfile.email,
-                emailVerified: true
-              } as any);
-            } else {
-              setUser(null);
-              setIsVerified(false);
+              localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
             }
           } else {
-            setUser(null);
-            setIsVerified(false);
+            const savedUid = localStorage.getItem(LOCAL_SESSION_KEY);
+            if (savedUid === 'admin_master_account') {
+              const adminProfile = await userService.getUserProfile('admin_master_account');
+              if (isMounted && adminProfile && adminProfile.role === 'admin') {
+                setUser(adminProfile);
+                setIsVerified(true);
+              }
+            } else if (!savedUid) {
+              if (isMounted) {
+                setUser(null);
+                setIsVerified(false);
+              }
+            }
+          }
+          if (isMounted) setLoading(false);
+        });
+        return () => unsubscribe();
+      } else {
+        // Local / Network mode session re-validation
+        const savedUid = localStorage.getItem(LOCAL_SESSION_KEY);
+        if (savedUid) {
+          try {
+            const profile = await userService.getUserProfile(savedUid);
+            if (isMounted && profile) {
+              setUser(profile);
+              setIsVerified(true);
+              localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
+            }
+          } catch (e) {
+            console.warn('[AuthContext] Failed to refresh background profile:', e);
           }
         }
-        setLoading(false);
-      });
-      return () => unsubscribe();
-    } else {
-      // Demo / offline session restoration
-      const savedUid = localStorage.getItem(LOCAL_SESSION_KEY);
-      if (savedUid) {
-        userService.getUserProfile(savedUid).then((profile) => {
-          if (profile) {
-            setUser(profile);
-            setIsVerified(true);
-            localStorage.setItem(LOCAL_VERIFIED_KEY, 'true');
-            setFirebaseUser({
-              uid: profile.uid,
-              email: profile.email,
-              emailVerified: true
-            } as any);
-          }
+        if (isMounted) {
           setLoading(false);
-        });
-      } else {
-        setLoading(false);
+        }
       }
-    }
+    };
+
+    initAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, [isDemoMode]);
 
   const clearError = () => setError(null);

@@ -14,6 +14,7 @@ import { LoanRequest, LoanOffer, Loan, LoanStatus } from '@/types/loan';
 import { walletService } from './walletService';
 import { userService } from './userService';
 import { notificationService } from './notificationService';
+import { syncStorage } from './storageSync';
 
 const REQUESTS_COLLECTION = 'loan_requests';
 const OFFERS_COLLECTION = 'loan_offers';
@@ -40,12 +41,12 @@ export const loanService = {
     }
 
     if (list.length === 0) {
-      const stored = localStorage.getItem(LOCAL_REQUESTS_KEY);
+      const stored = syncStorage.getItem(LOCAL_REQUESTS_KEY);
       if (stored) {
         try {
           const parsed: LoanRequest[] = JSON.parse(stored);
           list = parsed.filter((r) => r.id !== 'req_1');
-          localStorage.setItem(LOCAL_REQUESTS_KEY, JSON.stringify(list));
+          syncStorage.setItem(LOCAL_REQUESTS_KEY, JSON.stringify(list));
         } catch {
           list = [];
         }
@@ -116,7 +117,7 @@ export const loanService = {
 
     const all = await this.getLoanRequests();
     all.unshift(newReq);
-    localStorage.setItem(LOCAL_REQUESTS_KEY, JSON.stringify(all));
+    syncStorage.setItem(LOCAL_REQUESTS_KEY, JSON.stringify(all));
 
     return newReq;
   },
@@ -173,15 +174,15 @@ export const loanService = {
     request.offersCount = (request.offersCount || 0) + 1;
     request.status = 'OFFER_RECEIVED';
 
-    const allOffers: LoanOffer[] = JSON.parse(localStorage.getItem(LOCAL_OFFERS_KEY) || '[]');
+    const allOffers: LoanOffer[] = JSON.parse(syncStorage.getItem(LOCAL_OFFERS_KEY) || '[]');
     allOffers.push(offer);
-    localStorage.setItem(LOCAL_OFFERS_KEY, JSON.stringify(allOffers));
+    syncStorage.setItem(LOCAL_OFFERS_KEY, JSON.stringify(allOffers));
 
     const allReqs = await this.getLoanRequests();
     const idx = allReqs.findIndex((r) => r.id === request.id);
     if (idx !== -1) {
       allReqs[idx] = request;
-      localStorage.setItem(LOCAL_REQUESTS_KEY, JSON.stringify(allReqs));
+      syncStorage.setItem(LOCAL_REQUESTS_KEY, JSON.stringify(allReqs));
     }
 
     // Notify borrower
@@ -200,7 +201,7 @@ export const loanService = {
    * Get offers for a loan request
    */
   async getOffersForRequest(requestId: string): Promise<LoanOffer[]> {
-    const allOffers: LoanOffer[] = JSON.parse(localStorage.getItem(LOCAL_OFFERS_KEY) || '[]');
+    const allOffers: LoanOffer[] = JSON.parse(syncStorage.getItem(LOCAL_OFFERS_KEY) || '[]');
     return allOffers.filter((o) => o.requestId === requestId);
   },
 
@@ -268,16 +269,16 @@ export const loanService = {
     offer.status = 'ACCEPTED';
 
     // Persist
-    const allLoans: Loan[] = JSON.parse(localStorage.getItem(LOCAL_LOANS_KEY) || '[]');
+    const allLoans: Loan[] = JSON.parse(syncStorage.getItem(LOCAL_LOANS_KEY) || '[]');
     allLoans.push(loan);
-    localStorage.setItem(LOCAL_LOANS_KEY, JSON.stringify(allLoans));
-    localStorage.setItem(LOCAL_REQUESTS_KEY, JSON.stringify(allReqs));
+    syncStorage.setItem(LOCAL_LOANS_KEY, JSON.stringify(allLoans));
+    syncStorage.setItem(LOCAL_REQUESTS_KEY, JSON.stringify(allReqs));
 
-    const allOffers: LoanOffer[] = JSON.parse(localStorage.getItem(LOCAL_OFFERS_KEY) || '[]');
+    const allOffers: LoanOffer[] = JSON.parse(syncStorage.getItem(LOCAL_OFFERS_KEY) || '[]');
     const oIdx = allOffers.findIndex((o) => o.id === offer.id);
     if (oIdx !== -1) {
       allOffers[oIdx].status = 'ACCEPTED';
-      localStorage.setItem(LOCAL_OFFERS_KEY, JSON.stringify(allOffers));
+      syncStorage.setItem(LOCAL_OFFERS_KEY, JSON.stringify(allOffers));
     }
 
     // Notify lender that offer was accepted
@@ -296,7 +297,7 @@ export const loanService = {
    * Repay loan (supports full or partial repayment)
    */
   async repayLoan(loanId: string, repayAmount: number): Promise<Loan> {
-    const allLoans: Loan[] = JSON.parse(localStorage.getItem(LOCAL_LOANS_KEY) || '[]');
+    const allLoans: Loan[] = JSON.parse(syncStorage.getItem(LOCAL_LOANS_KEY) || '[]');
     const loan = allLoans.find((l) => l.id === loanId);
     if (!loan) throw new Error('Loan not found.');
 
@@ -336,15 +337,15 @@ export const loanService = {
       const lenderProfile = await userService.getUserProfile(loan.lenderId);
       if (lenderProfile) {
         lenderProfile.statistics.loansCompleted += 1;
-        const localUsers = JSON.parse(localStorage.getItem('paribet_mock_users') || '{}');
+        const localUsers = JSON.parse(syncStorage.getItem('paribet_mock_users') || '{}');
         localUsers[loan.lenderId] = lenderProfile;
-        localStorage.setItem('paribet_mock_users', JSON.stringify(localUsers));
+        syncStorage.setItem('paribet_mock_users', JSON.stringify(localUsers));
       }
     } else {
       loan.status = 'PARTIALLY_REPAID';
     }
 
-    localStorage.setItem(LOCAL_LOANS_KEY, JSON.stringify(allLoans));
+    syncStorage.setItem(LOCAL_LOANS_KEY, JSON.stringify(allLoans));
 
     // Notify lender
     await notificationService.sendNotification({
@@ -362,7 +363,7 @@ export const loanService = {
    * Get user loans (as borrower or lender)
    */
   async getUserLoans(userId: string): Promise<Loan[]> {
-    const allLoans: Loan[] = JSON.parse(localStorage.getItem(LOCAL_LOANS_KEY) || '[]');
+    const allLoans: Loan[] = JSON.parse(syncStorage.getItem(LOCAL_LOANS_KEY) || '[]');
     return allLoans.filter((l) => l.borrowerId === userId || l.lenderId === userId);
   }
 };

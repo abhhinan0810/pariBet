@@ -11,6 +11,7 @@ import { auth, isFirebaseConfigured } from '@/config/firebase';
 import { UserProfile, ApprovedStudent } from '@/types/user';
 import { studentService } from '@/services/studentService';
 import { userService } from '@/services/userService';
+import { syncStorage } from '@/services/storageSync';
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -56,8 +57,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [tempApprovedStudent, setTempApprovedStudent] = useState<ApprovedStudent | null>(null);
   const isDemoMode = !isFirebaseConfigured;
 
-  // Initialize auth listener
+  // Initialize auth listener & central storage sync
   useEffect(() => {
+    // Initial sync with central server so any device gets latest users and credentials
+    syncStorage.syncAll().catch(() => {});
+
     if (isFirebaseConfigured) {
       const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
         setFirebaseUser(fbUser);
@@ -320,7 +324,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         emailVerified: true
       } as any);
 
-      const requiresFirstLogin = credCheck.isFirstLogin || !profile.hasChangedPassword;
+      const requiresFirstLogin = credCheck.isFirstLogin || (!profile.hasChangedPassword && !credCheck.studentData.hasChangedPassword);
       setIsFirstLogin(requiresFirstLogin);
 
       return {
@@ -362,15 +366,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } else {
       updated = await userService.updateProfile(currentUid, {
         nickname: nickname.trim(),
-        profilePicture
+        profilePicture,
+        hasChangedPassword: true
       });
     }
 
     if (updated) {
       updated.hasChangedPassword = true;
-      const localUsers = JSON.parse(localStorage.getItem('paribet_mock_users') || '{}');
-      localUsers[currentUid] = updated;
-      localStorage.setItem('paribet_mock_users', JSON.stringify(localUsers));
+      await userService.updateProfile(currentUid, { hasChangedPassword: true });
 
       setUser(updated);
       setIsFirstLogin(false);

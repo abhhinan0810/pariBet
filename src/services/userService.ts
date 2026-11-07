@@ -1,6 +1,7 @@
 import { db, isFirebaseConfigured } from '@/config/firebase';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { UserProfile, UserRole } from '@/types/user';
+import { syncStorage } from '@/services/storageSync';
 
 const USERS_COLLECTION = 'users';
 const LOCAL_USERS_KEY = 'paribet_mock_users';
@@ -9,7 +10,7 @@ export const INITIAL_WELCOME_TOKENS = 1000;
 
 export const userService = {
   /**
-   * Fetch user profile from Firestore or local storage
+   * Fetch user profile from Firestore or central storage / local cache
    */
   async getUserProfile(uid: string): Promise<UserProfile | null> {
     if (isFirebaseConfigured) {
@@ -20,13 +21,31 @@ export const userService = {
           return docSnap.data() as UserProfile;
         }
       } catch (err) {
-        console.warn('[userService] Failed to get doc from Firestore, checking local storage:', err);
+        console.warn('[userService] Failed to get doc from Firestore, checking central storage:', err);
       }
     }
 
-    // Local storage fallback for seamless testing
-    const localUsers = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}');
-    return localUsers[uid] || null;
+    // Central storage read
+    try {
+      const stored = await syncStorage.getItemAsync(LOCAL_USERS_KEY);
+      if (stored) {
+        const localUsers = typeof stored === 'string' ? JSON.parse(stored) : stored;
+        if (localUsers[uid]) return localUsers[uid];
+      }
+    } catch (err) {
+      console.warn('[userService] Failed to get user from central storage:', err);
+    }
+
+    // Fast local cache fallback
+    try {
+      const fallback = syncStorage.getItem(LOCAL_USERS_KEY);
+      if (fallback) {
+        const localUsers = JSON.parse(fallback);
+        return localUsers[uid] || null;
+      }
+    } catch {}
+
+    return null;
   },
 
   /**
@@ -74,10 +93,22 @@ export const userService = {
       }
     }
 
-    // Persist to local storage for local/demo support
-    const localUsers = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}');
+    // Persist to central storage and local storage
+    let localUsers: Record<string, UserProfile> = {};
+    try {
+      const stored = await syncStorage.getItemAsync(LOCAL_USERS_KEY);
+      if (stored) {
+        localUsers = typeof stored === 'string' ? JSON.parse(stored) : stored;
+      }
+    } catch {
+      const local = syncStorage.getItem(LOCAL_USERS_KEY);
+      if (local) {
+        try { localUsers = JSON.parse(local); } catch {}
+      }
+    }
+
     localUsers[profile.uid] = profile;
-    localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
+    await syncStorage.setItemAsync(LOCAL_USERS_KEY, JSON.stringify(localUsers));
 
     return profile;
   },
@@ -88,7 +119,7 @@ export const userService = {
    */
   async updateProfile(
     uid: string,
-    updates: { nickname?: string; profilePicture?: string; bio?: string }
+    updates: { nickname?: string; profilePicture?: string; bio?: string; hasChangedPassword?: boolean }
   ): Promise<UserProfile | null> {
     // Sanitize updates: only allow specific safe fields
     const safeUpdates: Partial<UserProfile> = {};
@@ -101,6 +132,9 @@ export const userService = {
     if (updates.bio !== undefined) {
       safeUpdates.bio = updates.bio.trim();
     }
+    if (updates.hasChangedPassword !== undefined) {
+      safeUpdates.hasChangedPassword = updates.hasChangedPassword;
+    }
 
     if (isFirebaseConfigured) {
       try {
@@ -111,11 +145,23 @@ export const userService = {
       }
     }
 
-    // Update in local storage
-    const localUsers = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}');
+    // Update in central storage and local storage
+    let localUsers: Record<string, UserProfile> = {};
+    try {
+      const stored = await syncStorage.getItemAsync(LOCAL_USERS_KEY);
+      if (stored) {
+        localUsers = typeof stored === 'string' ? JSON.parse(stored) : stored;
+      }
+    } catch {
+      const local = syncStorage.getItem(LOCAL_USERS_KEY);
+      if (local) {
+        try { localUsers = JSON.parse(local); } catch {}
+      }
+    }
+
     if (localUsers[uid]) {
       localUsers[uid] = { ...localUsers[uid], ...safeUpdates, updatedAt: new Date().toISOString() };
-      localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers));
+      await syncStorage.setItemAsync(LOCAL_USERS_KEY, JSON.stringify(localUsers));
       return localUsers[uid];
     }
 
@@ -138,11 +184,22 @@ export const userService = {
     }
     if (list.length === 0) {
       try {
-        const localUsers = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}');
-        list = Object.values(localUsers) as UserProfile[];
+        const stored = await syncStorage.getItemAsync(LOCAL_USERS_KEY);
+        if (stored) {
+          const localUsers = typeof stored === 'string' ? JSON.parse(stored) : stored;
+          list = Object.values(localUsers) as UserProfile[];
+        }
       } catch {
         list = [];
       }
+    }
+    if (list.length === 0) {
+      try {
+        const local = syncStorage.getItem(LOCAL_USERS_KEY);
+        if (local) {
+          list = Object.values(JSON.parse(local)) as UserProfile[];
+        }
+      } catch {}
     }
     // Exclude master administrator account from player leaderboard
     return list.filter((u) => u.role !== 'admin' && u.admissionNumber !== 'ADMIN');

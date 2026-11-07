@@ -1,1 +1,279 @@
-{}
+{
+  "paribet_mock_users": {
+    "uid_chn25mca055": {
+      "uid": "uid_chn25mca055",
+      "email": "chn25mca055@ceconline.edu",
+      "officialName": "Abhinav Krishna S",
+      "admissionNumber": "chn25mca055",
+      "nickname": "Abhinav",
+      "profilePicture": "https://api.dicebear.com/7.x/bottts/svg?seed=chn25mca055",
+      "createdAt": "2026-11-04T14:22:28.407Z",
+      "role": "regular_user",
+      "accountStatus": "active",
+      "walletBalance": 900,
+      "lockedBalance": 100,
+      "statistics": {
+        "predictionsParticipated": 1,
+        "predictionsWon": 0,
+        "winRate": 0,
+        "currentStreak": 0,
+        "longestStreak": 0,
+        "totalRewardsEarned": 0,
+        "totalTokensCommitted": 100,
+        "loansGiven": 0,
+        "loansCompleted": 0
+      }
+    },
+    "uid_chn25mca065": {
+      "uid": "uid_chn25mca065",
+      "email": "chn25mca065@ceconline.edu",
+      "officialName": "Vishnu V Ram",
+      "admissionNumber": "chn25mca065",
+      "nickname": "Vishnu",
+      "profilePicture": "https://api.dicebear.com/7.x/bottts/svg?seed=chn25mca065",
+      "createdAt": "2026-11-04T16:40:25.732Z",
+      "role": "regular_user",
+      "accountStatus": "active",
+      "walletBalance": 700,
+      "lockedBalance": 300,
+      "statistics": {
+        "predictionsParticipated": 4,
+        "predictionsWon": 0,
+        "winRate": 0,
+        "currentStreak": 0,
+        "longestStreak": 0,
+        "totalRewardsEarned": 0,
+        "totalTokensCommitted": 300,
+        "loansGiven": 0,
+        "loansCompleted": 0
+      }
+    },
+    "admin_master_account": {
+      "uid": "admin_master_account",
+      "email": "admin@ceconline.edu",
+      "officialName": "Master Administrator",
+      "admissionNumber": "ADMIN",
+      "nickname": "Administrator",
+      "profilePicture": "https://api.dicebear.com/7.x/bottts/svg?seed=AdminMaster&backgroundColor=140d33",
+      "createdAt": "2026-11-05T14:37:21.277Z",
+      "role": "admin",
+      "accountStatus": "active",
+      "walletBalance": 100000,
+      "lockedBalance": 0,
+      "statistics": {
+        "predictionsParticipated": 0,
+        "predictionsWon": 0,
+        "winRate": 0,
+        "currentStreak": 0,
+        "longestStreak": 0,
+        "totalRewardsEarned": 0,
+        "totalTokensCommitted": 0,
+        "loansGiven": 0,
+        "loansCompleted": 0
+      }
+    }
+  },
+  "paribet_mock_predictions": [
+    {
+      "id": "pred_1793896050701_emx7",
+      "title": "How many",
+      "description": "how",
+      "type": "YES_NO",
+      "category": "Friends",
+      "creatorId": "uid_chn25mca065",
+      "creatorName": "Vishnu V Ram",
+      "creatorNickname": "Vishnu",
+      "creatorAvatar": "https://api.dicebear.com/7.x/bottts/svg?seed=chn25mca065",
+      "createdAt": "2026-11-05T16:27:30.702Z",
+      "participationDeadline": "2026-11-05T22:56:00.000Z",
+      "resultSubmissionDeadline": "2026-11-20T10:56:00.000Z",
+      "minCommitment": 50,
+      "status": "OPEN",
+      "options": [
+        {
+          "id": "opt_yes",
+          "text": "YES",
+          "totalTokensCommitted": 150,
+          "totalParticipants": 2
+        },
+        {
+          "id": "opt_no",
+          "text": "NO",
+          "totalTokensCommitted": 100,
+          "totalParticipants": 1
+        }
+      ],
+      "totalPoolTokens": 250,
+      "totalParticipantsCount": 3
+    },
+    {
+      "id": "pred_1793804807581_finb",
+      "title": "will varkkala sleep on train tomorrow",
+      "description": "varkkala",
+      "type": "YES_NO",
+      "category": "College",
+      "creatorId": "uid_chn25mca055",
+      "creatorName": "Abhinav Krishna S",
+      "creatorNickname": "Abhinav",
+      "creatorAvatar": "https://api.dicebear.com/7.x/bottts/svg?seed=chn25mca055",
+      "createdAt": "2026-11-04T15:06:47.581Z",
+      "participationDeadline": "2026-11-04T21:36:00.000Z",
+      "resultSubmissionDeadline": "2026-11-05T09:36:00.000Z",
+      "minCommitment": 50,
+      "status": "OPEN",
+      "options": [
+        {
+          "id": "opt_yes",
+          "text": "YES",
+          "totalTokensCommitted": 150,
+          "totalParticipants": 2
+        },
+        {
+          "id": "opt_no",
+          "text": "NO",
+          "totalTokensCommitted": 0,
+          "totalParticipants": 0
+        }
+      ],
+      "totalPoolTokens": 150,
+      "totalParticipantsCount": 2
+    }
+  ],
+  "paribet_mock_participations": [
+    {
+      "id": "part_1793804826039_3dlf",
+      "predictionId": "pred_1793804807581_finb",
+      "userId": "uid_chn25mca055",
+      "userNickname": "Abhinav",
+      "userOfficialName": "Abhinav Krishna S",
+      "userAvatar": "https://api.dicebear.com/7.x/bottts/svg?seed=chn25mca055",
+      "optionId": "opt_yes",
+      "tokensCommitted": 100,
+      "createdAt": "2026-11-04T15:07:06.039Z"
+    },
+    {
+      "id": "part_1793810449192_ibkp",
+      "predictionId": "pred_1793804807581_finb",
+      "userId": "uid_chn25mca065",
+      "userNickname": "Vishnu",
+      "userOfficialName": "Vishnu V Ram",
+      "userAvatar": "https://api.dicebear.com/7.x/bottts/svg?seed=chn25mca065",
+      "optionId": "opt_yes",
+      "tokensCommitted": 50,
+      "createdAt": "2026-11-04T16:40:49.192Z"
+    },
+    {
+      "id": "part_1793896073609_pc3x",
+      "predictionId": "pred_1793896050701_emx7",
+      "userId": "uid_chn25mca065",
+      "userNickname": "Vishnu",
+      "userOfficialName": "Vishnu V Ram",
+      "userAvatar": "https://api.dicebear.com/7.x/bottts/svg?seed=chn25mca065",
+      "optionId": "opt_yes",
+      "tokensCommitted": 100,
+      "createdAt": "2026-11-05T16:27:53.609Z"
+    },
+    {
+      "id": "part_1793897453213_mwcu",
+      "predictionId": "pred_1793896050701_emx7",
+      "userId": "uid_chn25mca065",
+      "userNickname": "Vishnu",
+      "userOfficialName": "Vishnu V Ram",
+      "userAvatar": "https://api.dicebear.com/7.x/bottts/svg?seed=chn25mca065",
+      "optionId": "opt_no",
+      "tokensCommitted": 100,
+      "createdAt": "2026-11-05T16:50:53.213Z"
+    },
+    {
+      "id": "part_1793897468403_ow62",
+      "predictionId": "pred_1793896050701_emx7",
+      "userId": "uid_chn25mca065",
+      "userNickname": "Vishnu",
+      "userOfficialName": "Vishnu V Ram",
+      "userAvatar": "https://api.dicebear.com/7.x/bottts/svg?seed=chn25mca065",
+      "optionId": "opt_yes",
+      "tokensCommitted": 50,
+      "createdAt": "2026-11-05T16:51:08.403Z"
+    }
+  ],
+  "paribet_mock_transactions": [
+    {
+      "id": "tx_1793897468403_evgjd",
+      "userId": "uid_chn25mca065",
+      "type": "PREDICTION_COMMITMENT",
+      "amount": -50,
+      "balanceAfter": 700,
+      "referenceId": "pred_1793896050701_emx7",
+      "description": "Committed 50 tokens on \"How many\"",
+      "createdAt": "2026-11-05T16:51:08.403Z",
+      "metadata": {
+        "optionId": "opt_yes"
+      }
+    },
+    {
+      "id": "tx_1793897453212_u6csx",
+      "userId": "uid_chn25mca065",
+      "type": "PREDICTION_COMMITMENT",
+      "amount": -100,
+      "balanceAfter": 750,
+      "referenceId": "pred_1793896050701_emx7",
+      "description": "Committed 100 tokens on \"How many\"",
+      "createdAt": "2026-11-05T16:50:53.212Z",
+      "metadata": {
+        "optionId": "opt_no"
+      }
+    },
+    {
+      "id": "tx_1793896073609_8ajz7",
+      "userId": "uid_chn25mca065",
+      "type": "PREDICTION_COMMITMENT",
+      "amount": -100,
+      "balanceAfter": 850,
+      "referenceId": "pred_1793896050701_emx7",
+      "description": "Committed 100 tokens on \"How many\"",
+      "createdAt": "2026-11-05T16:27:53.609Z",
+      "metadata": {
+        "optionId": "opt_yes"
+      }
+    },
+    {
+      "id": "tx_1793810449191_cgqx6",
+      "userId": "uid_chn25mca065",
+      "type": "PREDICTION_COMMITMENT",
+      "amount": -50,
+      "balanceAfter": 950,
+      "referenceId": "pred_1793804807581_finb",
+      "description": "Committed 50 tokens on \"will varkkala sleep on train tomorrow\"",
+      "createdAt": "2026-11-04T16:40:49.191Z",
+      "metadata": {
+        "optionId": "opt_yes"
+      }
+    },
+    {
+      "id": "tx_1793804826038_k9a0r",
+      "userId": "uid_chn25mca055",
+      "type": "PREDICTION_COMMITMENT",
+      "amount": -100,
+      "balanceAfter": 900,
+      "referenceId": "pred_1793804807581_finb",
+      "description": "Committed 100 tokens on \"will varkkala sleep on train tomorrow\"",
+      "createdAt": "2026-11-04T15:07:06.038Z",
+      "metadata": {
+        "optionId": "opt_yes"
+      }
+    }
+  ],
+  "paribet_mock_loan_requests": [],
+  "paribet_mock_notifications": [
+    {
+      "id": "notif_1793810449193_y0aw",
+      "userId": "uid_chn25mca055",
+      "type": "PARTICIPATION_NEW",
+      "title": "New Prediction Stake",
+      "message": "Vishnu placed 50 tokens on \"will varkkala sleep on train tomorrow\"",
+      "read": false,
+      "referenceId": "pred_1793804807581_finb",
+      "createdAt": "2026-11-04T16:40:49.193Z"
+    }
+  ]
+}

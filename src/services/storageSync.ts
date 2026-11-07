@@ -16,7 +16,8 @@ export const SHARED_STORAGE_KEYS = [
   'paribet_mock_loan_requests',
   'paribet_mock_loan_offers',
   'paribet_mock_notifications',
-  'paribet_mock_admin_logs'
+  'paribet_mock_admin_logs',
+  'paribet_user_engagement'
 ];
 
 class StorageSyncService {

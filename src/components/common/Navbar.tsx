@@ -28,8 +28,8 @@ export const Navbar: React.FC = () => {
     { label: 'Profile', path: '/profile', icon: User },
   ];
 
-  const secondaryNavItems = [
-    { label: 'Leaderboard & Prizes', path: '/leaderboard', icon: Trophy, badge: '🍗 Mandhi' },
+  const secondaryNavItems: Array<{ label: string; path: string; icon: any; badge?: string }> = [
+    { label: 'Leaderboard & Prizes', path: '/leaderboard', icon: Trophy },
     { label: 'Token Bank', path: '/bank', icon: Landmark },
     { label: 'Class Group', path: '/group', icon: Users },
     { label: 'Notifications', path: '/notifications', icon: Bell },

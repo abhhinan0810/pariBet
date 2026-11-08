@@ -180,11 +180,11 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* RETENTION MECHANICS: Target Gap Calculator & Friday Jackpot Banner */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div className="lg:col-span-7">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
+        <div className="flex flex-col">
           <TargetGapCalculator />
         </div>
-        <div className="lg:col-span-5 flex flex-col justify-center">
+        <div className="flex flex-col">
           <WeeklyJackpotBanner />
         </div>
       </div>

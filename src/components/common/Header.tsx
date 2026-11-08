@@ -233,18 +233,20 @@ export const Header: React.FC = () => {
 
             {/* Navigation Links */}
             <div className="p-3 space-y-1 flex-1">
-              {[
-                { to: '/home', label: 'Home Dashboard', icon: Home },
-                { to: '/discover', label: 'Discover Predictions', icon: Compass },
-                { to: '/create', label: 'Create New Prediction', icon: Plus, highlight: true },
-                { to: '/leaderboard', label: 'Leaderboard & Prizes', icon: Trophy, badge: '🍗 Mandhi' },
-                { to: '/bank', label: 'Token Bank (Loans)', icon: Landmark },
-                { to: '/group', label: 'Class Group & Wall', icon: Users },
-                { to: '/wallet', label: 'Token Wallet', icon: WalletIcon },
-                { to: '/notifications', label: 'Notifications', icon: Bell },
-                { to: '/profile', label: 'My Profile', icon: UserIcon },
-                { to: '/settings', label: 'Settings', icon: Settings },
-              ].map((item) => {
+              {(
+                [
+                  { to: '/home', label: 'Home Dashboard', icon: Home },
+                  { to: '/discover', label: 'Discover Predictions', icon: Compass },
+                  { to: '/create', label: 'Create New Prediction', icon: Plus, highlight: true },
+                  { to: '/leaderboard', label: 'Leaderboard & Prizes', icon: Trophy },
+                  { to: '/bank', label: 'Token Bank (Loans)', icon: Landmark },
+                  { to: '/group', label: 'Class Group & Wall', icon: Users },
+                  { to: '/wallet', label: 'Token Wallet', icon: WalletIcon },
+                  { to: '/notifications', label: 'Notifications', icon: Bell },
+                  { to: '/profile', label: 'My Profile', icon: UserIcon },
+                  { to: '/settings', label: 'Settings', icon: Settings },
+                ] as Array<{ to: string; label: string; icon: any; highlight?: boolean; badge?: string }>
+              ).map((item) => {
                 const Icon = item.icon;
                 return (
                   <NavLink

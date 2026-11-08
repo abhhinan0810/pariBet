@@ -24,8 +24,7 @@ import { FinalizeModal } from '@/components/predictions/FinalizeModal';
 import { DailyStreakModal } from '@/components/engagement/DailyStreakModal';
 import { WeeklyJackpotBanner } from '@/components/engagement/WeeklyJackpotBanner';
 import { TargetGapCalculator } from '@/components/engagement/TargetGapCalculator';
-import { userService } from '@/services/userService';
-import approvedStudentsSeed from '@/data/approved_students.json';
+import { leaderboardService } from '@/services/leaderboardService';
 
 export const HomePage: React.FC = () => {
   const { user, refreshUserProfile } = useAuth();
@@ -50,41 +49,8 @@ export const HomePage: React.FC = () => {
 
     const fetchTopRankings = async () => {
       try {
-        const users = await userService.getAllUsers();
-        const map = new Map<string, any>();
-        users.forEach((u) => {
-          map.set(u.admissionNumber.toLowerCase(), {
-            nickname: u.nickname || u.officialName.split(' ')[0],
-            name: u.officialName,
-            points: u.walletBalance,
-            winRate: u.statistics?.winRate || 0,
-            avatar: u.profilePicture,
-          });
-        });
-        if (user && user.role !== 'admin' && user.admissionNumber !== 'ADMIN') {
-          map.set(user.admissionNumber.toLowerCase(), {
-            nickname: user.nickname,
-            name: user.officialName,
-            points: user.walletBalance,
-            winRate: user.statistics?.winRate || 0,
-            avatar: user.profilePicture,
-          });
-        }
-        (approvedStudentsSeed as any[]).forEach((s) => {
-          if (!map.has(s.admission_number.toLowerCase())) {
-            map.set(s.admission_number.toLowerCase(), {
-              nickname: s.official_name.split(' ')[0],
-              name: s.official_name,
-              points: 1000,
-              winRate: 0,
-              avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${s.admission_number}`,
-            });
-          }
-        });
-        const sorted = Array.from(map.values())
-          .sort((a, b) => b.points - a.points)
-          .slice(0, 4);
-        setTopUsers(sorted);
+        const stats = await leaderboardService.getMandhiRaceStats(user);
+        setTopUsers(stats.top4);
       } catch (err) {
         console.warn('Failed to load top rankings:', err);
       }
@@ -214,16 +180,11 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* RETENTION MECHANICS: Target Gap Calculator & Friday Jackpot Banner */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div className="lg:col-span-7">
-          <TargetGapCalculator
-            cutoffPoints={2900}
-            cutoffHolderName="Phoenix (Abhinand)"
-            userRank={7}
-            userPoints={walletBalance}
-          />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
+        <div className="flex flex-col">
+          <TargetGapCalculator />
         </div>
-        <div className="lg:col-span-5 flex flex-col justify-center">
+        <div className="flex flex-col">
           <WeeklyJackpotBanner />
         </div>
       </div>
